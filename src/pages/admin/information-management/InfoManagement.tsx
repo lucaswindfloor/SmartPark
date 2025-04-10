@@ -43,8 +43,8 @@ const InfoManagement: React.FC = () => {
     setActiveTab(tab);
     
     // 如果是根路径，默认重定向到notice
-    if (location.pathname === '/admin/info/') {
-      navigate('/admin/info/notice', { replace: true });
+    if (location.pathname === '/admin/information/') {
+      navigate('/admin/information/notice', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -53,19 +53,19 @@ const InfoManagement: React.FC = () => {
     setActiveTab(key);
     switch (key) {
       case 'notice':
-        navigate('/admin/info/notice');
+        navigate('/admin/information/notice');
         break;
       case 'policy':
-        navigate('/admin/info/policy');
+        navigate('/admin/information/policy');
         break;
       case 'activity':
-        navigate('/admin/info/activity');
+        navigate('/admin/information/activity');
         break;
       case 'survey':
-        navigate('/admin/info/survey');
+        navigate('/admin/information/survey');
         break;
       default:
-        navigate('/admin/info/notice');
+        navigate('/admin/information/notice');
     }
   };
 

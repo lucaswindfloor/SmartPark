@@ -125,8 +125,14 @@ const App: React.FC = () => {
             <Route path="finance/bill" element={<BillManagement />} />
             <Route path="service/management" element={<ServiceManagement />} />
             {/* 信息公开管理路由 */}
-            <Route path="info/notice" element={<InformationManagement />} />
-            <Route path="info" element={<Navigate to="/admin/info/notice" replace />} />
+            <Route path="info">
+              <Route path="notice" element={<InformationManagement />} />
+              <Route path="policy" element={<InformationManagement />} />
+              <Route path="activity" element={<InformationManagement />} />
+              <Route path="survey" element={<InformationManagement />} />
+              <Route path="demands" element={<InformationManagement />} />
+              <Route index element={<Navigate to="/admin/info/notice" replace />} />
+            </Route>
             <Route path="operations/contract" element={<ContractList />} />
             
             {/* 停车管理路由 - 只保留没问题的 */}

@@ -6,6 +6,7 @@ import NoticeManagement from './NoticeManagement';
 import PolicyManagement from './PolicyManagement';
 import ActivityManagement from './ActivityManagement';
 import SurveyManagement from './SurveyManagement';
+import DemandManagement from './DemandManagement';
 
 // 内联样式，替代外部CSS文件
 const inlineStyles = {
@@ -24,7 +25,7 @@ const inlineStyles = {
 
 /**
  * 信息公开管理
- * 综合管理平台的信息公开管理主组件，包含通知公告、政策文件、园区活动和调查问卷管理
+ * 综合管理平台的信息公开管理主组件，包含通知公告、政策文件、园区活动、调查问卷和需求发布管理
  */
 const InformationManagement: React.FC = () => {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ const InformationManagement: React.FC = () => {
     if (pathname.includes('/policy')) return 'policy';
     if (pathname.includes('/activity')) return 'activity';
     if (pathname.includes('/survey')) return 'survey';
+    if (pathname.includes('/demands')) return 'demands';
     if (pathname.includes('/notice')) return 'notice';
     return 'notice'; // 默认为通知公告
   };
@@ -47,8 +49,8 @@ const InformationManagement: React.FC = () => {
     setActiveTab(tab);
     
     // 如果是根路径，默认重定向到notice
-    if (location.pathname === '/admin/information') {
-      navigate('/admin/information/notice', { replace: true });
+    if (location.pathname === '/admin/info') {
+      navigate('/admin/info/notice', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -57,19 +59,22 @@ const InformationManagement: React.FC = () => {
     setActiveTab(key);
     switch (key) {
       case 'notice':
-        navigate('/admin/information/notice');
+        navigate('/admin/info/notice');
         break;
       case 'policy':
-        navigate('/admin/information/policy');
+        navigate('/admin/info/policy');
         break;
       case 'activity':
-        navigate('/admin/information/activity');
+        navigate('/admin/info/activity');
         break;
       case 'survey':
-        navigate('/admin/information/survey');
+        navigate('/admin/info/survey');
+        break;
+      case 'demands':
+        navigate('/admin/info/demands');
         break;
       default:
-        navigate('/admin/information/notice');
+        navigate('/admin/info/notice');
     }
   };
 
@@ -77,22 +82,19 @@ const InformationManagement: React.FC = () => {
   const handleCreate = () => {
     switch (activeTab) {
       case 'notice':
-        // 新建通知公告
-        // 在实际应用中可能会跳转到编辑页面或打开弹窗
-        // navigate('/admin/information/notice/create');
         alert('新建通知公告功能尚未实现');
         break;
       case 'policy':
-        // 新建政策文件
         alert('新建政策文件功能尚未实现');
         break;
       case 'activity':
-        // 新建园区活动
         alert('新建园区活动功能尚未实现');
         break;
       case 'survey':
-        // 新建调查问卷
         alert('新建调查问卷功能尚未实现');
+        break;
+      case 'demands':
+        alert('新建需求功能尚未实现');
         break;
     }
   };
@@ -107,7 +109,8 @@ const InformationManagement: React.FC = () => {
       >
         新建{activeTab === 'notice' ? '通知' : 
              activeTab === 'policy' ? '政策' : 
-             activeTab === 'activity' ? '活动' : '问卷'}
+             activeTab === 'activity' ? '活动' : 
+             activeTab === 'survey' ? '问卷' : '需求'}
       </Button>
     ),
   };
@@ -125,22 +128,25 @@ const InformationManagement: React.FC = () => {
       <Breadcrumb.Item>
         {activeTab === 'notice' ? '通知公告' : 
          activeTab === 'policy' ? '政策文件' : 
-         activeTab === 'activity' ? '园区活动' : '调查问卷'}
+         activeTab === 'activity' ? '园区活动' : 
+         activeTab === 'survey' ? '调查问卷' : '需求发布'}
       </Breadcrumb.Item>
     </Breadcrumb>
   );
 
-  // 根据当前路径渲染对应的组件
+  // 根据当前标签页渲染对应的组件
   const renderContent = () => {
-    const pathname = location.pathname;
-    if (pathname.includes('/policy')) {
-      return <PolicyManagement />;
-    } else if (pathname.includes('/activity')) {
-      return <ActivityManagement />;
-    } else if (pathname.includes('/survey')) {
-      return <SurveyManagement />;
-    } else {
-      return <NoticeManagement />;
+    switch (activeTab) {
+      case 'policy':
+        return <PolicyManagement />;
+      case 'activity':
+        return <ActivityManagement />;
+      case 'survey':
+        return <SurveyManagement />;
+      case 'demands':
+        return <DemandManagement />;
+      default:
+        return <NoticeManagement />;
     }
   };
 
@@ -169,6 +175,10 @@ const InformationManagement: React.FC = () => {
             {
               key: 'survey',
               label: '调查问卷'
+            },
+            {
+              key: 'demands',
+              label: '需求发布'
             }
           ]}
           tabBarExtraContent={tabBarExtraContent}
