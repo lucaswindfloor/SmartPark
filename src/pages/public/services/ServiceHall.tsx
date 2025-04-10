@@ -26,7 +26,8 @@ import {
   BuildOutlined,
   BellOutlined,
   BookOutlined,
-  SearchOutlined
+  SearchOutlined,
+  QrcodeOutlined
 } from '@ant-design/icons';
 import { useAuth, PermissionAction } from '../../../contexts/AuthContext';
 
@@ -136,12 +137,21 @@ const serviceItems: ServiceItem[] = [
     isHot: true
   },
   {
+    id: 'parking-space',
+    name: '车位查询',
+    icon: <CarOutlined />,
+    description: '实时查询园区停车场可用车位',
+    path: '/portal/services/parking-space',
+    permission: PermissionAction.VIEW_ACTIVITIES,
+    category: 'facility'
+  },
+  {
     id: 'temp-parking',
     name: '临停缴费',
     icon: <CarOutlined />,
     description: '临时停车费查询与缴纳',
     path: '/portal/services/temp-parking',
-    permission: PermissionAction.REQUEST_VISITOR_ACCESS,
+    permission: PermissionAction.VIEW_ACTIVITIES,
     category: 'facility'
   },
   {
@@ -153,6 +163,16 @@ const serviceItems: ServiceItem[] = [
     permission: PermissionAction.APPLY_ENTERPRISE_SERVICE,
     category: 'facility',
     isHot: true
+  },
+  {
+    id: 'enterprise-qrcode',
+    name: '企业停车码',
+    icon: <QrcodeOutlined />,
+    description: '查看和管理企业访客停车二维码',
+    path: '/portal/services/enterprise-qrcode',
+    permission: PermissionAction.MANAGE_EMPLOYEES,
+    category: 'facility',
+    isNew: true
   },
   {
     id: 'ac-extension',

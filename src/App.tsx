@@ -24,7 +24,7 @@ import MonthlyPlanManagement from './pages/admin/parking/MonthlyPlanManagement';
 import TempPlanManagement from './pages/admin/parking/TempPlanManagement';
 // 注释掉有问题的导入
 import MonthlyPurchaseRecord from './pages/admin/parking/MonthlyPurchaseRecord';
-import EnterpriseQRCode from './pages/admin/parking/EnterpriseQRCode';
+import AdminEnterpriseQRCode from './pages/admin/parking/EnterpriseQRCode';
 import VehicleManagement from './pages/admin/parking/VehicleManagement';
 import AccessRecords from './pages/admin/parking/AccessRecords';
 
@@ -53,6 +53,13 @@ import ElectricityService from './pages/public/services/ElectricityService';
 import ActivityList from './pages/public/activities/ActivityList';
 import ActivityDetail from './pages/public/activities/ActivityDetail';
 import MessageCenter from './pages/public/messages/MessageCenter';
+
+// 停车管理 - 公共服务平台页面
+import ParkingCardPurchase from './pages/service/parking/ParkingCardPurchase';
+import TempParkingPayment from './pages/service/parking/TempParkingPayment';
+import ParkingSpaceQuery from './pages/service/parking/ParkingSpaceQuery';
+import ServiceEnterpriseQRCode from './pages/service/parking/EnterpriseQRCode';
+import MyParkingCards from './pages/user/card/MyParkingCards';
 
 // Platform selector
 const PlatformSelector = () => {
@@ -131,7 +138,7 @@ const App: React.FC = () => {
             
             {/* 注释掉有问题的路由 */}
             <Route path="parking/monthly-purchase-record" element={<MonthlyPurchaseRecord />} />
-            <Route path="parking/enterprise-qr-code" element={<EnterpriseQRCode />} />
+            <Route path="parking/enterprise-qr-code" element={<AdminEnterpriseQRCode />} />
             <Route path="parking/vehicle-management" element={<VehicleManagement />} />
             <Route path="parking/access-records" element={<AccessRecords />} />
             
@@ -149,6 +156,26 @@ const App: React.FC = () => {
                 <ElectricityService />
               </ProtectedRoute>
             } />
+            
+            {/* 停车管理相关路由 */}
+            <Route path="services/parking-card" element={
+              <ProtectedRoute requireAuth={true}>
+                <ParkingCardPurchase />
+              </ProtectedRoute>
+            } />
+            <Route path="services/temp-parking" element={<TempParkingPayment />} />
+            <Route path="services/parking-space" element={<ParkingSpaceQuery />} />
+            <Route path="services/enterprise-qrcode" element={
+              <ProtectedRoute requireAuth={true}>
+                <ServiceEnterpriseQRCode />
+              </ProtectedRoute>
+            } />
+            <Route path="user/my-card" element={
+              <ProtectedRoute requireAuth={true}>
+                <MyParkingCards />
+              </ProtectedRoute>
+            } />
+            
             <Route path="information" element={<InformationIndex />} />
             <Route path="information/policy" element={<PolicyPage />} />
             <Route path="information/notice" element={<NoticePage />} />
