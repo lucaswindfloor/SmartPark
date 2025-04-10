@@ -1,0 +1,1054 @@
+# 智慧园区系统数据模型设计文档
+
+## 1. 文档概述
+
+### 1.1 文档目的
+本文档旨在为智慧园区系统提供完整的数据模型设计方案，明确定义系统中各实体的结构、关系和属性，为系统开发、实现和维护提供数据基础，确保数据的一致性、完整性和可扩展性。
+
+### 1.2 适用范围
+本文档适用于智慧园区系统的综合管理平台、公共服务平台和系统管理员平台的设计、开发、测试和维护工作，是数据库设计和应用程序开发的基础参考文档。
+
+### 1.3 术语定义
+- **E-R图**: 实体关系图，用于表示实体及其之间的关系
+- **主键**: 用于唯一标识表中每条记录的字段
+- **外键**: 建立与其他表关联关系的字段
+- **实体**: 系统中可独立存在的对象，如用户、组织、合同等
+- **关系**: 实体之间的关联方式，如一对一、一对多、多对多关系
+- **数据域**: 特定类型数据的范围和约束条件
+- **三平台**: 指综合管理平台、公共服务平台和系统管理员平台
+
+### 1.4 参考文档
+- 智慧园区系统业务需求文档
+- 智慧园区系统功能规格说明
+- 智慧园区系统架构设计文档
+- 相关行业数据标准和规范
+
+## 2. 数据模型设计原则
+
+### 2.1 数据一致性原则
+- 确保数据在三大平台间保持一致，避免数据冗余和不一致
+- 减少数据冗余，通过引用关系减少数据重复存储
+- 定义统一的字段命名规范和数据格式标准
+- 建立数据唯一性约束，防止重复数据的产生
+
+### 2.2 数据安全性原则
+- 遵循数据最小化原则，只收集和存储必要的数据
+- 对敏感数据实施加密存储，如密码、身份证号等个人信息
+- 建立完善的数据访问控制机制，确保数据只被授权用户访问
+- 实现数据操作审计机制，记录关键操作及其执行者
+- 符合相关数据保护法规和行业标准
+
+### 2.3 扩展性与兼容性原则
+- 数据模型设计应支持业务扩展，预留适当的扩展字段
+- 采用模块化设计，确保新功能可以无缝集成
+- 保持数据模型的向后兼容性，避免因模型变更影响已有应用
+- 支持多种数据格式和接口标准，便于系统集成
+- 考虑未来可能的业务变化，提前在数据模型中做好准备
+
+### 2.4 性能优化原则
+- 合理设计索引，提高数据查询效率
+- 适当进行数据分片和分区，优化大数据量处理能力
+- 对常用查询进行优化设计，减少复杂连接操作
+- 合理设置数据缓存策略，减轻数据库负担
+- 定期进行性能评估和优化调整
+
+### 2.5 命名规范
+- 表名采用下划线命名法，使用英文全称，如 user_info, organization_structure
+- 字段名采用下划线命名法，具有描述性，如 create_time, update_user_id
+- 主键统一命名为 id，采用自增或UUID方式
+- 外键命名格式为 reference_table_id，如 user_id, department_id
+- 时间类字段统一后缀，如 create_time, update_time, expire_time
+- 状态类字段统一使用 status 命名，采用整数编码
+
+## 3. 系统整体数据架构
+
+### 3.1 数据域划分
+#### 3.1.1 基础数据域（用户、组织、权限）
+基础数据域包含系统运行所必须的核心数据，是各个业务模块的共同基础，主要包括:
+- 用户身份和认证信息
+- 组织结构数据
+- 角色与权限定义
+- 基础编码与字典数据
+
+这些数据由系统管理员平台统一管理，三个平台共享使用，确保数据的一致性和标准性。
+
+#### 3.1.2 业务数据域（园区、企业、资产、合同）
+业务数据域包含支撑智慧园区核心业务运作的数据，主要包括:
+- 园区基础信息数据
+- 企业及客户数据
+- 房源与资产数据
+- 合同及协议数据
+
+业务数据主要在综合管理平台进行创建和管理，并向公共服务平台提供必要的数据服务，形成完整的业务闭环。
+
+#### 3.1.3 交易数据域（账单、支付、开票）
+交易数据域包含所有与财务交易相关的数据，主要包括:
+- 账单生成与管理数据
+- 收付款交易记录
+- 电子发票数据
+- 财务统计与分析数据
+
+交易数据在综合管理平台和公共服务平台之间流转，由综合管理平台产生账单，公共服务平台完成支付，形成完整的交易链路。
+
+#### 3.1.4 服务数据域（服务类型、工作流）
+服务数据域包含所有与园区服务相关的数据，主要包括:
+- 服务类型定义数据
+- 服务工单与流程数据
+- 服务评价数据
+- 服务统计分析数据
+
+服务数据在综合管理平台和公共服务平台之间交互，由公共服务平台发起服务请求，综合管理平台处理服务流程。
+
+#### 3.1.5 系统管理数据域（配置、监控、安全）
+系统管理数据域包含支撑系统运行和管理的数据，主要包括:
+- 系统配置数据
+- 系统监控与性能数据
+- 安全审计与访问控制数据
+- 集成接口配置数据
+
+系统管理数据主要由系统管理员平台维护，为三个平台提供统一的系统运行环境和管理手段。
+
+#### 3.1.6 统计分析数据域（报表、指标）
+统计分析数据域包含用于决策支持的聚合数据，主要包括:
+- 业务运营指标数据
+- 数据统计与分析模型
+- 报表与仪表盘数据
+- 数据挖掘结果
+
+统计分析数据基于其他数据域的原始数据进行加工和处理，为各平台提供决策支持和分析能力。
+
+### 3.2 数据流图
+![智慧园区系统数据流图]
+
+系统核心数据流包括:
+1. 基础数据流: 由系统管理员平台维护基础数据，向其他平台提供数据服务
+2. 业务数据流: 综合管理平台创建并维护业务数据，公共服务平台消费业务数据
+3. 交易数据流: 综合管理平台生成账单，公共服务平台完成支付，形成交易数据闭环
+4. 服务数据流: 公共服务平台发起服务请求，综合管理平台处理服务并反馈结果
+5. 统计数据流: 各平台产生原始数据，经过集中处理后形成统计分析数据
+
+### 3.3 数据交互关系
+1. **系统管理员平台与综合管理平台**:
+   - 提供用户认证与授权服务
+   - 提供组织结构和权限管理服务
+   - 提供系统配置和监控服务
+
+2. **系统管理员平台与公共服务平台**:
+   - 提供用户认证与授权服务
+   - 提供配置管理服务
+   - 提供安全审计服务
+
+3. **综合管理平台与公共服务平台**:
+   - 提供业务数据查询服务
+   - 提供账单生成和查询服务
+   - 接收服务申请和处理结果
+   - 接收支付信息和开票请求
+
+### 3.4 三大平台共享数据模型
+三大平台间共享的核心数据模型包括:
+1. **用户与权限模型**: 统一的用户身份认证和授权模型
+2. **组织结构模型**: 统一的组织结构和人员关系模型
+3. **基础资源模型**: 园区、企业、房源等基础资源模型
+4. **配置管理模型**: 系统配置、参数设置等管理模型
+5. **数据字典模型**: 统一的编码和字典数据模型
+
+## 4. 核心实体关系模型
+
+### 4.1 E-R图
+
+园区系统的核心实体关系模型包括用户与组织、园区与房源、企业与员工、合同与交易等多个子模型组成的完整E-R关系图，下面将分模块描述主要实体及其关系。
+
+核心实体间的关系概述：
+- 组织机构管理园区，园区包含多个楼栋和片区
+- 楼栋包含多个楼层，楼层包含多个房间和工位
+- 企业与园区签订合同租赁房间和工位
+- 企业雇佣员工并赋予其不同权限
+- 用户基于角色获取系统权限，并执行各种操作
+- 合同生成账单，账单产生交易记录
+- 服务事项关联企业、房间和处理人员
+
+### 4.2 实体关系说明
+
+#### 用户与权限关系
+- **用户(User)** 与 **角色(Role)** 之间存在多对多关系，通过 **用户角色关联表(User_Role)** 进行关联
+- **角色(Role)** 与 **权限(Permission)** 之间存在多对多关系，通过 **角色权限关联表(Role_Permission)** 进行关联
+- **用户(User)** 归属于 **组织机构(Organization)**，形成一对多关系
+- **用户(User)** 可以是 **企业员工(Enterprise_Staff)**，形成一对一关系
+
+#### 园区与房源关系
+- **园区(Park)** 包含多个 **片区(Area)**，形成一对多关系
+- **片区(Area)** 包含多个 **楼栋(Building)**，形成一对多关系
+- **楼栋(Building)** 包含多个 **楼层(Floor)**，形成一对多关系
+- **楼层(Floor)** 包含多个 **房间(Room)** 和 **工位(Workstation)**，形成一对多关系
+- **房间(Room)** 可以安装多个 **设备(Device)**，如空调、门禁等，形成一对多关系
+- **房间(Room)** 可以安装多个 **能源表(EnergyMeter)**，如水表、电表，形成一对多关系
+
+#### 企业与员工关系
+- **企业(Enterprise)** 与 **客户(Customer)** 存在一对一关系，客户签约后成为企业
+- **企业(Enterprise)** 雇佣多个 **企业员工(Enterprise_Staff)**，形成一对多关系
+- **企业(Enterprise)** 可拥有多个 **车辆(Vehicle)**，形成一对多关系
+- **企业员工(Enterprise_Staff)** 与 **用户(User)** 存在一对一关系
+- **企业员工(Enterprise_Staff)** 可获得多个 **门禁权限(Access_Permission)**，形成一对多关系
+
+#### 合同与交易关系
+- **企业(Enterprise)** 与 **合同(Contract)** 之间存在一对多关系
+- **房间(Room)** 或 **工位(Workstation)** 可被多个 **合同(Contract)** 关联，形成多对多关系
+- **合同(Contract)** 生成多个 **账单(Bill)**，形成一对多关系
+- **账单(Bill)** 产生多个 **交易记录(Transaction)**，形成一对多关系
+- **账单(Bill)** 可申请多个 **开票记录(Invoice)**，形成一对多关系
+- **企业(Enterprise)** 可有多笔 **预收费(Prepayment)** 和 **押金(Deposit)**，形成一对多关系
+
+#### 服务与工单关系
+- **企业(Enterprise)** 或 **企业员工(Enterprise_Staff)** 可提交多个 **服务申请(Service_Request)**，形成一对多关系
+- **服务申请(Service_Request)** 会生成 **工单(Work_Order)**，形成一对一关系
+- **工单(Work_Order)** 会由多个 **用户(User)** 处理，形成多对多关系，通过 **工单处理记录(Work_Order_Process)** 关联
+- **服务申请(Service_Request)** 可以关联 **房间(Room)** 或 **设备(Device)**，形成多对多关系
+
+#### 设备与能源关系
+- **设备(Device)** 属于某个 **设备类型(Device_Type)**，形成多对一关系
+- **能源表(EnergyMeter)** 产生多条 **抄表记录(Meter_Reading)**，形成一对多关系
+- **能源表(EnergyMeter)** 可以关联到 **企业(Enterprise)**，形成多对多关系，通过 **企业能源表关联(Enterprise_Meter)** 表关联
+- **设备(Device)** 可以产生多条 **操作记录(Operation_Record)**，形成一对多关系
+
+### 4.3 平台数据交互机制
+
+#### 系统管理员平台与综合管理平台交互
+1. **用户认证与授权**:
+   - 系统管理员平台维护用户、角色、权限数据
+   - 综合管理平台通过API获取用户身份验证和权限信息
+   - 权限变更实时同步到综合管理平台
+
+2. **系统配置交互**:
+   - 系统管理员平台统一管理系统参数配置
+   - 综合管理平台运行时读取这些配置
+   - 配置变更后通过消息机制通知综合管理平台
+
+3. **数据字典共享**:
+   - 系统管理员平台维护统一的数据字典
+   - 综合管理平台引用这些字典数据
+   - 字典数据更新通过事件推送机制实时同步
+
+#### 综合管理平台与公共服务平台交互
+1. **业务数据共享**:
+   - 综合管理平台创建和维护企业、合同、房源等业务数据
+   - 公共服务平台通过API获取必要的业务数据
+   - 数据更新通过数据同步服务保持一致性
+
+2. **交易数据流转**:
+   - 综合管理平台生成账单并推送给公共服务平台
+   - 公共服务平台记录支付信息并推送给综合管理平台
+   - 开票请求由公共服务平台发起，综合管理平台处理并反馈结果
+
+3. **服务请求处理**:
+   - 公共服务平台接收企业的服务申请
+   - 综合管理平台处理服务工单并更新状态
+   - 服务状态变更实时同步到公共服务平台
+
+#### 系统管理员平台与公共服务平台交互
+1. **用户身份验证**:
+   - 系统管理员平台提供统一的用户认证服务
+   - 公共服务平台调用认证API进行用户验证
+   - 用户状态变更同步到公共服务平台
+
+2. **配置和字典共享**:
+   - 系统管理员平台提供配置和字典数据服务
+   - 公共服务平台运行时读取这些共享数据
+   - 数据更新通过事件推送机制同步
+
+3. **安全审计共享**:
+   - 公共服务平台记录用户操作日志
+   - 操作日志定期同步到系统管理员平台
+   - 系统管理员平台提供统一的审计查询服务
+
+## 5. 基础数据模型（三平台共享）
+
+### 5.1 用户与权限管理
+
+#### 5.1.1 用户表设计（统一用户表）
+```
+表名: user
+描述: 存储系统所有用户的基本信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 用户唯一标识
+- username: VARCHAR(50), 非空, 唯一, 用户名
+- password_hash: VARCHAR(128), 非空, 加密存储的密码
+- real_name: VARCHAR(50), 真实姓名
+- phone: VARCHAR(20), 手机号码
+- email: VARCHAR(100), 电子邮箱
+- id_card: VARCHAR(30), 加密存储的身份证号
+- gender: TINYINT(1), 性别(0:未知,1:男,2:女)
+- avatar: VARCHAR(255), 用户头像URL
+- status: TINYINT(1), 状态(0:禁用,1:正常,2:锁定)
+- user_type: TINYINT(2), 用户类型(1:系统用户,2:企业用户,3:个人用户)
+- last_login_time: DATETIME, 最后登录时间
+- last_login_ip: VARCHAR(50), 最后登录IP
+- login_count: INT(11), 登录次数
+- organization_id: INT(11), 外键, 关联组织机构
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_username (username)
+- INDEX idx_phone (phone)
+- INDEX idx_email (email)
+- INDEX idx_organization_id (organization_id)
+```
+
+#### 5.1.2 角色表设计
+```
+表名: role
+描述: 存储系统角色信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 角色唯一标识
+- role_name: VARCHAR(50), 非空, 角色名称
+- role_code: VARCHAR(50), 非空, 角色编码
+- role_desc: VARCHAR(200), 角色描述
+- platform_type: TINYINT(1), 平台类型(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- is_system: TINYINT(1), 是否系统内置(0:否,1:是)
+- park_id: INT(11), 可空, 适用园区ID(空表示适用所有园区)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_role_code (role_code)
+- INDEX idx_platform_type (platform_type)
+- INDEX idx_park_id (park_id)
+```
+
+#### 5.1.3 权限表设计
+```
+表名: permission
+描述: 存储系统权限信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 权限唯一标识
+- permission_name: VARCHAR(50), 非空, 权限名称
+- permission_code: VARCHAR(100), 非空, 权限编码
+- permission_desc: VARCHAR(200), 权限描述
+- parent_id: INT(11), 父权限ID(0表示顶级权限)
+- type: TINYINT(1), 权限类型(1:菜单,2:按钮,3:数据)
+- path: VARCHAR(200), 菜单路径
+- component: VARCHAR(200), 组件路径
+- redirect: VARCHAR(200), 重定向路径
+- icon: VARCHAR(100), 图标
+- sort: INT(5), 排序号
+- is_show: TINYINT(1), 是否显示(0:否,1:是)
+- platform_type: TINYINT(1), 平台类型(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_permission_code (permission_code)
+- INDEX idx_parent_id (parent_id)
+- INDEX idx_platform_type (platform_type)
+```
+
+#### 5.1.4 用户角色关联表设计
+```
+表名: user_role
+描述: 用户与角色的关联表
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键
+- user_id: INT(11), 非空, 用户ID
+- role_id: INT(11), 非空, 角色ID
+- create_time: DATETIME, 创建时间
+- create_user_id: INT(11), 创建人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_user_role (user_id, role_id)
+- INDEX idx_role_id (role_id)
+```
+
+#### 5.1.5 角色权限关联表设计
+```
+表名: role_permission
+描述: 角色与权限的关联表
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键
+- role_id: INT(11), 非空, 角色ID
+- permission_id: INT(11), 非空, 权限ID
+- create_time: DATETIME, 创建时间
+- create_user_id: INT(11), 创建人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_role_permission (role_id, permission_id)
+- INDEX idx_permission_id (permission_id)
+```
+
+#### 5.1.6 组织机构表设计
+```
+表名: organization
+描述: 存储组织机构信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 组织机构唯一标识
+- org_name: VARCHAR(100), 非空, 组织机构名称
+- org_code: VARCHAR(50), 非空, 组织机构编码
+- parent_id: INT(11), 父组织ID(0表示顶级组织)
+- org_type: TINYINT(2), 组织类型(1:公司,2:部门,3:团队)
+- leader_user_id: INT(11), 负责人用户ID
+- contact_phone: VARCHAR(20), 联系电话
+- email: VARCHAR(100), 电子邮箱
+- address: VARCHAR(200), 地址
+- level: INT(3), 层级
+- path: VARCHAR(500), 组织路径(如1,2,3)
+- sort: INT(5), 排序号
+- remark: VARCHAR(500), 备注
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_org_code (org_code)
+- INDEX idx_parent_id (parent_id)
+- INDEX idx_leader_user_id (leader_user_id)
+```
+
+### 5.2 基础资源管理
+
+#### 5.2.1 园区基础信息表设计
+```
+表名: park
+描述: 存储园区基础信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 园区唯一标识
+- park_name: VARCHAR(100), 非空, 园区名称
+- park_code: VARCHAR(50), 非空, 园区编码
+- total_area: DECIMAL(10,2), 总占地面积(平方米)
+- building_area: DECIMAL(10,2), 建筑面积(平方米)
+- floor_area_ratio: DECIMAL(5,2), 容积率
+- industry_positioning: VARCHAR(500), 产业定位
+- address: VARCHAR(200), 园区地址
+- introduction: TEXT, 园区介绍
+- image_urls: TEXT, 园区效果图URL(JSON格式存储多张图片)
+- status: TINYINT(1), 状态(0:未启用,1:正常,2:已封闭)
+- organization_id: INT(11), 管理组织ID
+- leader_user_id: INT(11), 负责人用户ID
+- province: VARCHAR(50), 省份
+- city: VARCHAR(50), 城市
+- district: VARCHAR(50), 区县
+- longitude: DECIMAL(10,7), 经度
+- latitude: DECIMAL(10,7), 纬度
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_park_code (park_code)
+- INDEX idx_organization_id (organization_id)
+- INDEX idx_leader_user_id (leader_user_id)
+```
+
+#### 5.2.2 企业基础信息表设计
+```
+表名: enterprise
+描述: 存储企业基础信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 企业唯一标识
+- enterprise_name: VARCHAR(100), 非空, 企业名称
+- credit_code: VARCHAR(50), 统一社会信用代码
+- industry_type_id: INT(11), 行业类型ID
+- enterprise_type_id: INT(11), 企业类型ID
+- establishment_date: DATE, 成立日期
+- registered_capital: DECIMAL(15,2), 注册资本(万元)
+- paid_capital: DECIMAL(15,2), 实缴资本(万元)
+- enterprise_scale_id: INT(11), 企业规模ID
+- legal_person: VARCHAR(50), 法人代表
+- legal_person_phone: VARCHAR(20), 法人电话
+- introduction: TEXT, 企业简介
+- address: VARCHAR(200), 公司地址
+- license_image_url: VARCHAR(255), 营业执照图片URL
+- status: TINYINT(2), 企业状态(1:意向客户,2:签约客户,3:入驻客户,4:退租客户)
+- customer_id: INT(11), 关联客户ID
+- park_id: INT(11), 所在园区ID
+- is_incubation: TINYINT(1), 是否孵化企业(0:否,1:是)
+- is_registered_in_park: TINYINT(1), 是否在园区注册(0:否,1:是)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_credit_code (credit_code)
+- INDEX idx_enterprise_name (enterprise_name)
+- INDEX idx_park_id (park_id)
+- INDEX idx_customer_id (customer_id)
+- INDEX idx_industry_type_id (industry_type_id)
+- INDEX idx_enterprise_type_id (enterprise_type_id)
+```
+
+#### 5.2.3 区域与空间表设计
+```
+表名: space
+描述: 存储园区空间信息(包括片区、楼栋、楼层、房间等)
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 空间唯一标识
+- space_name: VARCHAR(100), 非空, 空间名称
+- space_code: VARCHAR(50), 空间编码
+- space_type: TINYINT(2), 空间类型(1:片区,2:楼栋,3:楼层,4:房间,5:工位,6:车位,7:会议室)
+- parent_id: INT(11), 父空间ID(0表示顶级空间)
+- park_id: INT(11), 所属园区ID
+- area: DECIMAL(10,2), 面积(平方米)
+- inside_area: DECIMAL(10,2), 套内面积(平方米)
+- public_area_ratio: DECIMAL(5,2), 公摊率
+- purpose: VARCHAR(100), 用途定位
+- rental_price: DECIMAL(10,2), 租赁单价(元/平方米/月)
+- image_urls: TEXT, 空间图片URL(JSON格式存储多张图片)
+- floor_number: INT(5), 楼层号(楼层类型适用)
+- room_number: VARCHAR(50), 房间号(房间类型适用)
+- workstation_number: VARCHAR(50), 工位号(工位类型适用)
+- is_workstation_suite: TINYINT(1), 是否工位套间(0:否,1:是)
+- workstation_count: INT(5), 工位数量(工位套间适用)
+- level: INT(3), 层级
+- path: VARCHAR(500), 空间路径(如1,2,3)
+- status: TINYINT(2), 空间状态(1:待出租,2:已出租,3:已销售,4:维修中,5:不可租)
+- longitude: DECIMAL(10,7), 经度
+- latitude: DECIMAL(10,7), 纬度
+- sort: INT(5), 排序号
+- remark: VARCHAR(500), 备注
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_space_code (space_code)
+- INDEX idx_parent_id (parent_id)
+- INDEX idx_park_id (park_id)
+- INDEX idx_space_type (space_type)
+- INDEX idx_status (status)
+```
+
+### 5.3 系统配置基础表
+
+#### 5.3.1 基础参数表设计
+```
+表名: system_param
+描述: 存储系统基础参数配置
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 参数唯一标识
+- param_name: VARCHAR(100), 非空, 参数名称
+- param_key: VARCHAR(100), 非空, 唯一, 参数键
+- param_value: VARCHAR(2000), 参数值
+- default_value: VARCHAR(2000), 默认值
+- param_type: TINYINT(2), 参数类型(1:系统参数,2:业务参数)
+- value_type: VARCHAR(50), 值类型(string,number,boolean,json等)
+- is_system: TINYINT(1), 是否系统内置(0:否,1:是)
+- platform_type: TINYINT(1), 平台类型(0:全局,1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- module: VARCHAR(50), 所属模块
+- sort: INT(5), 排序号
+- remark: VARCHAR(500), 备注
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_param_key (param_key)
+- INDEX idx_param_type (param_type)
+- INDEX idx_platform_type (platform_type)
+```
+
+#### 5.3.2 数据字典表设计
+```
+表名: dict_type
+描述: 存储数据字典类型
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 字典类型唯一标识
+- dict_name: VARCHAR(100), 非空, 字典名称
+- dict_type: VARCHAR(100), 非空, 唯一, 字典类型编码
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- remark: VARCHAR(500), 备注
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_dict_type (dict_type)
+```
+
+```
+表名: dict_data
+描述: 存储数据字典项
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 字典数据唯一标识
+- dict_type_id: INT(11), 非空, 关联字典类型ID
+- dict_type: VARCHAR(100), 非空, 字典类型编码
+- dict_label: VARCHAR(100), 非空, 字典标签
+- dict_value: VARCHAR(100), 非空, 字典值
+- dict_sort: INT(5), 排序号
+- css_class: VARCHAR(100), 样式属性
+- list_class: VARCHAR(100), 表格回显样式
+- is_default: TINYINT(1), 是否默认(0:否,1:是)
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- remark: VARCHAR(500), 备注
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_dict_type_id (dict_type_id)
+- INDEX idx_dict_type (dict_type)
+- INDEX idx_dict_sort (dict_sort)
+```
+
+#### 5.3.3 通知模板基础表设计
+```
+表名: notification_template
+描述: 存储系统通知模板
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 模板唯一标识
+- template_name: VARCHAR(100), 非空, 模板名称
+- template_code: VARCHAR(100), 非空, 模板编码
+- template_type: TINYINT(2), 模板类型(1:短信,2:邮件,3:站内信,4:微信)
+- template_content: TEXT, 模板内容
+- template_variables: VARCHAR(500), 模板变量(JSON格式)
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- remark: VARCHAR(500), 备注
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_template_code (template_code)
+- INDEX idx_template_type (template_type)
+```
+
+#### 5.3.4 支付方式基础表设计
+```
+表名: payment_method
+描述: 存储系统支付方式配置
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 支付方式唯一标识
+- payment_name: VARCHAR(100), 非空, 支付方式名称
+- payment_code: VARCHAR(100), 非空, 唯一, 支付方式编码
+- payment_type: TINYINT(2), 支付方式类型(1:在线支付,2:线下支付)
+- payment_desc: VARCHAR(500), 支付方式描述
+- icon: VARCHAR(255), 支付图标URL
+- api_config: TEXT, API配置信息(JSON格式)
+- sort: INT(5), 排序号
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_payment_code (payment_code)
+- INDEX idx_payment_type (payment_type)
+- INDEX idx_status (status)
+```
+
+## 6. 智慧园区综合管理平台数据模型
+
+### 6.1 工作门户模块
+
+#### 6.1.1 待办事项表设计
+```
+表名: todo_item
+描述: 存储用户待办事项
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 待办事项唯一标识
+- title: VARCHAR(200), 非空, 待办标题
+- content: TEXT, 待办内容
+- business_type: VARCHAR(50), 业务类型
+- business_id: VARCHAR(50), 业务ID
+- priority: TINYINT(1), 优先级(1:低,2:中,3:高)
+- status: TINYINT(1), 状态(0:未处理,1:已处理,2:已过期)
+- start_time: DATETIME, 开始时间
+- end_time: DATETIME, 截止时间
+- remind_time: DATETIME, 提醒时间
+- process_time: DATETIME, 处理时间
+- user_id: INT(11), 非空, 用户ID
+- creator_id: INT(11), 创建人ID
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_user_id (user_id)
+- INDEX idx_status (status)
+- INDEX idx_business_type (business_type)
+- INDEX idx_business_id (business_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.1.2 通知消息表设计
+```
+表名: notification
+描述: 存储系统通知消息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 通知消息唯一标识
+- title: VARCHAR(200), 非空, 通知标题
+- content: TEXT, 通知内容
+- notification_type: TINYINT(2), 通知类型(1:系统消息,2:业务消息,3:消防预警,4:安防预警)
+- business_type: VARCHAR(50), 业务类型
+- business_id: VARCHAR(50), 业务ID
+- level: TINYINT(1), 消息级别(1:普通,2:重要,3:紧急)
+- status: TINYINT(1), 状态(0:未读,1:已读)
+- read_time: DATETIME, 阅读时间
+- receiver_id: INT(11), 非空, 接收人ID
+- sender_id: INT(11), 发送人ID
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_receiver_id (receiver_id)
+- INDEX idx_status (status)
+- INDEX idx_notification_type (notification_type)
+- INDEX idx_business_type (business_type)
+- INDEX idx_business_id (business_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.1.3 仪表盘指标表设计
+```
+表名: dashboard_indicator
+描述: 存储仪表盘指标数据
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 指标唯一标识
+- indicator_code: VARCHAR(100), 非空, 指标编码
+- indicator_name: VARCHAR(100), 非空, 指标名称
+- indicator_value: VARCHAR(100), 指标值
+- indicator_unit: VARCHAR(50), 单位
+- indicator_type: TINYINT(2), 指标类型(1:园区总览,2:事项总览,3:客户总览,...)
+- indicator_dimension: VARCHAR(50), 指标维度(day,week,month,quarter,year)
+- indicator_date: DATE, 指标日期
+- indicator_data: TEXT, 详细数据(JSON格式)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_indicator_code (indicator_code)
+- INDEX idx_indicator_type (indicator_type)
+- INDEX idx_indicator_date (indicator_date)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.1.4 快捷入口表设计
+```
+表名: quick_entry
+描述: 存储用户快捷入口配置
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 快捷入口唯一标识
+- entry_name: VARCHAR(100), 非空, 入口名称
+- entry_icon: VARCHAR(255), 图标URL
+- entry_url: VARCHAR(255), 跳转URL
+- entry_type: TINYINT(2), 入口类型(1:常用功能,2:集成应用)
+- permission_code: VARCHAR(100), 权限编码
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- sort: INT(5), 排序号
+- user_id: INT(11), 用户ID(NULL表示系统预设)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_user_id (user_id)
+- INDEX idx_entry_type (entry_type)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.1.5 文档中心表设计
+```
+表名: document_center
+描述: 存储用户文档
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 文档唯一标识
+- document_name: VARCHAR(200), 非空, 文档名称
+- document_type: VARCHAR(50), 文档类型
+- file_path: VARCHAR(500), 文件路径
+- file_size: BIGINT(20), 文件大小(byte)
+- file_extension: VARCHAR(20), 文件扩展名
+- is_shared: TINYINT(1), 是否共享(0:否,1:是)
+- share_type: TINYINT(1), 共享类型(1:指定人员,2:指定组织,3:公开)
+- share_to: VARCHAR(500), 共享对象(JSON格式)
+- folder_id: INT(11), 所属文件夹ID(0表示根目录)
+- user_id: INT(11), 非空, 所有者用户ID
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_user_id (user_id)
+- INDEX idx_document_type (document_type)
+- INDEX idx_is_shared (is_shared)
+- INDEX idx_folder_id (folder_id)
+- INDEX idx_park_id (park_id)
+```
+
+### 6.2 招商管理模块
+
+#### 6.2.1 客户档案表设计
+```
+表名: customer
+描述: 存储客户档案信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 客户唯一标识
+- customer_name: VARCHAR(100), 非空, 客户名称
+- customer_type: TINYINT(2), 客户类型(1:企业,2:个人)
+- industry_type_id: INT(11), 行业类型ID
+- enterprise_type_id: INT(11), 企业类型ID
+- credit_code: VARCHAR(50), 统一社会信用代码
+- establishment_date: DATE, 成立日期
+- registered_capital: DECIMAL(15,2), 注册资本(万元)
+- paid_capital: DECIMAL(15,2), 实缴资本(万元)
+- enterprise_scale_id: INT(11), 企业规模ID
+- legal_person: VARCHAR(50), 法人代表
+- legal_person_phone: VARCHAR(20), 法人电话
+- contact_name: VARCHAR(50), 联系人
+- contact_phone: VARCHAR(20), 联系电话
+- contact_email: VARCHAR(100), 联系邮箱
+- introduction: TEXT, 企业简介
+- address: VARCHAR(200), 公司地址
+- license_image_url: VARCHAR(255), 营业执照图片URL
+- status: TINYINT(2), 客户状态(1:潜在客户,2:意向客户,3:签约客户,4:入驻客户,5:流失客户)
+- customer_source_id: INT(11), 客户来源ID
+- park_id: INT(11), 所属园区ID
+- follower_id: INT(11), 跟进人ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_credit_code (credit_code)
+- INDEX idx_customer_name (customer_name)
+- INDEX idx_status (status)
+- INDEX idx_follower_id (follower_id)
+- INDEX idx_park_id (park_id)
+- INDEX idx_industry_type_id (industry_type_id)
+- INDEX idx_enterprise_type_id (enterprise_type_id)
+```
+
+#### 6.2.2 客户意向表设计
+```
+表名: customer_intention
+描述: 存储客户意向信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 客户意向唯一标识
+- customer_id: INT(11), 非空, 客户ID
+- intention_type: TINYINT(2), 意向类型(1:租赁房间,2:租赁工位,3:注册地址)
+- space_id: INT(11), 意向空间ID
+- area: DECIMAL(10,2), 意向面积(平方米)
+- workstation_count: INT(5), 意向工位数量
+- budget: DECIMAL(15,2), 意向预算
+- requirement_desc: TEXT, 需求描述
+- expected_date: DATE, 预计入驻日期
+- intention_level: TINYINT(1), 意向级别(1:弱,2:中,3:强)
+- status: TINYINT(2), 意向状态(1:跟进中,2:已转化,3:已流失)
+- lost_reason_id: INT(11), 流失原因ID
+- follower_id: INT(11), 跟进人ID
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_customer_id (customer_id)
+- INDEX idx_intention_type (intention_type)
+- INDEX idx_space_id (space_id)
+- INDEX idx_status (status)
+- INDEX idx_follower_id (follower_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.2.3 客户跟进记录表设计
+```
+表名: customer_follow
+描述: 存储客户跟进记录
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 跟进记录唯一标识
+- customer_id: INT(11), 非空, 客户ID
+- intention_id: INT(11), 意向ID
+- follow_type: TINYINT(2), 跟进方式(1:电话,2:邮件,3:拜访,4:其他)
+- follow_content: TEXT, 跟进内容
+- follow_result: TEXT, 跟进结果
+- next_follow_time: DATETIME, 下次跟进时间
+- next_follow_plan: VARCHAR(500), 下次跟进计划
+- follower_id: INT(11), 跟进人ID
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_customer_id (customer_id)
+- INDEX idx_intention_id (intention_id)
+- INDEX idx_follower_id (follower_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.2.4 渠道单位表设计
+```
+表名: channel_company
+描述: 存储招商渠道单位信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 渠道单位唯一标识
+- channel_name: VARCHAR(100), 非空, 渠道名称
+- channel_type_id: INT(11), 渠道类型ID
+- contact_name: VARCHAR(50), 联系人
+- contact_phone: VARCHAR(20), 联系电话
+- contact_email: VARCHAR(100), 联系邮箱
+- address: VARCHAR(200), 地址
+- cooperation_start_date: DATE, 合作开始日期
+- cooperation_end_date: DATE, 合作结束日期
+- commission_rule: TEXT, 佣金规则
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_channel_name (channel_name)
+- INDEX idx_channel_type_id (channel_type_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.2.5 经纪人表设计
+```
+表名: broker
+描述: 存储招商经纪人信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 经纪人唯一标识
+- broker_name: VARCHAR(50), 非空, 经纪人姓名
+- gender: TINYINT(1), 性别(0:未知,1:男,2:女)
+- phone: VARCHAR(20), 手机号码
+- email: VARCHAR(100), 电子邮箱
+- id_card: VARCHAR(30), 身份证号
+- channel_company_id: INT(11), 渠道单位ID
+- job_title: VARCHAR(50), 职位
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_broker_name (broker_name)
+- INDEX idx_phone (phone)
+- INDEX idx_channel_company_id (channel_company_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
