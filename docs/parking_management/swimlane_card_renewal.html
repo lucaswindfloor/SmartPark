@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>停车月卡续费流程 - 泳道图</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #1890ff;
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        /* 泳道图样式 */
+        .swimlane-container {
+            border: 1px solid #e8e8e8;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative !important;
+        }
+        .swimlane {
+            white-space: nowrap;
+            overflow-x: auto;
+            padding: 15px;
+            position: relative !important;
+            scrollbar-width: thin;
+            scrollbar-color: #1890ff #f0f0f0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .swimlane::-webkit-scrollbar {
+            height: 8px;
+        }
+        .swimlane::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+        .swimlane::-webkit-scrollbar-thumb {
+            background-color: #1890ff;
+            border-radius: 4px;
+        }
+        .lane {
+            display: inline-block;
+            vertical-align: top;
+            width: 220px;
+            border-right: 1px dashed #e8e8e8;
+            padding: 0 15px;
+            position: relative !important;
+        }
+        .lane:last-child {
+            border-right: none;
+        }
+        .lane-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px 0;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .process-step {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            border-left: 4px solid;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        .individual-step {
+            border-left-color: #fa8c16;
+            background-color: #fff7e6;
+        }
+        .enterprise-step {
+            border-left-color: #52c41a;
+            background-color: #f6ffed;
+        }
+        .admin-step {
+            border-left-color: #1890ff;
+            background-color: #e6f7ff;
+        }
+        .finance-step {
+            border-left-color: #722ed1;
+            background-color: #f9f0ff;
+        }
+        .system-step {
+            border-left-color: #bfbfbf;
+            background-color: #f5f5f5;
+        }
+        /* 连接线样式修复 */
+        .jtk-connector {
+            z-index: 4 !important;
+        }
+        .jtk-endpoint {
+            z-index: 5 !important;
+        }
+        .jtk-overlay {
+            z-index: 6 !important;
+        }
+        .jtk-bezier {
+            z-index: 4 !important;
+        }
+        /* 泳道容器缩放控制 */
+        .lane-zoom {
+            transition: transform 0.3s ease;
+        }
+        .zoom-controls {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .zoom-btn {
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .connection-label {
+            padding: 2px 5px;
+            background-color: white;
+            border: 1px solid #e8e8e8;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+        .process-description {
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .swimlane-note {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #faad14;
+        }
+        .swimlane-note ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        #reset-view-btn {
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            margin: 20px auto;
+            display: block;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #reset-view-btn:hover {
+            background-color: #096dd9;
+        }
+        .back-link {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+        }
+    </style>
+    <!-- 使用本地jsPlumb库 -->
+    <script src="jsplumb.min.js"></script>
+</head>
+<body>
+    <h1>停车月卡续费流程</h1>
+    
+    <div class="process-description">
+        <p>停车月卡续费流程描述了月卡持有者如何在月卡到期前对其进行续费的完整过程。该流程简化了用户操作，无需重新申请和审批，提升了用户体验并确保了停车服务的连续性。</p>
+    </div>
+    
+    <div class="swimlane-container" id="card-renewal-flow">
+        <div class="swimlane">
+            <div class="lane lane-zoom">
+                <div class="lane-header">月卡持有用户</div>
+                <div class="process-step individual-step" id="ur1-1">接收到期提醒</div>
+                <div class="process-step individual-step" id="ur1-2" style="margin-top: 60px;">登录公共服务平台</div>
+                <div class="process-step individual-step" id="ur1-3" style="margin-top: 60px;">查看月卡到期信息</div>
+                <div class="process-step individual-step" id="ur1-4" style="margin-top: 60px;">选择续费时长</div>
+                <div class="process-step individual-step" id="ur1-5" style="margin-top: 60px;">确认费用信息</div>
+                <div class="process-step individual-step" id="ur1-6" style="margin-top: 60px;">选择支付方式</div>
+                <div class="process-step individual-step" id="ur1-7" style="margin-top: 60px;">完成支付</div>
+                <div class="process-step individual-step" id="ur1-8" style="margin-top: 60px;">接收续费成功通知</div>
+                <div class="process-step individual-step" id="ur1-9" style="margin-top: 60px;">查看更新后的月卡信息</div>
+                <div class="process-step individual-step" id="ur1-10" style="margin-top: 60px;">申请开票</div>
+            </div>
+            <div class="lane lane-zoom">
+                <div class="lane-header">企业管理员</div>
+                <div class="process-step enterprise-step" id="er1-1" style="margin-top: 180px;">接收员工月卡到期提醒</div>
+                <div class="process-step enterprise-step" id="er1-2" style="margin-top: 60px;">查看企业月卡列表</div>
+                <div class="process-step enterprise-step" id="er1-3" style="margin-top: 60px;">批量选择续费月卡</div>
+                <div class="process-step enterprise-step" id="er1-4" style="margin-top: 60px;">选择续费时长</div>
+                <div class="process-step enterprise-step" id="er1-5" style="margin-top: 60px;">确认费用总额</div>
+                <div class="process-step enterprise-step" id="er1-6" style="margin-top: 60px;">选择企业支付方式</div>
+                <div class="process-step enterprise-step" id="er1-7" style="margin-top: 60px;">完成批量支付</div>
+                <div class="process-step enterprise-step" id="er1-8" style="margin-top: 60px;">查看月卡批量续费记录</div>
+            </div>
+            <div class="lane lane-zoom">
+                <div class="lane-header">园区财务管理员</div>
+                <div class="process-step finance-step" id="fr1-1" style="margin-top: 480px;">查看续费记录</div>
+                <div class="process-step finance-step" id="fr1-2" style="margin-top: 60px;">生成费用账单</div>
+                <div class="process-step finance-step" id="fr1-3" style="margin-top: 180px;">处理开票申请</div>
+                <div class="process-step finance-step" id="fr1-4" style="margin-top: 60px;">生成电子发票</div>
+            </div>
+            <div class="lane lane-zoom">
+                <div class="lane-header">系统</div>
+                <div class="process-step system-step" id="sr1-1" style="margin-top: 60px;">检测月卡到期时间</div>
+                <div class="process-step system-step" id="sr1-2" style="margin-top: 60px;">生成到期提醒</div>
+                <div class="process-step system-step" id="sr1-3" style="margin-top: 60px;">发送到期通知</div>
+                <div class="process-step system-step" id="sr1-4" style="margin-top: 240px;">计算续费金额</div>
+                <div class="process-step system-step" id="sr1-5" style="margin-top: 60px;">应用企业折扣政策</div>
+                <div class="process-step system-step" id="sr1-6" style="margin-top: 60px;">验证预付款余额</div>
+                <div class="process-step system-step" id="sr1-7" style="margin-top: 60px;">处理在线支付</div>
+                <div class="process-step system-step" id="sr1-8" style="margin-top: 60px;">生成支付凭证</div>
+                <div class="process-step system-step" id="sr1-9" style="margin-top: 60px;">更新月卡有效期</div>
+                <div class="process-step system-step" id="sr1-10" style="margin-top: 60px;">更新权限数据</div>
+                <div class="process-step system-step" id="sr1-11" style="margin-top: 60px;">发送续费成功通知</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="swimlane-note">
+        <strong>流程说明：</strong>
+        <ul>
+            <li>系统自动在月卡到期前10天发送到期提醒通知，提醒方式包括短信、系统消息、微信推送等</li>
+            <li>企业管理员可以查看所有即将到期的企业月卡，并进行批量续费操作，提高效率</li>
+            <li>续费操作<strong>无需再次审批</strong>，支付成功后系统自动延长月卡有效期</li>
+            <li>如果原月卡尚未到期，新的有效期从原到期日开始计算；如已过期，则从续费支付成功当日计算</li>
+            <li>企业可以设置<strong>月卡自动续费</strong>，系统在到期前自动从企业预付款中扣除费用完成续费</li>
+            <li>系统支持多种续费时长选择（1个月/3个月/6个月/12个月），并提供长期续费折扣</li>
+            <li>续费成功后，系统自动同步更新车牌识别系统的权限数据，确保月卡功能正常使用</li>
+            <li>续费记录自动记入财务系统，可供园区财务管理员查询和统计</li>
+            <li>用户可在续费后申请开具发票，企业用户可将续费费用纳入月度账单统一开票</li>
+            <li>对于连续多次无人续费的月卡，系统自动执行到期禁用，并在配置时间后（默认30天）释放资源</li>
+        </ul>
+    </div>
+    
+    <div class="zoom-controls">
+        <button class="zoom-btn" id="zoom-in-btn">放大</button>
+        <button class="zoom-btn" id="zoom-out-btn">缩小</button>
+        <button class="zoom-btn" id="reset-zoom-btn">重置大小</button>
+        <button id="reset-view-btn">重绘连接线</button>
+    </div>
+    
+    <a href="swimlane_index.html" class="back-link">返回泳道图索引</a>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded, preparing to initialize jsPlumb');
+            
+            // 确保DOM完全加载后再初始化
+            setTimeout(function() {
+                // 检查jsPlumb是否加载
+                if (typeof jsPlumb === 'undefined') {
+                    console.error('jsPlumb library not loaded!');
+                    alert('jsPlumb库未加载，连接线可能无法显示。请刷新页面重试。');
+                    return;
+                }
+                
+                console.log('jsPlumb is loaded, initializing...');
+                
+                try {
+                    // 重置所有jsPlumb实例
+                    jsPlumb.reset();
+                    
+                    // 初始化月卡续费流程
+                    initCardRenewal();
+                    
+                    // 设置缩放控件
+                    setupZoomControls();
+                    
+                    // 重绘所有连接以确保可见性
+                    setTimeout(function(){
+                        console.log('Repainting all connections...');
+                        jsPlumb.repaintEverything();
+                    }, 500);
+                } catch (e) {
+                    console.error('Error initializing jsPlumb:', e);
+                    alert('初始化jsPlumb时出错: ' + e.message);
+                }
+            }, 1000);
+            
+            // 月卡续费流程初始化函数
+            function initCardRenewal() {
+                console.log('Initializing Card Renewal Flow...');
+                var cardRenewalJsPlumb = jsPlumb.getInstance({
+                    Connector: ["Flowchart", { cornerRadius: 8, gap: 30, stub: [60, 60] }],
+                    Endpoint: ["Dot", { radius: 3 }],
+                    EndpointStyle: { fill: "#1890ff" },
+                    PaintStyle: { stroke: "#1890ff", strokeWidth: 2 },
+                    HoverPaintStyle: { stroke: "#096dd9", strokeWidth: 4 },
+                    ConnectionOverlays: [
+                        ["Arrow", { location: 1, width: 12, length: 12, foldback: 0.7 }]
+                    ],
+                    Container: "card-renewal-flow"
+                });
+                
+                try {
+                    // 月卡持有用户泳道内连接
+                    cardRenewalJsPlumb.connect({ source: "ur1-1", target: "ur1-2", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "ur1-2", target: "ur1-3", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "ur1-3", target: "ur1-4", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "ur1-4", target: "ur1-5", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "ur1-5", target: "ur1-6", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "ur1-6", target: "ur1-7", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "ur1-8", target: "ur1-9", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "ur1-9", target: "ur1-10", anchor: ["Bottom", "Top"] });
+                    
+                    // 企业管理员泳道内连接
+                    cardRenewalJsPlumb.connect({ source: "er1-1", target: "er1-2", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "er1-2", target: "er1-3", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "er1-3", target: "er1-4", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "er1-4", target: "er1-5", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "er1-5", target: "er1-6", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "er1-6", target: "er1-7", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "er1-7", target: "er1-8", anchor: ["Bottom", "Top"] });
+                    
+                    // 园区财务管理员泳道内连接
+                    cardRenewalJsPlumb.connect({ source: "fr1-1", target: "fr1-2", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "fr1-3", target: "fr1-4", anchor: ["Bottom", "Top"] });
+                    
+                    // 系统泳道内连接
+                    cardRenewalJsPlumb.connect({ source: "sr1-1", target: "sr1-2", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-2", target: "sr1-3", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-4", target: "sr1-5", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-5", target: "sr1-6", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-6", target: "sr1-7", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-7", target: "sr1-8", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-8", target: "sr1-9", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-9", target: "sr1-10", anchor: ["Bottom", "Top"] });
+                    cardRenewalJsPlumb.connect({ source: "sr1-10", target: "sr1-11", anchor: ["Bottom", "Top"] });
+                    
+                    // 跨泳道连接 - 系统到用户
+                    cardRenewalJsPlumb.connect({ 
+                        source: "sr1-3", 
+                        target: "ur1-1", 
+                        anchor: ["Left", "Right"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#8c8c8c", strokeWidth: 2 }
+                    });
+                    
+                    cardRenewalJsPlumb.connect({ 
+                        source: "sr1-3", 
+                        target: "er1-1", 
+                        anchor: ["Left", "Right"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#8c8c8c", strokeWidth: 2 }
+                    });
+                    
+                    // 用户到系统
+                    cardRenewalJsPlumb.connect({ 
+                        source: "ur1-5", 
+                        target: "sr1-4", 
+                        anchor: ["Right", "Left"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#fa8c16", strokeWidth: 2 }
+                    });
+                    
+                    cardRenewalJsPlumb.connect({ 
+                        source: "er1-5", 
+                        target: "sr1-4", 
+                        anchor: ["Right", "Left"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#52c41a", strokeWidth: 2 }
+                    });
+                    
+                    // 支付完成连接
+                    cardRenewalJsPlumb.connect({ 
+                        source: "ur1-7", 
+                        target: "sr1-7", 
+                        anchor: ["Right", "Left"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#fa8c16", strokeWidth: 2 }
+                    });
+                    
+                    cardRenewalJsPlumb.connect({ 
+                        source: "er1-7", 
+                        target: "sr1-7", 
+                        anchor: ["Right", "Left"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#52c41a", strokeWidth: 2 }
+                    });
+                    
+                    // 系统通知
+                    cardRenewalJsPlumb.connect({ 
+                        source: "sr1-11", 
+                        target: "ur1-8", 
+                        anchor: ["Left", "Right"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#8c8c8c", strokeWidth: 2 }
+                    });
+                    
+                    // 财务相关连接
+                    cardRenewalJsPlumb.connect({ 
+                        source: "sr1-8", 
+                        target: "fr1-1", 
+                        anchor: ["Left", "Right"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#8c8c8c", strokeWidth: 2 }
+                    });
+                    
+                    cardRenewalJsPlumb.connect({ 
+                        source: "ur1-10", 
+                        target: "fr1-3", 
+                        anchor: ["Right", "Left"],
+                        connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                        paintStyle: { stroke: "#fa8c16", strokeWidth: 2 }
+                    });
+                    
+                    console.log('Card Renewal Flow initialized successfully');
+                } catch (e) {
+                    console.error('Error in Card Renewal Flow initialization:', e);
+                }
+            }
+            
+            // 设置缩放控件
+            function setupZoomControls() {
+                // 获取所有泳道元素
+                const lanes = document.querySelectorAll('.lane-zoom');
+                let currentZoom = 1.0; // 初始缩放比例
+                
+                // 放大按钮
+                document.getElementById('zoom-in-btn').addEventListener('click', function() {
+                    currentZoom += 0.1;
+                    if (currentZoom > 2) currentZoom = 2; // 最大放大2倍
+                    applyZoom(currentZoom);
+                });
+                
+                // 缩小按钮
+                document.getElementById('zoom-out-btn').addEventListener('click', function() {
+                    currentZoom -= 0.1;
+                    if (currentZoom < 0.5) currentZoom = 0.5; // 最小缩小到0.5倍
+                    applyZoom(currentZoom);
+                });
+                
+                // 重置按钮
+                document.getElementById('reset-zoom-btn').addEventListener('click', function() {
+                    currentZoom = 1.0;
+                    applyZoom(currentZoom);
+                });
+                
+                // 应用缩放
+                function applyZoom(zoom) {
+                    lanes.forEach(lane => {
+                        lane.style.transform = `scale(${zoom})`;
+                        lane.style.transformOrigin = 'top left';
+                    });
+                    // 缩放改变后重绘连接线
+                    setTimeout(function() {
+                        if (typeof jsPlumb !== 'undefined') {
+                            jsPlumb.repaintEverything();
+                        }
+                    }, 300);
+                }
+            }
+            
+            // 添加全局事件监听
+            window.addEventListener('load', function() {
+                console.log('Window fully loaded, repainting all connections...');
+                setTimeout(function() {
+                    if (typeof jsPlumb !== 'undefined') {
+                        jsPlumb.repaintEverything();
+                    }
+                }, 1000);
+            });
+            
+            // 修复连接线不可见问题的其他事件监听
+            document.addEventListener('scroll', function() {
+                if (typeof jsPlumb !== 'undefined') {
+                    jsPlumb.repaintEverything();
+                }
+            });
+            
+            window.addEventListener('resize', function() {
+                if (typeof jsPlumb !== 'undefined') {
+                    jsPlumb.repaintEverything();
+                }
+            });
+            
+            // 添加手动重绘按钮功能
+            document.getElementById('reset-view-btn').addEventListener('click', function() {
+                console.log('Manual repaint triggered');
+                if (typeof jsPlumb !== 'undefined') {
+                    jsPlumb.repaintEverything();
+                    alert('连接线已重新绘制，如仍看不见请尝试刷新页面。');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

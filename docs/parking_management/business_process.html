@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区 - 停车管理系统业务流程设计</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #1890ff;
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 20px;
+        }
+        h4 {
+            font-size: 18px;
+        }
+        .process-box {
+            border: 1px solid #e8e8e8;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .process-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #1890ff;
+        }
+        .process-step {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .step-number {
+            flex: 0 0 30px;
+            height: 30px;
+            background-color: #1890ff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .step-desc {
+            color: #666;
+        }
+        .note {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #faad14;
+            margin: 15px 0;
+        }
+        .process-image {
+            max-width: 100%;
+            margin: 20px 0;
+            border: 1px solid #eee;
+        }
+        .role {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+        .admin {
+            background-color: #e6f7ff;
+            color: #1890ff;
+        }
+        .enterprise {
+            background-color: #f6ffed;
+            color: #52c41a;
+        }
+        .individual {
+            background-color: #fff7e6;
+            color: #fa8c16;
+        }
+        .visitor {
+            background-color: #fff1f0;
+            color: #f5222d;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区 - 停车管理系统业务流程设计</h1>
+    
+    <h2>5. 业务流程设计</h2>
+    
+    <h3>5.1 核心业务流程</h3>
+    
+    <p><a href="swimlane_index.html" style="display: inline-block; margin: 10px 0; padding: 8px 16px; background-color: #1890ff; color: white; text-decoration: none; border-radius: 4px;">查看业务流程泳道图</a></p>
+    
+    <!-- 停车月卡申请与审批流程 -->
+    <div class="process-box">
+        <div class="process-title">流程一：停车月卡申请与审批流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">月卡申请 <span class="role enterprise">企业用户</span><span class="role individual">个人用户</span></div>
+                <div class="step-desc">
+                    用户登录公共服务平台，进入"停车月卡"功能模块，填写月卡申请信息，包括车主信息、车牌号、车辆信息、月卡类型、有效期等，提交申请。企业用户可批量提交多车申请。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">费用计算与支付 <span class="role enterprise">企业用户</span><span class="role individual">个人用户</span></div>
+                <div class="step-desc">
+                    系统根据月卡类型、有效期及企业类型自动计算月卡费用，应用相应折扣政策。用户确认费用后，选择支付方式（预付款支付、微信支付、银行支付等）完成支付。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">申请审核 <span class="role admin">园区管理员</span></div>
+                <div class="step-desc">
+                    园区管理员在综合管理平台收到月卡申请，查看申请详情，核实车辆信息、付款状态。根据园区车位资源情况和申请信息合规性进行审核，可批量审核多条申请。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">审核结果处理 <span class="role admin">园区管理员</span></div>
+                <div class="step-desc">
+                    <strong>审核通过：</strong>系统自动为车牌生成月卡权限，更新月卡数据库，生成月卡记录，发送通知给申请用户。<br>
+                    <strong>审核不通过：</strong>管理员填写拒绝原因，系统发送拒绝通知给申请用户，启动退款流程。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <div class="step-title">月卡使用与管理 <span class="role enterprise">企业用户</span><span class="role individual">个人用户</span></div>
+                <div class="step-desc">
+                    用户收到月卡开通通知，可在"我的月卡"模块查看月卡详情，包括有效期、使用状态等。月卡到期前，系统自动提醒用户续费。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>月卡申请通过后，系统将自动同步更新车牌识别系统的权限数据</li>
+                <li>企业类型不同，月卡费用折扣政策不同，系统自动应用</li>
+                <li>若用户申请审核未通过，系统自动发起退款流程，按原支付方式退回用户账户</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 临时停车缴费流程 -->
+    <div class="process-box">
+        <div class="process-title">流程二：临时停车缴费流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">入场记录 <span class="role system">系统</span></div>
+                <div class="step-desc">
+                    车辆驶入园区停车场，系统通过车牌识别摄像头自动识别车牌号，记录入场时间，道闸自动抬起放行。对于无法自动识别的车牌，系统提供人工确认界面，由值班人员手动录入车牌信息。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">费用查询 <span class="role individual">个人用户</span><span class="role visitor">访客</span></div>
+                <div class="step-desc">
+                    用户在准备离场前，通过公共服务平台"临停缴费"功能输入车牌号查询停车费用。系统根据入场时间、当前时间和收费标准自动计算停车费用。对于有关联企业的车辆，系统识别企业身份，可能应用特定的计费规则或折扣。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">缴费支付 <span class="role individual">个人用户</span><span class="role visitor">访客</span></div>
+                <div class="step-desc">
+                    用户确认费用后，选择支付方式完成支付：
+                    <ul>
+                        <li><strong>企业预付款支付</strong>：企业员工或访客可选择从关联企业的预付款账户中扣除费用，无需个人支付</li>
+                        <li><strong>微信支付</strong>：系统生成微信支付二维码，用户通过微信扫码完成支付</li>
+                        <li><strong>银联支付</strong>：用户输入银行卡信息完成银联在线支付</li>
+                        <li><strong>企业访客停车码</strong>：访客通过扫描企业提供的停车二维码，停车费将记入企业账单，由企业后续支付</li>
+                    </ul>
+                    支付成功后，系统生成支付凭证，更新车辆状态为已缴费，保存缴费记录。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">出场放行 <span class="role system">系统</span></div>
+                <div class="step-desc">
+                    车辆到达出口，系统再次识别车牌，查询缴费状态。若已完成缴费且在免费出场时间内（通常为支付后15分钟），道闸自动抬起放行；若超时，系统重新计算额外费用并提示缴费。系统记录出场时间，完成本次停车流程。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>系统提供缴费后的有效出场时间倒计时，超时需补缴费用</li>
+                <li>对于月卡持有者，系统识别后自动放行，不需缴纳临时停车费</li>
+                <li>系统支持多种优惠政策配置，如首小时免费、节假日特殊费率等</li>
+                <li>若遇系统故障，可由现场管理人员使用管理终端进行手动放行</li>
+                <li>所有缴费记录将同步到财务管理系统，用于对账和报表分析</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 企业访客停车码流程 -->
+    <div class="process-box">
+        <div class="process-title">流程三：企业访客停车码流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">访客码生成 <span class="role enterprise">企业管理员</span></div>
+                <div class="step-desc">
+                    企业管理员登录公共服务平台，访问"企业访客停车码"功能，生成企业专属的访客停车二维码。管理员可以设置访客停车码的有效期、使用次数限制、单次最高金额等参数，并可添加使用说明备注。系统可生成单次使用码或多次使用码，满足不同访客接待需求。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">访客码分享 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业可通过多种方式分享访客停车码：发送电子邮件、微信分享、打印纸质二维码放置于前台、嵌入企业访客预约系统等。系统支持批量生成和导出访客码，方便企业举办大型活动时使用。企业可随时查看已分享访客码的使用情况和费用统计。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">访客使用停车码 <span class="role visitor">访客</span></div>
+                <div class="step-desc">
+                    访客进入园区停车场后，系统正常记录车辆入场信息。访客准备离场前，在公共服务平台的"临停缴费"功能中，选择"扫描企业访客停车码"选项，使用手机扫描企业提供的二维码。系统自动识别企业身份，将停车费计入该企业账单。访客无需支付，系统显示"企业代付成功"并更新车辆状态为已缴费。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">费用记录与账单生成 <span class="role system">系统</span></div>
+                <div class="step-desc">
+                    系统记录每次访客停车码使用情况，包括使用时间、车牌、停车时长、费用等信息。这些费用将自动汇总，定期（月度/季度）生成企业访客停车费账单，纳入企业总账单管理。系统提供详细的费用明细，方便企业核对和管理。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <div class="step-title">企业账单支付 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业在账单支付环节中，可以查看访客停车费用的明细，并通过预付款支付、微信支付、银行B2B/B2C支付等方式完成支付。支付完成后，系统生成电子凭证，并更新账单状态。企业可根据需要申请开具发票，系统确保停车费与租金等其他费用分开开票。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>企业可对访客停车码设置使用权限和限额，控制费用</li>
+                <li>系统支持访客停车码使用异常报警，如单日使用频次过高时自动通知</li>
+                <li>企业可随时禁用或更新已生成的访客停车码</li>
+                <li>同一车辆在同一天多次使用访客码，系统可配置为合并计费或分次计费</li>
+                <li>系统提供访客停车数据分析报表，帮助企业优化访客管理</li>
+                <li>若访客码超出设定的使用限制（金额/次数/日期），系统会提示无效并引导访客自行支付</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 企业账单管理流程 -->
+    <div class="process-box">
+        <div class="process-title">流程四：企业账单管理与支付流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">账单生成与复核 <span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    财务管理员在综合管理平台通过按月+按园区/区域/楼栋/楼层/企业/费用科目等组合方式生成账单，或系统根据预设时间自动生成。生成的账单显示在账单台账中，默认状态为未复核。管理员可批量复核账单，确认金额无误后推送给企业用户。在复核过程中，若发现账单金额存在问题，管理员可以修改金额，系统会记录修改内容、时间和修改人信息，确保可追溯性。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">账单接收与查看 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业用户通过短信或系统消息接收到账单通知，登录公共服务平台进入"企业账单"模块查看账单详情，包括费用明细、计费周期、金额等信息。企业可导出账单明细进行内部核对。若发现账单有误，可联系园区财务管理员处理，管理员可通过账单撤销功能撤回未支付账单进行修改。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">账单支付 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业确认账单无误后，选择支付方式（企业预付款支付、微信支付、银行B2B/B2C支付等）进行在线支付。企业账单支付时支持插入U盘密钥验证操作以提高安全性。系统记录支付信息并更新账单状态为已支付。企业可使用两种类型的预存款支付：指定费项预存（只用于特定费项如水电费）和全部费项预存（可用于所有费用）。
+                    <p><strong>B2B支付U盘密钥验证流程：</strong></p>
+                    <ol>
+                        <li>企业选择B2B支付方式时，系统提示插入企业U盘密钥</li>
+                        <li>系统读取U盘中的企业标识信息，验证密钥与企业账号的绑定关系</li>
+                        <li>系统检查密钥有效期和权限状态，确保密钥有效且具备支付权限</li>
+                        <li>验证通过后，系统自动跳转到企业网银支付环节</li>
+                        <li>用户输入企业网银账号和密码完成最终支付授权</li>
+                        <li>支付成功后，系统自动记录付款凭证，并将支付结果通知发送到用户手机和企业邮箱</li>
+                        <li>系统保存完整的验证记录和支付日志，支持后续财务审计和对账</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">支付确认与记录 <span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    系统自动记录企业支付信息，财务管理员可在收款管理模块查看企业缴费记录，包括缴费企业名称、缴费金额、缴费时间、流水号、支付方式等详细信息。系统生成收款凭证并可供下载。支付成功后，账单即可进入开票流程。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>账单推送后，企业未查看时，管理员可执行收回操作；企业已查看未付款时，管理员可执行撤销操作</li>
+                <li>账单有误时，管理员可执行废弃操作，系统要求填写废弃原因，便于后续审计</li>
+                <li>账单支付成功后，系统自动生成电子凭证，企业可下载或打印</li>
+                <li>企业可设置账单金额预警阈值，超过阈值时系统自动通知企业财务负责人进行确认</li>
+                <li>系统支持部分支付功能，企业可分批次支付大额账单</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 账单收回流程 -->
+    <div class="process-box">
+        <div class="process-title">流程五：账单收回流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">收回触发场景 <span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    在以下情况下，财务管理员可能需要收回已推送的账单：发现账单金额计算错误、停车费用重复计费、需要对多家企业统一调整账单等。关键前提是企业尚未查看该账单，若企业已查看未付款，则应使用账单撤销功能。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">执行收回操作 <span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    财务管理员在综合管理平台的账单管理模块中，切换到"已推送账单"标签，筛选出需要收回的账单，可使用批量操作功能一次收回多个账单。系统弹出确认对话框，管理员必须填写收回原因（如"系统计算错误，临时停车费用存在重复计费情况，需统一调整"），确认后系统执行收回操作。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">系统处理与通知 <span class="role system">系统</span></div>
+                <div class="step-desc">
+                    系统立即执行账单收回操作，将账单从企业端撤回，企业将无法查看和支付这些账单。同时系统向企业管理员发送通知，说明账单被收回的原因和预计重新推送时间。系统自动将收回的账单状态更改为"已收回"，并回到"未推送"列表中。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">账单调整与重新推送 <span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    管理员对收回的账单进行必要的调整，可通过"金额修改"功能调整金额，或者选择"账单废弃"后重新生成准确的账单。调整完成后，管理员重新复核并推送账单。整个账单收回过程有完整的操作记录，包括收回时间、操作人、收回原因等，确保账单管理的透明度和可追溯性。
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 开票申请流程 -->
+    <div class="process-box">
+        <div class="process-title">流程六：开票申请与处理流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">开票信息管理 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业用户在公共服务平台"开票变更"功能中管理开票信息，包括企业名称、税号、地址电话、开户行账号等信息。系统支持保存多个开票信息，便于后续快速选择。开票信息变更后立即生效，用于后续的开票申请。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">提交开票申请 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业用户在"开票申请"功能中选择需要开票的项目（已支付或未支付的账单、停车月卡等），从已保存的开票信息中选择抬头，确认开票内容和金额，提交开票申请。<strong>系统严格校验租金是否与其他费项（包括停车费）分开开票</strong>，若企业选择将租金与其他费项合并，系统会给出错误提示并阻止提交。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">开票审核 <span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    财务管理员在综合管理平台的开票管理模块中查看开票申请，审核开票信息的准确性和合规性。对于未付款开票申请，需特别审核企业信用情况，确认是否允许提前开票。系统再次校验是否遵循"租金不能与其他费项合并开票"的业务规则。审核通过后，系统生成电子发票。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">发票下载与管理 <span class="role enterprise">企业用户</span><span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    开票成功后，系统通知企业用户，企业用户可在"开票申请"功能中查看并下载电子发票。财务管理员可按月生成发票压缩包，包含该月所有发票的电子文件（PDF格式），便于管理和存档。系统将开票记录分为"未付开票管理"和"已开票管理"两个模块，便于财务人员分类查看和管理。
+                    <p><strong>发票压缩包管理流程：</strong></p>
+                    <ol>
+                        <li>财务管理员在月底整理发票时，可在"已开票管理"模块选择按月生成发票压缩包</li>
+                        <li>系统提供压缩包分类选项，管理员选择"按费项类型分类"</li>
+                        <li>系统自动将本月所有发票按照租金和其他费项（包括停车费）分别打包成两个独立压缩文件</li>
+                        <li>每张发票以企业名称+费项类型+金额+日期命名，便于后续查找和核对</li>
+                        <li>系统同时生成月度开票汇总报表，详细记录每张发票的关键信息（企业名称、费项类型、开票金额、开票日期和发票号码等）</li>
+                        <li>管理员可一键下载压缩包和汇总报表，用于财务存档和税务申报</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>重要业务规则：</strong></p>
+            <ul>
+                <li><strong>租金不能与其他费项（包括停车费）合并开票</strong>，此规则在系统各环节均有严格校验</li>
+                <li>企业可跟踪开票申请的处理状态，包括申请时间、审核状态、开票时间等</li>
+                <li>未付款开票申请需经过更严格的审核，并可能需要企业提供额外的信用证明</li>
+                <li>发票一经开具，相关账单信息不可再修改，确保财务数据一致性</li>
+                <li>系统支持按不同费项类型分别开票，如停车费单独开票、物业费单独开票等</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 未付开票管理流程 -->
+    <div class="process-box">
+        <div class="process-title">流程七：未付开票管理流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">提交未付开票申请 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业财务人员因报销制度要求，需在缴纳费用前先获取发票。登录公共服务平台，进入"企业账单"模块，查看账单后，点击"申请提前开票"按钮。系统提示确认开票信息，包括开票金额、费项明细、发票类型和开票抬头等。企业确认无误后提交申请，系统生成一条未付开票申请记录，状态为"审核中"。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">未付开票审核 <span class="role admin">园区财务管理员</span></div>
+                <div class="step-desc">
+                    财务管理员在综合管理平台的"开票管理-未付开票管理"模块收到申请通知，查看详细的申请信息，包括企业名称、开票金额、费项明细、申请时间等。管理员需评估企业的信用状况和历史缴费记录，确定是否允许提前开票。对于信用良好的企业，审批通过并设置付款期限（默认30天）；对于首次申请或信用记录不佳的企业，可能需要提供额外担保或拒绝申请。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">开票处理与跟踪 <span class="role admin">园区财务管理员</span><span class="role system">系统</span></div>
+                <div class="step-desc">
+                    审批通过后，系统自动生成电子发票，并通过邮件发送给企业。同时，在"未付开票管理"模块中，该记录状态更新为"已开票未付款"，并记录付款截止日期。系统自动跟踪付款状态，如超过期限未付款，会自动提醒财务管理员跟进处理，可通过发送催款通知或电话联系等方式督促企业付款。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">付款处理与状态更新 <span class="role enterprise">企业用户</span><span class="role system">系统</span></div>
+                <div class="step-desc">
+                    企业收到发票后，完成内部报销审批流程，在付款期限内返回公共服务平台的"企业账单"模块，找到对应账单进行支付。支付完成后，系统自动将未付开票记录状态更新为"已付款"，并在"已开票管理"模块中生成对应记录。全流程实现从开票申请到付款的闭环管理，兼顾企业报销需求和园区财务风险控制。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>未付开票申请仅适用于企业用户，个人用户不可使用此功能</li>
+                <li>系统对单个企业的未付开票总额设有上限，超过限额需管理员特别审批</li>
+                <li>若企业有多笔未付开票逾期未付款记录，系统自动暂停其未付开票功能</li>
+                <li>未付开票发票与普通发票在内容和格式上完全一致，只是开具时机不同</li>
+                <li>系统支持未付开票记录的多维度统计分析，便于管理者掌握财务风险</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 我的月卡管理中心 -->
+    <div class="process-box">
+        <div class="process-title">流程八：我的月卡管理中心</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">月卡信息查看 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    用户登录公共服务平台，进入"用户中心"下的"我的月卡"功能模块。系统清晰展示用户所有月卡记录，包括当前使用中的月卡和历史月卡。每张月卡卡片显示核心信息：车牌号码、月卡类型、有效期区间、所属停车区域以及当前状态（如"使用中"、"已到期"、"待生效"等）。用户点击任一月卡卡片，可进入详情页查看更多信息，包括购买日期、支付金额、支付方式、发票状态等财务信息。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">车辆管理 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    在月卡详情页的"车辆管理"选项卡中，用户可查看和管理绑定到该月卡的车辆信息。对于支持一人多车的月卡，系统允许用户最多绑定系统限定数量的车辆（通常为2辆）。用户可点击"添加车辆"按钮绑定新车辆，或修改现有车辆信息。对于多车设置，用户可指定主副车辆的优先级，系统根据"先出场车辆享受月卡"的规则自动处理权益使用。当多辆绑定车辆同时在场内时，先离场的车辆将优先享受月卡权益，无需支付费用。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">使用记录查看 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    在"使用记录"选项卡中，系统记录并展示该月卡的完整使用历史，包括每次车辆进出园区的时间、使用的出入口、是否享受了月卡优惠等信息。用户可通过时间筛选、车牌筛选等方式查找特定记录，方便追踪月卡使用情况和解决可能的争议。对于多车共用一个月卡的情况，记录中会清晰标明哪辆车在何时使用了月卡权益。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">续费管理 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    系统显示距离月卡到期还有多少天，并在到期前10天自动发送续费提醒通知。用户可点击"立即续费"按钮，选择续费时长（1个月、3个月、6个月、12个月），系统根据用户所属企业类型自动计算优惠价格（如3-6个月9折，6-12个月8.5折，12个月以上8折）。用户选择支付方式完成支付后，系统自动延长月卡有效期，无需重新审批。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <div class="step-title">转让管理 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    用户计划调岗或离职时，可在月卡详情页点击"申请转让"按钮，填写接收人的姓名、手机号和车牌号，并选择转让生效日期。系统记录转让申请并通知企业管理员进行审批。审批通过后，系统会在指定日期自动将月卡权益从原用户的车牌转移到接收人的车牌，保留原有效期，并完整记录转让历史。对于绑定多辆车的月卡，系统会提示接收人是否需要继承这一多车绑定设置。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">6</div>
+            <div class="step-content">
+                <div class="step-title">发票申请 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    用户可在月卡详情页直接点击"申请发票"按钮，系统关联购买记录，自动填充关键信息（如金额、购买日期等），简化发票申请流程。用户只需确认或选择开票信息（如抬头和税号），系统自动提交开票申请并在审核通过后生成电子发票，通过邮件发送给用户并可在平台下载。这种集成方式大大简化了用户的操作流程，提高了服务体验。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>用户可通过"我的月卡"一站式管理多张不同园区的月卡</li>
+                <li>系统支持月卡自动续费功能，用户可设置到期自动从指定账户扣款</li>
+                <li>多车共用月卡时，所有绑定车辆可进入园区，但每日只有一辆车可享受免费出场</li>
+                <li>月卡转让需原持卡人和接收人双方确认，并经企业管理员审批</li>
+                <li>系统定期发送月卡使用报表给用户，帮助优化停车管理</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>5.2 子业务流程</h3>
+    
+    <!-- 月卡转让流程 -->
+    <div class="process-box">
+        <div class="process-title">子流程一：月卡转让流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">转让申请提交 <span class="role individual">个人用户</span></div>
+                <div class="step-desc">
+                    月卡持有者在公共服务平台"我的月卡"模块中，选择要转让的月卡，填写受让方信息（含姓名、手机号、车牌号等），提交转让申请。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">受让方确认 <span class="role individual">个人用户</span></div>
+                <div class="step-desc">
+                    系统向受让方发送转让确认通知，受让方登录系统确认接受转让，并补充必要的个人和车辆信息。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">管理员审核 <span class="role admin">园区管理员</span></div>
+                <div class="step-desc">
+                    园区管理员在综合管理平台收到转让申请，核实转让双方信息和月卡状态，审核转让的合规性，作出审批决定。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">转让完成 <span class="role admin">园区管理员</span></div>
+                <div class="step-desc">
+                    审核通过后，系统自动更新月卡持有者信息，将月卡权限从原车牌转移到新车牌，并向双方发送转让成功通知。如审核不通过，系统发送拒绝通知及原因。
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 月卡续费流程 -->
+    <div class="process-box">
+        <div class="process-title">子流程二：月卡续费流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">续费提醒 <span class="role system">系统</span></div>
+                <div class="step-desc">
+                    系统自动检测月卡到期时间，在到期前10天通过短信和系统消息提醒月卡持有者进行续费。提醒消息包含月卡基本信息、到期时间和续费链接。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">续费申请 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    用户登录公共服务平台进入"我的月卡"模块，选择需要续费的月卡，点击"续费"按钮，选择续费时长（1个月/3个月/6个月/12个月）。系统自动计算续费金额并显示，企业用户可享受相应的企业折扣。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">支付续费 <span class="role individual">个人用户</span><span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    用户确认续费信息后，选择支付方式（企业预付款支付、微信支付、银联支付、银行B2C支付等）完成支付。系统生成支付凭证并记录续费交易。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">更新月卡有效期 <span class="role system">系统</span></div>
+                <div class="step-desc">
+                    支付成功后，系统自动更新月卡有效期，从原有效期结束日开始计算，并向用户发送续费成功通知，包含新的有效期信息。系统同步更新月卡权限数据到车牌识别系统。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>续费操作无需再次审批，支付成功后直接延长有效期</li>
+                <li>若原月卡已过期，则从续费支付成功当日起计算新的有效期</li>
+                <li>企业可设置员工月卡自动续费，到期前自动从预存款中扣除续费金额</li>
+                <li>可选择一次性续费多个月，系统会根据续费时长自动计算优惠价格</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 企业需求发布流程 -->
+    <div class="process-box">
+        <div class="process-title">子流程三：企业需求发布流程</div>
+        
+        <div class="process-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">创建需求 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业管理员登录公共服务平台，进入"需求发布"模块，点击"新增需求"，选择需求类型（如增加停车位需求、月卡类型变更需求等），填写需求详情、期望解决时间等信息。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">编辑与保存 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业用户可以暂存需求草稿，随时进行编辑、修改或删除。需求草稿支持上传附件（如车辆清单、停车需求分析等），完善需求内容后再提交。系统保存每次编辑的历史记录，便于追溯变更。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">提交需求 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    企业用户确认需求信息完整后，点击"提交"按钮正式提交需求。系统进行表单验证，确保必填项完整，内容符合规范后，将需求推送给园区管理员审核。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">需求处理 <span class="role admin">园区管理员</span></div>
+                <div class="step-desc">
+                    园区管理员收到需求后，进行评估和处理，可以接受需求、拒绝需求或要求补充信息。处理结果和进度会实时更新到系统，企业用户可随时查看。
+                </div>
+            </div>
+        </div>
+        
+        <div class="process-step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <div class="step-title">需求撤销 <span class="role enterprise">企业用户</span></div>
+                <div class="step-desc">
+                    若需求尚未被处理或处于补充信息阶段，企业用户可以撤销需求。撤销后，系统记录操作日志，通知园区管理员，并将需求状态更新为"已撤销"。
+                </div>
+            </div>
+        </div>
+        
+        <div class="note">
+            <p><strong>注意事项：</strong></p>
+            <ul>
+                <li>企业只能查看和管理自己提交的需求</li>
+                <li>需求一旦被园区管理员处理完成（接受或拒绝），将不能再撤销</li>
+                <li>系统自动记录需求的完整生命周期，包括创建、修改、提交、撤销等所有操作</li>
+                <li>园区管理员可根据需求的优先级和紧急程度调整处理顺序</li>
+            </ul>
+        </div>
+    </div>
+    
+    <h3>5.3 状态转换说明</h3>
+    
+    <h4>5.3.1 月卡申请状态转换</h4>
+    <table>
+        <tr>
+            <th>状态</th>
+            <th>说明</th>
+            <th>触发条件</th>
+            <th>后续可转换状态</th>
+        </tr>
+        <tr>
+            <td>待提交</td>
+            <td>月卡申请表单已填写但尚未提交</td>
+            <td>用户开始填写申请表单</td>
+            <td>待支付、已取消</td>
+        </tr>
+        <tr>
+            <td>待支付</td>
+            <td>申请已提交但尚未完成支付</td>
+            <td>用户提交申请表单</td>
+            <td>待审核、已取消</td>
+        </tr>
+        <tr>
+            <td>待审核</td>
+            <td>申请已支付等待管理员审核</td>
+            <td>用户完成支付</td>
+            <td>审核通过、审核拒绝</td>
+        </tr>
+        <tr>
+            <td>审核通过</td>
+            <td>申请已通过审核，月卡已生效</td>
+            <td>管理员审批通过</td>
+            <td>已过期、已转让</td>
+        </tr>
+        <tr>
+            <td>审核拒绝</td>
+            <td>申请未通过审核</td>
+            <td>管理员审批拒绝</td>
+            <td>已退款</td>
+        </tr>
+        <tr>
+            <td>已取消</td>
+            <td>用户主动取消申请</td>
+            <td>用户取消操作</td>
+            <td>已退款（如已支付）</td>
+        </tr>
+        <tr>
+            <td>已过期</td>
+            <td>月卡超过有效期</td>
+            <td>系统自动检测到期</td>
+            <td>已续费（转为待审核）</td>
+        </tr>
+        <tr>
+            <td>已转让</td>
+            <td>月卡已转让给其他用户</td>
+            <td>转让申请审批通过</td>
+            <td>-</td>
+        </tr>
+    </table>
+    
+    <h4>5.3.2 临时停车状态转换</h4>
+    <table>
+        <tr>
+            <th>状态</th>
+            <th>说明</th>
+            <th>触发条件</th>
+            <th>后续可转换状态</th>
+        </tr>
+        <tr>
+            <td>已入场</td>
+            <td>车辆已进入停车场，开始计费</td>
+            <td>系统识别车牌进入</td>
+            <td>待支付、已绑定企业</td>
+        </tr>
+        <tr>
+            <td>已绑定企业</td>
+            <td>访客车辆已与企业关联</td>
+            <td>访客扫描企业二维码</td>
+            <td>企业待确认、已离场</td>
+        </tr>
+        <tr>
+            <td>企业待确认</td>
+            <td>需企业确认的访客停车</td>
+            <td>超出企业自动审批范围</td>
+            <td>企业已确认、企业已拒绝</td>
+        </tr>
+        <tr>
+            <td>企业已确认</td>
+            <td>企业已确认访客停车费用</td>
+            <td>企业管理员确认操作</td>
+            <td>已离场</td>
+        </tr>
+        <tr>
+            <td>企业已拒绝</td>
+            <td>企业拒绝承担访客停车费用</td>
+            <td>企业管理员拒绝操作</td>
+            <td>待支付</td>
+        </tr>
+        <tr>
+            <td>待支付</td>
+            <td>车辆准备离场，等待缴费</td>
+            <td>用户查询停车费用</td>
+            <td>已支付、支付超时</td>
+        </tr>
+        <tr>
+            <td>已支付</td>
+            <td>停车费用已支付，可以离场</td>
+            <td>用户完成支付</td>
+            <td>已离场、支付超时</td>
+        </tr>
+        <tr>
+            <td>支付超时</td>
+            <td>支付后超过30分钟未离场</td>
+            <td>系统检测超时</td>
+            <td>待支付（需补缴）</td>
+        </tr>
+        <tr>
+            <td>已离场</td>
+            <td>车辆已离开停车场，完成一次停车</td>
+            <td>系统识别车牌离开</td>
+            <td>-</td>
+        </tr>
+    </table>
+    
+    <h4>5.3.3 企业账单状态转换</h4>
+    <table>
+        <tr>
+            <th>状态</th>
+            <th>说明</th>
+            <th>触发条件</th>
+            <th>后续可转换状态</th>
+        </tr>
+        <tr>
+            <td>未复核</td>
+            <td>账单已生成但尚未经过管理员复核</td>
+            <td>手动或自动生成账单</td>
+            <td>已复核、已废弃</td>
+        </tr>
+        <tr>
+            <td>已复核</td>
+            <td>账单已经过管理员复核确认</td>
+            <td>管理员完成复核操作</td>
+            <td>已推送、已废弃</td>
+        </tr>
+        <tr>
+            <td>已推送</td>
+            <td>账单已推送给企业用户</td>
+            <td>系统自动或管理员手动推送</td>
+            <td>已收回、已撤销、待支付</td>
+        </tr>
+        <tr>
+            <td>已收回</td>
+            <td>已推送账单被管理员收回</td>
+            <td>管理员执行收回操作</td>
+            <td>未复核</td>
+        </tr>
+        <tr>
+            <td>已撤销</td>
+            <td>已推送未付款账单被撤销</td>
+            <td>管理员执行撤销操作</td>
+            <td>未复核</td>
+        </tr>
+        <tr>
+            <td>已废弃</td>
+            <td>账单因错误或不完整被废弃</td>
+            <td>管理员执行废弃操作</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>待支付</td>
+            <td>账单已被企业查看，等待支付</td>
+            <td>企业用户查看账单</td>
+            <td>部分支付、已支付、已撤销</td>
+        </tr>
+        <tr>
+            <td>部分支付</td>
+            <td>账单已部分支付</td>
+            <td>企业完成部分金额支付</td>
+            <td>已支付</td>
+        </tr>
+        <tr>
+            <td>已支付</td>
+            <td>账单已全额支付</td>
+            <td>企业完成全额支付</td>
+            <td>已开票</td>
+        </tr>
+        <tr>
+            <td>已开票</td>
+            <td>账单已支付并已开具发票</td>
+            <td>财务审核通过开票申请</td>
+            <td>-</td>
+        </tr>
+    </table>
+    
+    <h4>5.3.4 开票申请状态转换</h4>
+    <table>
+        <tr>
+            <th>状态</th>
+            <th>说明</th>
+            <th>触发条件</th>
+            <th>后续可转换状态</th>
+        </tr>
+        <tr>
+            <td>草稿</td>
+            <td>开票申请已创建但尚未提交</td>
+            <td>用户开始创建开票申请</td>
+            <td>待审核、已取消</td>
+        </tr>
+        <tr>
+            <td>待审核</td>
+            <td>开票申请已提交等待审核</td>
+            <td>用户提交开票申请</td>
+            <td>审核通过、审核拒绝</td>
+        </tr>
+        <tr>
+            <td>审核通过</td>
+            <td>开票申请已通过审核</td>
+            <td>管理员审核通过</td>
+            <td>已开票</td>
+        </tr>
+        <tr>
+            <td>审核拒绝</td>
+            <td>开票申请未通过审核</td>
+            <td>管理员审核拒绝</td>
+            <td>草稿（可修改后重新提交）</td>
+        </tr>
+        <tr>
+            <td>已开票</td>
+            <td>发票已开具</td>
+            <td>系统生成电子发票</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>已取消</td>
+            <td>用户取消开票申请</td>
+            <td>用户执行取消操作</td>
+            <td>-</td>
+        </tr>
+    </table>
+    
+    <h4>5.3.5 结算单状态转换</h4>
+    <table>
+        <tr>
+            <th>状态</th>
+            <th>说明</th>
+            <th>触发条件</th>
+            <th>后续可转换状态</th>
+        </tr>
+        <tr>
+            <td>草稿</td>
+            <td>退园结算单初始创建状态</td>
+            <td>系统触发退园结算流程</td>
+            <td>待确认、已取消</td>
+        </tr>
+        <tr>
+            <td>待确认</td>
+            <td>结算单数据核算完成，等待企业确认</td>
+            <td>管理员完成核算并提交</td>
+            <td>企业已确认、企业有异议、已取消</td>
+        </tr>
+        <tr>
+            <td>企业有异议</td>
+            <td>企业对结算单内容有异议，需调整</td>
+            <td>企业提出异议</td>
+            <td>待确认</td>
+        </tr>
+        <tr>
+            <td>企业已确认</td>
+            <td>企业确认结算单无误</td>
+            <td>企业确认操作</td>
+            <td>待结算、已取消</td>
+        </tr>
+        <tr>
+            <td>待结算</td>
+            <td>等待财务进行最终结算操作</td>
+            <td>企业确认后进入结算环节</td>
+            <td>结算完成</td>
+        </tr>
+        <tr>
+            <td>结算完成</td>
+            <td>退园结算全部完成</td>
+            <td>财务完成退费或补缴操作</td>
+            <td>已存档</td>
+        </tr>
+        <tr>
+            <td>已存档</td>
+            <td>结算单归档保存</td>
+            <td>结算完成后系统自动归档</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>已取消</td>
+            <td>退园结算被取消</td>
+            <td>企业撤回退园申请或管理员取消</td>
+            <td>-</td>
+        </tr>
+    </table>
+    
+    <h3>5.4 异常流程处理</h3>
+    
+    <div class="process-box">
+        <div class="process-title">异常情况一：车牌识别失败</div>
+        <ol>
+            <li>系统检测到车牌识别置信度低或完全无法识别时，自动抓拍车辆图片并记录</li>
+            <li>系统通知值班管理员处理异常情况</li>
+            <li>管理员通过综合管理平台查看车辆图片，手动录入正确车牌号</li>
+            <li>系统使用人工录入的车牌号继续执行正常流程</li>
+        </ol>
+    </div>
+    
+    <div class="process-box">
+        <div class="process-title">异常情况二：月卡审批延迟</div>
+        <ol>
+            <li>当月卡申请在支付后24小时内未得到审批时，系统自动提醒管理员</li>
+            <li>若48小时仍未审批，系统向管理员上级发送督办提醒</li>
+            <li>若72小时仍未处理，系统可配置为自动通过或升级处理</li>
+            <li>用户也可通过客服渠道反馈申请长时间未处理的情况</li>
+        </ol>
+    </div>
+    
+    <div class="process-box">
+        <div class="process-title">异常情况三：支付失败处理</div>
+        <ol>
+            <li>用户支付过程中遇到网络问题或支付失败时，系统保留未完成的支付记录</li>
+            <li>用户可重新进入支付页面，系统显示未完成的支付，可重新选择支付方式</li>
+            <li>若支付网关返回支付成功但系统未收到通知，用户可提供支付凭证，管理员通过后台确认支付状态</li>
+            <li>对于企业账单支付失败，系统发送通知给企业财务联系人，并提供重新支付入口</li>
+        </ol>
+    </div>
+    
+    <h3>5.5 参与角色与权限</h3>
+    
+    <table>
+        <tr>
+            <th>业务流程</th>
+            <th>园区运营管理员</th>
+            <th>园区财务管理员</th>
+            <th>企业管理员</th>
+            <th>企业员工</th>
+            <th>访客</th>
+        </tr>
+        <tr>
+            <td>停车场配置管理</td>
+            <td>编辑/查看</td>
+            <td>查看</td>
+            <td>无权限</td>
+            <td>无权限</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>月卡申请审批</td>
+            <td>审批/查看</td>
+            <td>查看</td>
+            <td>提交/查看</td>
+            <td>提交/查看</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>月卡转让管理</td>
+            <td>审批/查看</td>
+            <td>无权限</td>
+            <td>查看</td>
+            <td>提交/查看</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>临时停车缴费</td>
+            <td>查看/处理异常</td>
+            <td>查看收费记录</td>
+            <td>支付/查看</td>
+            <td>支付/查看</td>
+            <td>支付/查看</td>
+        </tr>
+        <tr>
+            <td>企业访客停车码</td>
+            <td>查看/处理异常</td>
+            <td>查看收费记录</td>
+            <td>创建/确认/查看</td>
+            <td>查看</td>
+            <td>使用</td>
+        </tr>
+        <tr>
+            <td>企业账单管理</td>
+            <td>查看</td>
+            <td>生成/复核/推送/收回/撤销/废弃</td>
+            <td>查看/支付</td>
+            <td>无权限</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>开票申请与管理</td>
+            <td>无权限</td>
+            <td>审核/开票/查看</td>
+            <td>提交/查看</td>
+            <td>无权限</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>收费标准设置</td>
+            <td>查看</td>
+            <td>编辑/查看</td>
+            <td>无权限</td>
+            <td>无权限</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>停车数据统计</td>
+            <td>查看</td>
+            <td>查看</td>
+            <td>查看(企业相关)</td>
+            <td>无权限</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>月卡续费</td>
+            <td>查看</td>
+            <td>查看收费记录</td>
+            <td>续费/查看</td>
+            <td>续费/查看</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>结算单管理</td>
+            <td>查看</td>
+            <td>生成/核算/确认/下载</td>
+            <td>确认/查看/下载</td>
+            <td>无权限</td>
+            <td>无权限</td>
+        </tr>
+        <tr>
+            <td>需求发布管理</td>
+            <td>处理/回复/查看</td>
+            <td>查看</td>
+            <td>新增/删除/修改/提交/撤销/查看</td>
+            <td>查看</td>
+            <td>无权限</td>
+        </tr>
+    </table>
+    
+</body>
+</html> 

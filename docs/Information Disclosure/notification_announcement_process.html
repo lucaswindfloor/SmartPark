@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>通知公告业务流程</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1, h2, h3, h4 { color: #1890ff; }
+        h1 { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #1890ff; }
+        .section { margin-bottom: 30px; background: #f8f9fa; border-radius: 8px; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        .process-diagram { width: 100%; padding: 20px; background: #fff; border-radius: 5px; margin: 15px 0; text-align: center; }
+        .highlight { background-color: #fff3e0; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .mermaid { text-align: center; margin: 20px 0; }
+        .navigation { display: flex; justify-content: space-between; margin: 20px 0; padding: 10px; background-color: #f0f0f0; border-radius: 4px; }
+        .navigation a { text-decoration: none; color: #1890ff; font-weight: bold; padding: 5px 10px; }
+        .navigation a:hover { background-color: #e6f7ff; border-radius: 4px; }
+        
+        /* 泳道图样式 */
+        .swimlane-container {
+            position: relative;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            width: 100%;
+            min-width: 1000px;
+        }
+        .swimlane-header {
+            display: flex;
+            height: 40px;
+        }
+        .swimlane-title {
+            flex: 1;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+        }
+        .swimlane {
+            position: relative;
+            width: 100%;
+            height: 1200px; /* 减少高度 */
+            font-size: 14px;
+        }
+        .swimlane-body {
+            display: flex;
+            height: calc(100% - 40px);
+        }
+        .lane {
+            flex: 1;
+            position: relative;
+            height: 100%;
+            border-right: 1px dashed #ccc;
+            padding: 10px;
+            min-width: 250px;
+        }
+        .lane:last-child {
+            border-right: none;
+        }
+        .node {
+            position: absolute;
+            width: 160px;
+            height: 50px;
+            left: 20px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .decision-node {
+            position: absolute;
+            left: 45px;
+            width: 70px;
+            height: 70px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+        .decision-text {
+            transform: rotate(-45deg);
+            position: absolute;
+            width: 120px;
+            left: -25px;
+            top: 25px;
+        }
+        #admin-lane .node {
+            background-color: #e6f7ff;
+            border-color: #1890ff;
+            box-shadow: 0 2px 4px rgba(24, 144, 255, 0.2);
+        }
+        #auditor-lane .node, #auditor-lane .decision-node {
+            background-color: #fff7e6;
+            border-color: #fa8c16;
+            box-shadow: 0 2px 4px rgba(250, 140, 22, 0.2);
+        }
+        #system-lane .node {
+            background-color: #f5f5f5;
+            border-color: #bfbfbf;
+            box-shadow: 0 2px 4px rgba(191, 191, 191, 0.2);
+        }
+        #user-lane .node, #user-lane .decision-node {
+            background-color: #f6ffed;
+            border-color: #52c41a;
+            box-shadow: 0 2px 4px rgba(82, 196, 26, 0.2);
+        }
+        
+        /* 用于连接线的样式 */
+        .jtk-connector {
+            z-index: 4;
+        }
+        .jtk-endpoint {
+            z-index: 5;
+        }
+        .jtk-overlay {
+            z-index: 6;
+        }
+        ._jsPlumb_connector {
+            z-index: 4;
+        }
+        ._jsPlumb_endpoint {
+            z-index: 5;
+        }
+        ._jsPlumb_overlay {
+            z-index: 6;
+        }
+        .connection-label {
+            background-color: white;
+            padding: 2px 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        /* 审核员泳道节点位置调整 */
+        #auditor-lane .node#b1 {
+            top: 440px; 
+            left: 40px;
+        }
+        #auditor-lane .node#b3 {
+            top: 380px; 
+            left: 120px;
+        }
+        #auditor-lane .decision-node#b2 {
+            top: 560px; 
+            left: 75px;
+        }
+        #auditor-lane .node#b4 {
+            top: 680px;
+            left: 40px;
+        }
+        
+        /* 系统泳道节点位置调整 */
+        #system-lane .node#c1 {
+            top: 440px; 
+            left: 40px;
+        }
+        #system-lane .node#c2 {
+            top: 520px; 
+            left: 40px;
+        }
+        #system-lane .node#c3 {
+            top: 600px; 
+            left: 40px;
+        }
+        #system-lane .node#c4 {
+            top: 680px; 
+            left: 40px;
+        }
+        #system-lane .node#c5 {
+            top: 760px; 
+            left: 40px;
+        }
+        #system-lane .node#c6 {
+            top: 520px; 
+            left: 160px;
+        }
+        #system-lane .node#c7 {
+            top: 600px; 
+            left: 160px;
+        }
+
+        /* 添加分隔线样式 */
+        .horizontal-divider {
+            position: absolute;
+            height: 1px;
+            width: 90%;
+            background-color: #eee;
+            left: 5%;
+            z-index: 5;
+        }
+
+        /* 添加背景交替色 */
+        .alt-bg {
+            position: absolute;
+            height: 80px;
+            width: 100%;
+            background-color: #fafafa;
+            left: 0;
+            z-index: 1;
+        }
+    </style>
+    <script src="jsplumb.min.js"></script>
+</head>
+<body>
+    <h1>信息公开模块 - 通知公告业务流程</h1>
+
+    <div class="navigation">
+        <a href="business_process.html">← 返回业务流程总览</a>
+        <div>
+            <a href="notification_announcement_process.html">通知公告</a> |
+            <a href="policy_document_process.html">政策文件</a> |
+            <a href="park_activity_process.html">园区活动</a> |
+            <a href="survey_process.html">调查问卷</a> |
+            <a href="demand_publishing_process.html">需求发布</a>
+        </div>
+        <a href="policy_document_process.html">下一个：政策文件 →</a>
+    </div>
+
+    <div class="section">
+        <h2>通知公告业务流程</h2>
+        <div class="highlight">
+            <p><strong>场景</strong>: 园区管理方需要发布一项重要通知，例如园区停水通知，并要求所有企业确认接收。</p>
+        </div>
+
+        <h3>核心业务流程泳道图</h3>
+        <div class="process-diagram">
+            <div id="notification-process-diagram" class="swimlane-container">
+                <div class="swimlane-header">
+                    <div class="swimlane-title" style="background-color: #e6f7ff; border: 1px solid #1890ff; color: #1890ff;">园区管理员</div>
+                    <div class="swimlane-title" style="background-color: #fff7e6; border: 1px solid #fa8c16; color: #fa8c16;">审核员</div>
+                    <div class="swimlane-title" style="background-color: #f5f5f5; border: 1px solid #bfbfbf; color: #bfbfbf;">系统</div>
+                    <div class="swimlane-title" style="background-color: #f6ffed; border: 1px solid #52c41a; color: #52c41a;">企业用户</div>
+                </div>
+                
+                <div class="swimlane" id="notification-swimlane">
+                    <!-- 泳道内容 -->
+                    <div class="swimlane-body">
+                        <!-- 为泳道添加辅助背景和分隔线 -->
+                        <div class="alt-bg" style="top: 120px;"></div>
+                        <div class="alt-bg" style="top: 280px;"></div>
+                        <div class="alt-bg" style="top: 440px;"></div>
+                        <div class="alt-bg" style="top: 600px;"></div>
+                        <div class="alt-bg" style="top: 760px;"></div>
+                        <div class="alt-bg" style="top: 920px;"></div>
+                        <div class="alt-bg" style="top: 1080px;"></div>
+                        <div class="alt-bg" style="top: 1240px;"></div>
+
+                        <div class="horizontal-divider" style="top: 200px;"></div>
+                        <div class="horizontal-divider" style="top: 360px;"></div>
+                        <div class="horizontal-divider" style="top: 520px;"></div>
+                        <div class="horizontal-divider" style="top: 680px;"></div>
+                        <div class="horizontal-divider" style="top: 840px;"></div>
+                        <div class="horizontal-divider" style="top: 1000px;"></div>
+                        <div class="horizontal-divider" style="top: 1160px;"></div>
+                        
+                        <!-- 园区管理员泳道 -->
+                        <div class="lane" id="admin-lane">
+                            <div class="node" id="a1" style="top: 80px; left: 40px;">创建通知公告</div>
+                            <div class="node" id="a2" style="top: 230px; left: 40px;">设置通知内容与范围</div>
+                            <div class="node" id="a3" style="top: 380px; left: 40px;">设置是否需要确认接收</div>
+                            <div class="node" id="a4" style="top: 530px; left: 40px;">提交审核</div>
+                            <div class="node" id="a5" style="top: 850px; left: 40px;">查看统计数据</div>
+                        </div>
+                        
+                        <!-- 审核员泳道 -->
+                        <div class="lane" id="auditor-lane">
+                            <div class="node" id="b1" style="top: 530px; left: 40px;">审核通知</div>
+                            <div class="decision-node" id="b2" style="top: 680px; left: 75px;"><span class="decision-text">是否通过</span></div>
+                            <div class="node" id="b3" style="top: 650px; left: 180px;">发布通知</div>
+                        </div>
+                        
+                        <!-- 系统泳道 -->
+                        <div class="lane" id="system-lane">
+                            <div class="node" id="c1" style="top: 530px; left: 40px;">接收审核结果</div>
+                            <div class="node" id="c2" style="top: 680px; left: 40px;">发布到公共服务平台</div>
+                            <div class="node" id="c3" style="top: 800px; left: 40px;">统计查看/确认数量</div>
+                        </div>
+                        
+                        <!-- 企业用户泳道 -->
+                        <div class="lane" id="user-lane">
+                            <div class="node" id="d1" style="top: 680px; left: 40px;">查看通知</div>
+                            <div class="decision-node" id="d2" style="top: 800px; left: 75px;"><span class="decision-text">需要确认?</span></div>
+                            <div class="node" id="d3" style="top: 800px; left: 180px;">确认接收</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p style="font-style: italic; color: #666; margin-top: 10px;">图1: 通知公告业务流程泳道图</p>
+        </div>
+
+        <h3>核心流程说明</h3>
+        <table>
+            <tr>
+                <th width="20%">角色</th>
+                <th width="30%">操作步骤</th>
+                <th width="50%">说明</th>
+            </tr>
+            <tr>
+                <td rowspan="4">园区管理员</td>
+                <td>创建通知公告</td>
+                <td>新建通知公告，开始创建流程</td>
+            </tr>
+            <tr>
+                <td>设置通知内容与范围</td>
+                <td>设置标题、正文内容、公开范围等基本信息</td>
+            </tr>
+            <tr>
+                <td>设置是否需要确认接收</td>
+                <td>对于重要通知，可设置接收人需要点击确认接收</td>
+            </tr>
+            <tr>
+                <td>查看统计数据</td>
+                <td>查看通知的已查看数量和确认接收数量</td>
+            </tr>
+            <tr>
+                <td rowspan="2">审核员</td>
+                <td>审核通知</td>
+                <td>检查通知内容的准确性、合规性和必要性</td>
+            </tr>
+            <tr>
+                <td>发布通知</td>
+                <td>审核通过后发布通知到公共服务平台</td>
+            </tr>
+            <tr>
+                <td rowspan="3">系统</td>
+                <td>接收审核结果</td>
+                <td>系统处理审核结果，为后续操作做准备</td>
+            </tr>
+            <tr>
+                <td>发布到公共服务平台</td>
+                <td>将通知同步至公共服务平台，更新状态为"已发布"</td>
+            </tr>
+            <tr>
+                <td>统计查看/确认数量</td>
+                <td>统计用户查看和确认接收的数量</td>
+            </tr>
+            <tr>
+                <td rowspan="2">企业用户</td>
+                <td>查看通知</td>
+                <td>在公共服务平台查看通知内容，已查看可表示该用户已接收到该信息</td>
+            </tr>
+            <tr>
+                <td>确认接收</td>
+                <td>如需确认的通知，用户点击确认接收按钮</td>
+            </tr>
+        </table>
+
+        <h3>管理操作说明</h3>
+        <p>除了核心发布流程外，通知公告还支持以下管理操作：</p>
+        <table>
+            <tr>
+                <th width="25%">管理操作</th>
+                <th width="75%">功能说明</th>
+            </tr>
+            <tr>
+                <td>查询通知</td>
+                <td>园区管理员可以在通知列表中查询和筛选通知，按标题、发布时间、状态等多种条件过滤。</td>
+            </tr>
+            <tr>
+                <td>修改通知</td>
+                <td>对于未发布或被拒绝的通知，管理员可以修改内容后重新提交审核。</td>
+            </tr>
+            <tr>
+                <td>删除通知</td>
+                <td>对于过期或不再需要的通知，管理员可以删除，从系统中永久移除。</td>
+            </tr>
+            <tr>
+                <td>置顶通知</td>
+                <td>管理员可对重要通知设置置顶，使其在公共服务平台优先展示，提高信息可见性。</td>
+            </tr>
+            <tr>
+                <td>站内信推送</td>
+                <td>发布的通知会通过站内信自动推送给目标用户，系统将其记录为已接收状态。</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>状态转换</h2>
+        <table>
+            <tr>
+                <th>状态</th>
+                <th>描述</th>
+                <th>转换条件</th>
+                <th>下一状态</th>
+            </tr>
+            <tr>
+                <td>草稿</td>
+                <td>通知创建后但尚未提交</td>
+                <td>管理员点击"提交审核"</td>
+                <td>待审核</td>
+            </tr>
+            <tr>
+                <td>待审核</td>
+                <td>已提交等待审核</td>
+                <td>审核员审核通过</td>
+                <td>已发布</td>
+            </tr>
+            <tr>
+                <td>待审核</td>
+                <td>已提交等待审核</td>
+                <td>审核员审核拒绝</td>
+                <td>已拒绝</td>
+            </tr>
+            <tr>
+                <td>已发布</td>
+                <td>通知已在公共服务平台可见</td>
+                <td>管理员设置置顶</td>
+                <td>已置顶</td>
+            </tr>
+            <tr>
+                <td>已发布</td>
+                <td>通知已在公共服务平台可见</td>
+                <td>系统自动/管理员手动归档</td>
+                <td>已归档</td>
+            </tr>
+            <tr>
+                <td>已发布/已置顶</td>
+                <td>通知处于发布状态</td>
+                <td>系统判断当前时间超过通知有效期</td>
+                <td>已过期</td>
+            </tr>
+            <tr>
+                <td>任意状态</td>
+                <td>通知任意状态</td>
+                <td>园区管理员执行删除操作</td>
+                <td>已删除</td>
+            </tr>
+        </table>
+
+        <h3>数据流说明</h3>
+        <p>通知公告业务流程涉及的主要数据流如下：</p>
+        <ol>
+            <li><strong>通知创建数据流</strong>：园区管理员创建通知→设置标题、内容、范围→设置确认接收要求→提交审核→系统记录</li>
+            <li><strong>审核流程数据流</strong>：审核员获取待审核通知→进行审核→提交审核结果→系统记录</li>
+            <li><strong>发布数据流</strong>：系统接收审核通过结果→更新通知状态为"已发布"→同步至公共服务平台→推送站内消息给目标用户（此时用户处于已接收状态）</li>
+            <li><strong>用户操作数据流</strong>：企业用户登录公共服务平台→查看通知列表→打开通知（系统记录已查看状态）→需要时确认接收（系统记录确认状态）</li>
+            <li><strong>管理操作数据流</strong>：园区管理员查询通知→查看统计数据→执行管理操作（修改/删除/置顶）→系统更新通知状态</li>
+        </ol>
+
+        <h3>异常处理</h3>
+        <p>在通知公告业务流程中可能出现的异常情况及处理方式：</p>
+        <table>
+            <tr>
+                <th width="30%">异常情况</th>
+                <th width="30%">影响</th>
+                <th width="40%">处理方式</th>
+            </tr>
+            <tr>
+                <td>审核超时</td>
+                <td>通知长时间处于待审核状态</td>
+                <td>系统自动提醒审核员；园区管理员可查看审核状态并催办</td>
+            </tr>
+            <tr>
+                <td>通知内容有误</td>
+                <td>已发布的通知包含错误信息</td>
+                <td>园区管理员可修改内容后重新提交审核；重要错误可先删除通知</td>
+            </tr>
+            <tr>
+                <td>用户未查看重要通知</td>
+                <td>重要信息未及时传达给目标用户</td>
+                <td>系统定期发送提醒；管理员可查看查阅统计并采取额外通知措施</td>
+            </tr>
+            <tr>
+                <td>公共服务平台同步失败</td>
+                <td>用户无法在公共服务平台看到已发布通知</td>
+                <td>系统自动重试同步；管理员可手动触发同步操作</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>功能关键点说明</h2>
+        <table>
+            <tr>
+                <th width="25%">功能点</th>
+                <th width="75%">说明</th>
+            </tr>
+            <tr>
+                <td>置顶功能</td>
+                <td>管理员可对重要通知设置置顶，使其在公共服务平台首页和列表优先展示，提高信息可见性。置顶状态的通知会在公共服务平台首页的信息公开区域展示。</td>
+            </tr>
+            <tr>
+                <td>确认接收机制</td>
+                <td>对于重要通知，园区管理员可设置"需要确认接收"属性，企业用户查看后需点击"确认接收"按钮，系统记录确认状态。管理员可查看确认接收统计数据，了解通知实际送达效果。</td>
+            </tr>
+            <tr>
+                <td>已接收与已查看关系</td>
+                <td>站内信推送给用户时即标记为"已接收"状态；用户打开通知时标记为"已查看"状态。已查看可表示用户已接收到该信息且进行了阅读。</td>
+            </tr>
+            <tr>
+                <td>公开范围设置</td>
+                <td>创建通知时可设置公开范围，包括全部企业、特定企业类型、指定企业等选项，精准控制通知的发布对象。</td>
+            </tr>
+            <tr>
+                <td>统计功能</td>
+                <td>系统自动统计通知的查看数量和确认接收数量，并提供图表可视化展示，便于管理员评估通知传达效果。</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>需求对照</h2>
+        <table>
+            <tr>
+                <th width="30%">需求项</th>
+                <th width="20%">是否支持</th>
+                <th width="50%">实现方式</th>
+            </tr>
+            <tr>
+                <td>新增、删除、查询、修改功能</td>
+                <td>✓ 支持</td>
+                <td>通过管理界面提供完整的通知CRUD操作，支持按标题、时间、状态等条件查询筛选</td>
+            </tr>
+            <tr>
+                <td>审核、发布功能</td>
+                <td>✓ 支持</td>
+                <td>设置完整的审核流程，确保通知内容准确合规后才发布至公共服务平台</td>
+            </tr>
+            <tr>
+                <td>置顶功能</td>
+                <td>✓ 支持</td>
+                <td>可设置通知置顶，置顶通知在公共服务平台优先展示</td>
+            </tr>
+            <tr>
+                <td>设置标题、正文、公开范围</td>
+                <td>✓ 支持</td>
+                <td>通知创建界面提供完整的内容编辑和范围设置功能</td>
+            </tr>
+            <tr>
+                <td>统计用户已查看数量</td>
+                <td>✓ 支持</td>
+                <td>系统自动记录查看状态并提供统计数据查看界面</td>
+            </tr>
+            <tr>
+                <td>确认接收功能</td>
+                <td>✓ 支持</td>
+                <td>可选择性设置重要通知需确认接收，企业用户点击确认按钮后记录确认状态</td>
+            </tr>
+            <tr>
+                <td>站内信推送为已接收状态</td>
+                <td>✓ 支持</td>
+                <td>系统推送站内信时自动标记为已接收，用户查看后标记为已查看</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="navigation">
+        <a href="business_process.html">← 返回业务流程总览</a>
+        <div>
+            <a href="notification_announcement_process.html">通知公告</a> |
+            <a href="policy_document_process.html">政策文件</a> |
+            <a href="park_activity_process.html">园区活动</a> |
+            <a href="survey_process.html">调查问卷</a> |
+            <a href="demand_publishing_process.html">需求发布</a>
+        </div>
+        <a href="policy_document_process.html">下一个：政策文件 →</a>
+    </div>
+
+    <script>
+        // 确保DOM完全加载后再执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM已加载，准备初始化jsPlumb');
+            
+            // 检查jsPlumb是否正确加载
+            if (typeof jsPlumb === 'undefined') {
+                console.error('错误：jsPlumb库未加载！');
+                var errorDiv = document.createElement('div');
+                errorDiv.style.color = 'red';
+                errorDiv.style.padding = '20px';
+                errorDiv.style.backgroundColor = '#ffeeee';
+                errorDiv.style.border = '1px solid red';
+                errorDiv.style.margin = '10px';
+                errorDiv.innerHTML = '<strong>错误：jsPlumb库未能加载</strong><p>请检查：</p><ol>' +
+                    '<li>jsplumb.min.js文件是否位于正确位置</li>' +
+                    '<li>文件是否有正确的读取权限</li>' +
+                    '<li>是否有JavaScript控制台错误</li></ol>';
+                document.getElementById('notification-swimlane').appendChild(errorDiv);
+                return;
+            }
+            
+            try {
+                console.log('jsPlumb已加载，版本：', jsPlumb.version);
+                
+                var instance = jsPlumb.getInstance({
+                    Connector: ["Flowchart", { cornerRadius: 5 }],
+                    Endpoint: ["Dot", { radius: 4 }],
+                    EndpointStyle: { fill: "#2196f3" },
+                    PaintStyle: { stroke: "#2196f3", strokeWidth: 2 },
+                    HoverPaintStyle: { stroke: "#1565c0", strokeWidth: 3 },
+                    ConnectionOverlays: [
+                        ["Arrow", { location: 1, width: 10, length: 10, foldback: 0.8 }],
+                        ["Label", { 
+                            cssClass: "connection-label",
+                            label: "",
+                            location: 0.5
+                        }]
+                    ],
+                    Container: "notification-swimlane"
+                });
+                
+                console.log('jsPlumb实例已创建');
+                
+                // 添加一个测试连接来验证jsPlumb是否工作
+                setTimeout(function() {
+                    console.log('正在创建测试连接...');
+                    try {
+                        // 园区管理员流程连接
+                        instance.connect({ 
+                            source: "a1", 
+                            target: "a2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "填写基本信息", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "a2", 
+                            target: "a3", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "设置标题、正文、公开范围", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "a3", 
+                            target: "a4", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "完成通知设置", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 从管理员到审核员
+                        instance.connect({ 
+                            source: "a4", 
+                            target: "b1", 
+                            anchors: ["Right", "Left"] 
+                        });
+                        
+                        // 审核员内部
+                        instance.connect({ 
+                            source: "b1", 
+                            target: "b2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "检查内容", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "b2", 
+                            target: "b3", 
+                            anchors: ["Right", "Left"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "审核通过", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 审核员到系统
+                        instance.connect({ 
+                            source: "b3", 
+                            target: "c1", 
+                            anchors: ["Right", "Right"] 
+                        });
+                        
+                        // 系统内部
+                        instance.connect({ 
+                            source: "c1", 
+                            target: "c2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "更新通知状态", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "c2", 
+                            target: "c3", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "收集统计数据", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 系统到管理员
+                        instance.connect({ 
+                            source: "c3", 
+                            target: "a5", 
+                            anchors: ["Left", "Bottom"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "提供统计结果", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 系统到用户
+                        instance.connect({ 
+                            source: "c2", 
+                            target: "d1", 
+                            anchors: ["Right", "Left"] 
+                        });
+                        
+                        // 用户内部
+                        instance.connect({ 
+                            source: "d1", 
+                            target: "d2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "阅读通知", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "d2", 
+                            target: "d3", 
+                            anchors: ["Right", "Left"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "是", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        console.log('所有连接已创建');
+                        
+                        // 添加按钮让用户强制重绘
+                        var buttonDiv = document.createElement('div');
+                        buttonDiv.style.margin = '10px 0';
+                        buttonDiv.innerHTML = '<button id="repaintBtn" style="padding: 5px 10px; background-color: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer;">强制重绘连接线</button>';
+                        document.querySelector('.process-diagram').appendChild(buttonDiv);
+                        
+                        document.getElementById('repaintBtn').addEventListener('click', function() {
+                            console.log('手动重绘所有连接');
+                            instance.repaintEverything();
+                        });
+                        
+                    } catch (e) {
+                        console.error('创建连接失败：', e);
+                    }
+                }, 800);
+                
+                // 窗口大小改变时自动调整
+                window.addEventListener('resize', function() {
+                    console.log('窗口大小改变，重绘连接');
+                    instance.repaintEverything();
+                });
+                
+            } catch (error) {
+                console.error('jsPlumb初始化错误:', error);
+                var errorMsg = document.createElement('div');
+                errorMsg.style.color = 'red';
+                errorMsg.style.padding = '20px';
+                errorMsg.style.backgroundColor = '#ffeeee';
+                errorMsg.style.border = '1px solid red';
+                errorMsg.style.margin = '10px';
+                errorMsg.innerHTML = '<strong>jsPlumb初始化错误:</strong> ' + error.message;
+                document.getElementById('notification-swimlane').appendChild(errorMsg);
+            }
+        });
+    </script>
+</body>
+</html> 

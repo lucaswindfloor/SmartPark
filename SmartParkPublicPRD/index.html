@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区公共服务平台 - 产品需求设计文档</title>
+    <style>
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            border-bottom: 2px solid #2E6AE6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #0F2645;
+            font-size: 28px;
+        }
+        h2 {
+            color: #2E6AE6;
+            font-size: 24px;
+            margin-top: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #1D4073;
+            font-size: 20px;
+            margin-top: 30px;
+        }
+        p, ul, ol {
+            margin-bottom: 16px;
+        }
+        ul, ol {
+            padding-left: 25px;
+        }
+        .highlight {
+            background-color: #f6f8fd;
+            padding: 15px;
+            border-left: 4px solid #4CBBFF;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f6f8fd;
+            color: #1D4073;
+        }
+        .navigation {
+            background-color: #f6f8fd;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        .navigation ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .navigation li {
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        .navigation a {
+            color: #2E6AE6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        .version-table {
+            width: 100%;
+        }
+        strong {
+            font-weight: bold;
+            color: #1D4073;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>智慧园区公共服务平台 - 产品需求设计文档</h1>
+        <p>本文档详细描述了湘江科创基地智慧园区公共服务平台的产品需求设计，旨在为开发团队提供明确的产品目标、功能规划和实施指南。</p>
+    </header>
+
+    <div class="navigation">
+        <h3>文档导航</h3>
+        <ul>
+            <li><a href="index.html">文档概述</a></li>
+            <li><a href="user-research.html">用户研究与场景分析</a></li>
+            <li><a href="roles-permissions.html">用户角色与权限</a></li>
+            <li><a href="functional-structure.html">功能结构设计</a></li>
+            <li><a href="business-process.html">业务流程设计</a></li>
+            <li><a href="ui-interaction.html">界面与交互设计</a></li>
+            <li><a href="non-functional.html">非功能性需求</a></li>
+            <li><a href="implementation.html">实施计划</a></li>
+        </ul>
+    </div>
+
+    <h2>1. 文档概述</h2>
+    
+    <h3>1.1 项目背景与目标</h3>
+    <p>湘江科创基地智慧园区系统由两个核心平台组成：</p>
+
+    <ul>
+        <li><strong>智慧园区综合管理平台</strong>：面向园区管理方使用，包括工作门户、招商管理、运营管理、财务管理、服务管理、资产管理、综合统计等功能模块，是园区内部管理的核心工具。</li>
+        <li><strong>智慧园区公共服务平台</strong>：面向园区企业及员工、公众使用，提供便捷的园区服务和信息获取渠道，是连接园区与用户的服务门户。</li>
+    </ul>
+
+    <p>本文档重点描述<strong>智慧园区公共服务平台</strong>的设计方案，该平台以用户视角为核心，旨在解决传统园区管理中存在的痛点问题：</p>
+    
+    <ul>
+        <li><strong>信息不对称</strong>：园区政策、活动、通知等信息传达效率低下</li>
+        <li><strong>服务流程繁琐</strong>：传统服务申请流程复杂，审批链路长，效率低</li>
+        <li><strong>资源利用率低</strong>：会议室等公共资源预订管理效率不高</li>
+        <li><strong>服务体验割裂</strong>：多项服务需要通过不同渠道办理，用户体验不连贯</li>
+        <li><strong>缴费方式单一</strong>：传统线下缴费方式不便捷，缺乏多元化支付选择</li>
+    </ul>
+
+    <div class="highlight">
+        <h4>核心目标：</h4>
+        <ol>
+            <li>构建一站式园区综合服务平台，实现园区企业全生命周期服务数字化</li>
+            <li>打造流畅高效的园区服务申请、审批、执行流程</li>
+            <li>提供便捷的园区信息查阅、资源预订和费用缴纳渠道</li>
+            <li>建立园区、企业与员工之间的高效互动机制</li>
+            <li>为园区管理方提供数据支撑，优化园区运营效率</li>
+        </ol>
+    </div>
+
+    <h3>1.2 产品愿景</h3>
+    <p>智慧园区公共服务平台致力于成为连接园区管理方与企业用户的核心纽带，以用户为中心打造"高效、便捷、智能、开放"的园区服务生态。</p>
+    
+    <h4>长期目标：</h4>
+    <ul>
+        <li>成为园区企业日常运营的必备工具和首选渠道</li>
+        <li>建立完整的园区数字孪生体系，实现园区资源的可视化管理</li>
+        <li>通过数据驱动的运营模式，持续优化园区服务质量</li>
+        <li>构建园区企业间的协作网络，促进园区产业生态发展</li>
+        <li>形成可复制、可推广的智慧园区服务标准和模式</li>
+    </ul>
+
+    <h4>价值主张：</h4>
+    <ul>
+        <li><strong>对企业</strong>：降低运营成本，提升办事效率，享受高质量园区服务</li>
+        <li><strong>对员工</strong>：简化日常办事流程，提供便捷的工作生活体验</li>
+        <li><strong>对园区</strong>：提升管理效率，增强园区吸引力，促进可持续发展</li>
+        <li><strong>对社会</strong>：示范智慧园区建设，推动产业园区数字化转型</li>
+    </ul>
+
+    <h3>1.3 企业全生命周期服务</h3>
+    <p>智慧园区公共服务平台将覆盖企业从意向入驻到最终退出的整个生命周期，提供全流程的数字化服务支持：</p>
+
+    <div class="highlight">
+        <h4>招商阶段：</h4>
+        <ul>
+            <li><strong>房源查看</strong>：公众可通过平台浏览园区房源信息、价格和配套服务</li>
+            <li><strong>意向登记</strong>：潜在客户可在线提交入驻意向，系统自动推送给招商团队</li>
+            <li><strong>园区展示</strong>：展示园区规划、发展历程、服务配套等信息，吸引潜在客户</li>
+        </ul>
+
+        <h4>合同签订阶段：</h4>
+        <ul>
+            <li><strong>账号激活</strong>：企业获得平台账号，完成初步注册</li>
+            <li><strong>合同确认</strong>：查看合同条款，确认房源和费用</li>
+            <li><strong>首期款支付</strong>：通过平台支付押金和首期租金</li>
+        </ul>
+
+        <h4>履约阶段：</h4>
+        <ul>
+            <li><strong>企业入驻</strong>：完成入驻手续，管理企业信息和员工</li>
+            <li><strong>日常服务</strong>：申请各类园区服务（会议室预订、维修等）</li>
+            <li><strong>费用管理</strong>：查看账单、在线缴费、开票申请</li>
+            <li><strong>信息获取</strong>：接收园区通知、政策和活动信息</li>
+            <li><strong>资源预订</strong>：预订会议室、申请空调加时、购买停车月卡等</li>
+            <li><strong>合同变更/续签</strong>：在线申请合同变更或续签</li>
+        </ul>
+
+        <h4>退租阶段：</h4>
+        <ul>
+            <li><strong>退租申请</strong>：在线提交退租申请</li>
+            <li><strong>退园手续</strong>：办理退园结算和相关手续</li>
+            <li><strong>费用结算</strong>：完成最终费用结算，处理押金退还</li>
+        </ul>
+    </div>
+
+    <h3>1.4 目标用户群体</h3>
+    <p>本平台面向三类核心用户群体：</p>
+
+    <h4>1. 企业管理员</h4>
+    <ul>
+        <li><strong>特征</strong>：园区入驻企业的管理层人员，负责企业在园区内的各项事务管理</li>
+        <li><strong>行为习惯</strong>：频繁处理企业租赁、缴费、员工管理等业务，需要高效的企业管理工具</li>
+        <li><strong>需求</strong>：全面的企业事务管理权限，包括合同查看、账单缴费、员工管理等</li>
+    </ul>
+
+    <h4>2. 企业员工</h4>
+    <ul>
+        <li><strong>特征</strong>：园区企业的普通员工，日常需使用园区各类服务和设施</li>
+        <li><strong>行为习惯</strong>：工作日频繁使用会议室、报修、访客申请等服务，偏好移动端操作</li>
+        <li><strong>需求</strong>：便捷的日常服务申请渠道，个人相关服务的管理功能</li>
+    </ul>
+
+    <h4>3. 访客/公众</h4>
+    <ul>
+        <li><strong>特征</strong>：潜在入驻企业、临时访客、供应商等非园区常驻人员</li>
+        <li><strong>行为习惯</strong>：不定期访问园区，需临时了解园区信息或申请服务</li>
+        <li><strong>需求</strong>：园区基本信息查询，临时访问申请，简单服务使用</li>
+    </ul>
+
+    <h3>1.5 设计理念</h3>
+    <p>智慧园区公共服务平台采用以下核心设计理念：</p>
+
+    <ul>
+        <li><strong>用户视角</strong>：从用户需求出发设计功能和流程，而非从管理视角划分模块</li>
+        <li><strong>场景驱动</strong>：基于真实业务场景设计功能，确保流程的连贯性和易用性</li>
+        <li><strong>统一入口</strong>：提供一站式服务门户，集中展示用户可用的各类服务和信息</li>
+        <li><strong>角色适配</strong>：根据不同用户角色提供差异化的功能和内容</li>
+        <li><strong>移动优先</strong>：考虑移动场景下的使用体验，确保各类终端的适配性</li>
+    </ul>
+
+    <h3>1.6 文档版本控制</h3>
+    <table class="version-table">
+        <thead>
+            <tr>
+                <th>版本号</th>
+                <th>修订日期</th>
+                <th>修订人</th>
+                <th>修订说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>V1.0.0</td>
+                <td>2023-06-15</td>
+                <td>产品团队</td>
+                <td>初版创建，完成需求框架设计</td>
+            </tr>
+            <tr>
+                <td>V1.1.0</td>
+                <td>2023-07-01</td>
+                <td>产品团队</td>
+                <td>根据用户调研结果修订功能需求</td>
+            </tr>
+            <tr>
+                <td>V1.2.0</td>
+                <td>2023-07-15</td>
+                <td>产品团队</td>
+                <td>细化业务流程，完善交互设计</td>
+            </tr>
+            <tr>
+                <td>V1.3.0</td>
+                <td>2023-08-01</td>
+                <td>技术团队</td>
+                <td>根据技术可行性分析调整部分功能</td>
+            </tr>
+            <tr>
+                <td>V2.0.0</td>
+                <td>2023-08-15</td>
+                <td>产品&技术团队</td>
+                <td>最终确认版本，详细梳理全部功能点</td>
+            </tr>
+            <tr>
+                <td>V2.1.0</td>
+                <td>2023-08-30</td>
+                <td>产品团队</td>
+                <td>调整功能结构，从用户视角重新组织菜单</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <footer style="margin-top: 50px; text-align: center; color: #666; border-top: 1px solid #eee; padding-top: 20px;">
+        <p>智慧园区公共服务平台产品需求设计文档 © 2023 湘江科创基地</p>
+    </footer>
+</body>
+</html> 

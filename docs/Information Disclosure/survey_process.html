@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>调查问卷业务流程</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1, h2, h3, h4 { color: #1890ff; }
+        h1 { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #1890ff; }
+        .section { margin-bottom: 30px; background: #f8f9fa; border-radius: 8px; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        .process-diagram { width: 100%; padding: 20px; background: #fff; border-radius: 5px; margin: 15px 0; text-align: center; }
+        .highlight { background-color: #fff3e0; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .mermaid { text-align: center; margin: 20px 0; }
+        .navigation { display: flex; justify-content: space-between; margin: 20px 0; padding: 10px; background-color: #f0f0f0; border-radius: 4px; }
+        .navigation a { text-decoration: none; color: #1890ff; font-weight: bold; padding: 5px 10px; }
+        .navigation a:hover { background-color: #e6f7ff; border-radius: 4px; }
+
+        /* 泳道图样式 */
+        .swimlane-container {
+            position: relative;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            width: 100%;
+            min-width: 1000px;
+        }
+        .swimlane-header {
+            display: flex;
+            height: 40px;
+        }
+        .swimlane-title {
+            flex: 1;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+        }
+        .swimlane {
+            position: relative;
+            width: 100%;
+            height: 800px; /* 调整高度 */
+            font-size: 14px;
+        }
+        .swimlane-body {
+            display: flex;
+            height: calc(100% - 40px);
+        }
+        .lane {
+            flex: 1;
+            position: relative;
+            height: 100%;
+            border-right: 1px dashed #ccc;
+            padding: 10px;
+            min-width: 250px;
+        }
+        .lane:last-child {
+            border-right: none;
+        }
+        .node {
+            position: absolute;
+            width: 160px;
+            height: 50px;
+            left: 20px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .decision-node { /* 可以保留，如果需要决策点 */
+            position: absolute;
+            left: 45px;
+            width: 70px;
+            height: 70px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+        .decision-text {
+            transform: rotate(-45deg);
+            position: absolute;
+            width: 120px;
+            left: -25px;
+            top: 25px;
+        }
+        #admin-lane .node { /* 园区管理员 */
+            background-color: #e6f7ff;
+            border-color: #1890ff;
+            box-shadow: 0 2px 4px rgba(24, 144, 255, 0.2);
+        }
+        #system-lane .node { /* 系统 */
+            background-color: #f5f5f5;
+            border-color: #bfbfbf;
+            box-shadow: 0 2px 4px rgba(191, 191, 191, 0.2);
+        }
+        #user-lane .node, #user-lane .decision-node { /* 企业用户/公众 */
+            background-color: #f6ffed;
+            border-color: #52c41a;
+            box-shadow: 0 2px 4px rgba(82, 196, 26, 0.2);
+        }
+
+        /* 连接线样式 */
+        .jtk-connector { z-index: 4; }
+        .jtk-endpoint { z-index: 5; }
+        .jtk-overlay { z-index: 6; }
+        ._jsPlumb_connector { z-index: 4; }
+        ._jsPlumb_endpoint { z-index: 5; }
+        ._jsPlumb_overlay { z-index: 6; }
+        .connection-label { background-color: white; padding: 2px 5px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; }
+
+        /* 分隔线和背景 */
+        .horizontal-divider { position: absolute; height: 1px; width: 90%; background-color: #eee; left: 5%; z-index: 5; }
+        .alt-bg { position: absolute; height: 80px; width: 100%; background-color: #fafafa; left: 0; z-index: 1; }
+    </style>
+    <script src="jsplumb.min.js"></script>
+</head>
+<body>
+    <h1>信息公开模块 - 调查问卷业务流程</h1>
+
+    <div class="navigation">
+        <a href="park_activity_process.html">← 上一个：园区活动</a>
+        <div>
+            <a href="notification_announcement_process.html">通知公告</a> |
+            <a href="policy_document_process.html">政策文件</a> |
+            <a href="park_activity_process.html">园区活动</a> |
+            <a href="survey_process.html">调查问卷</a> |
+            <a href="demand_publishing_process.html">需求发布</a>
+        </div>
+        <a href="demand_publishing_process.html">下一个：需求发布 →</a>
+    </div>
+
+    <div class="section">
+        <h2>调查问卷业务流程</h2>
+        <div class="highlight">
+            <p><strong>场景</strong>: 园区管理方希望了解企业对新推出的某项服务的满意度，需要发起一次调查问卷，收集反馈并进行分析。</p>
+        </div>
+
+        <h3>核心业务流程泳道图</h3>
+        <div class="process-diagram">
+            <div id="survey-process-diagram" class="swimlane-container">
+                <div class="swimlane-header">
+                    <div class="swimlane-title" style="background-color: #e6f7ff; border: 1px solid #1890ff; color: #1890ff;">园区管理员</div>
+                    <div class="swimlane-title" style="background-color: #f5f5f5; border: 1px solid #bfbfbf; color: #bfbfbf;">系统</div>
+                    <div class="swimlane-title" style="background-color: #f6ffed; border: 1px solid #52c41a; color: #52c41a;">企业用户/公众</div>
+                </div>
+
+                <div class="swimlane" id="survey-swimlane">
+                    <div class="swimlane-body">
+                        <!-- 背景和分隔线 -->
+                        <div class="alt-bg" style="top: 120px;"></div>
+                        <div class="alt-bg" style="top: 280px;"></div>
+                        <div class="alt-bg" style="top: 440px;"></div>
+                        <div class="alt-bg" style="top: 600px;"></div>
+                        <div class="alt-bg" style="top: 760px;"></div>
+                        <div class="horizontal-divider" style="top: 200px;"></div>
+                        <div class="horizontal-divider" style="top: 360px;"></div>
+                        <div class="horizontal-divider" style="top: 520px;"></div>
+                        <div class="horizontal-divider" style="top: 680px;"></div>
+
+                        <!-- 园区管理员泳道 -->
+                        <div class="lane" id="admin-lane">
+                            <div class="node" id="a1" style="top: 80px; left: 40px;">创建问卷 (设计问题与选项)</div>
+                            <div class="node" id="a2" style="top: 230px; left: 40px;">设置问卷范围与有效期</div>
+                            <div class="node" id="a3" style="top: 380px; left: 40px;">发布问卷</div>
+                            <div class="node" id="a4" style="top: 650px; left: 40px;">查看问卷结果与统计</div>
+                        </div>
+
+                        <!-- 系统泳道 -->
+                        <div class="lane" id="system-lane">
+                            <div class="node" id="c1" style="top: 380px; left: 40px;">接收发布指令</div>
+                            <div class="node" id="c2" style="top: 500px; left: 40px;">发布到公共服务平台 & 推送通知</div>
+                            <div class="node" id="c3" style="top: 620px; left: 40px;">收集/统计问卷回复</div>
+                        </div>
+
+                        <!-- 企业用户/公众泳道 -->
+                        <div class="lane" id="user-lane">
+                            <div class="node" id="d1" style="top: 500px; left: 40px;">查看问卷列表/接收通知</div>
+                            <div class="node" id="d2" style="top: 620px; left: 40px;">参与问卷调查 (填写并提交)</div>
+                            <div class="node" id="d3" style="top: 740px; left: 40px;">(可选) 查看公开结果</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p style="font-style: italic; color: #666; margin-top: 10px;">图1: 调查问卷业务流程泳道图</p>
+        </div>
+
+        <h3>核心流程说明</h3>
+        <table>
+            <tr>
+                <th width="20%">角色</th>
+                <th width="30%">操作步骤</th>
+                <th width="50%">说明</th>
+            </tr>
+            <tr>
+                <td rowspan="4">园区管理员</td>
+                <td>创建问卷</td>
+                <td>在管理平台设计问卷的标题、描述、问题（单选、多选、文本等）及选项</td>
+            </tr>
+            <tr>
+                <td>设置问卷范围与有效期</td>
+                <td>设定问卷的可见范围（如所有企业、特定类型企业、公众等）和起止时间</td>
+            </tr>
+            <tr>
+                <td>发布问卷</td>
+                <td>确认问卷内容无误后，发布问卷</td>
+            </tr>
+            <tr>
+                <td>查看问卷结果与统计</td>
+                <td>查看实时收集到的问卷回复、各项结果统计图表及详细数据</td>
+            </tr>
+            <tr>
+                <td rowspan="3">系统</td>
+                <td>接收发布指令</td>
+                <td>保存问卷信息，状态置为"发布中"</td>
+            </tr>
+            <tr>
+                <td>发布到公共服务平台 & 推送通知</td>
+                <td>将问卷推送至公共服务平台的信息公开列表，并根据范围通过站内信等方式通知目标用户</td>
+            </tr>
+             <tr>
+                <td>收集/统计问卷回复</td>
+                <td>接收用户提交的问卷数据，实时更新统计结果，处理问卷状态（如到期自动关闭）</td>
+            </tr>
+           <tr>
+                <td rowspan="3">企业用户/公众</td>
+                <td>查看问卷列表/接收通知</td>
+                <td>在公共服务平台的信息公开模块看到发布的问卷，或收到系统通知</td>
+            </tr>
+            <tr>
+                <td>参与问卷调查</td>
+                <td>打开问卷链接，填写答案并提交</td>
+            </tr>
+             <tr>
+                <td>(可选) 查看公开结果</td>
+                <td>如果管理员设置了结果公开，用户可以在问卷结束后查看汇总统计结果</td>
+            </tr>
+        </table>
+
+        <h3>管理操作说明</h3>
+        <p>调查问卷模块支持以下管理操作：</p>
+        <table>
+            <tr>
+                <th width="25%">管理操作</th>
+                <th width="75%">功能说明</th>
+            </tr>
+            <tr>
+                <td>查询问卷</td>
+                <td>园区管理员可以按标题、状态（草稿、发布中、已结束）、发布时间等条件查询筛选问卷。</td>
+            </tr>
+            <tr>
+                <td>修改问卷</td>
+                <td>对于"草稿"状态或未开始的问卷，管理员可以修改问卷内容、设置等。已发布的问卷通常不允许修改问题结构，以免影响已收集数据的有效性，但可修改结束时间等。</td>
+            </tr>
+             <tr>
+                <td>删除问卷</td>
+                <td>管理员可以删除问卷（通常限制在草稿或已结束后操作），删除后相关数据将移除。</td>
+            </tr>
+            <tr>
+                <td>置顶问卷</td>
+                <td>管理员可将重要或进行中的问卷置顶，使其在公共服务平台信息公开列表中优先展示。</td>
+            </tr>
+             <tr>
+                <td>导出结果</td>
+                <td>管理员可以将问卷的统计结果或原始回复数据导出为Excel或其他格式，便于离线分析。</td>
+            </tr>
+             <tr>
+                <td>查看参与详情</td>
+                <td>管理员可以查看参与问卷的用户列表（若非匿名）及每个用户的提交内容。</td>
+            </tr>
+            <tr>
+                <td>手动结束问卷</td>
+                <td>管理员可以在有效期结束前手动结束问卷，停止接收新的回复。</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>状态转换</h2>
+        <table>
+            <tr>
+                <th>状态</th>
+                <th>描述</th>
+                <th>转换条件</th>
+                <th>下一状态</th>
+            </tr>
+            <tr>
+                <td>草稿</td>
+                <td>问卷已创建但未发布</td>
+                <td>管理员点击"发布"</td>
+                <td>发布中</td>
+            </tr>
+            <tr>
+                <td>发布中</td>
+                <td>问卷已发布，在有效期内，可供用户参与</td>
+                <td>到达问卷结束时间 或 管理员手动结束</td>
+                <td>已结束</td>
+            </tr>
+            <tr>
+                <td>发布中</td>
+                <td>问卷已发布</td>
+                <td>管理员设置置顶</td>
+                <td>置顶中</td>
+            </tr>
+             <tr>
+                <td>置顶中</td>
+                <td>问卷处于置顶状态</td>
+                <td>管理员取消置顶</td>
+                <td>发布中 (若仍在有效期) / 已结束 (若已过有效期)</td>
+            </tr>
+             <tr>
+                <td>置顶中</td>
+                <td>问卷处于置顶状态</td>
+                <td>到达问卷结束时间 或 管理员手动结束</td>
+                <td>已结束</td>
+            </tr>
+            <tr>
+                <td>已结束</td>
+                <td>问卷已过有效期或被手动结束，不再接收新回复</td>
+                <td>管理员进行归档操作（如果需要）</td>
+                <td>已归档</td>
+            </tr>
+            <tr>
+                <td>任意状态</td>
+                <td>问卷任意状态</td>
+                <td>管理员执行删除操作</td>
+                <td>已删除</td>
+            </tr>
+        </table>
+
+        <h3>数据流说明</h3>
+        <p>调查问卷业务流程涉及的主要数据流如下：</p>
+        <ol>
+            <li><strong>问卷创建与发布流</strong>：管理员设计问卷（问题、选项）→设置范围、有效期→点击发布→系统保存问卷，状态更新为"发布中"→系统推送到公共平台&发送通知。</li>
+            <li><strong>用户参与流</strong>：用户在公共平台查看/接收通知→打开问卷→填写答案→提交问卷→系统记录用户回复数据。</li>
+            <li><strong>结果处理流</strong>：系统实时收集回复→自动聚合统计数据（各选项占比等）→管理员登录管理平台→查看统计图表、参与详情、导出数据。</li>
+            <li><strong>状态管理流</strong>：系统监控问卷有效期→到期自动更新状态为"已结束"；管理员可手动结束、删除、置顶问卷→系统更新问卷状态及在公共平台的可见性/排序。</li>
+        </ol>
+
+        <h3>异常处理</h3>
+        <p>在调查问卷业务流程中可能出现的异常情况及处理方式：</p>
+        <table>
+            <tr>
+                <th width="30%">异常情况</th>
+                <th width="30%">影响</th>
+                <th width="40%">处理方式</th>
+            </tr>
+            <tr>
+                <td>问卷设计不合理</td>
+                <td>用户难以理解或回答，回收数据质量低</td>
+                <td>管理员在发布前预览测试；提供清晰的问卷说明；必要时提前结束并重新设计发布。</td>
+            </tr>
+            <tr>
+                <td>用户提交失败</td>
+                <td>用户答案未被记录</td>
+                <td>系统应提供友好的错误提示，允许用户重试；记录错误日志供管理员排查。</td>
+            </tr>
+            <tr>
+                <td>参与率过低</td>
+                <td>收集到的样本量不足，结果代表性差</td>
+                <td>管理员可通过站内信等方式再次提醒；检查问卷范围设置是否准确；适当延长问卷有效期。</td>
+            </tr>
+            <tr>
+                <td>统计数据错误</td>
+                <td>管理员获取错误的分析结果</td>
+                <td>系统进行充分测试；提供数据校验机制；管理员发现异常可联系技术支持。</td>
+            </tr>
+        </table>
+    </div>
+
+     <div class="section">
+        <h2>功能关键点说明</h2>
+        <table>
+            <tr>
+                <th width="25%">功能点</th>
+                <th width="75%">说明</th>
+            </tr>
+            <tr>
+                <td>多种问题类型</td>
+                <td>支持单选题、多选题、填空题（文本输入）、评分题等多种常见问题类型，满足不同调查需求。</td>
+            </tr>
+            <tr>
+                <td>发布范围控制</td>
+                <td>管理员可以精确控制问卷的发布对象，如全体园区用户、特定企业类型、指定企业列表或完全公开。</td>
+            </tr>
+            <tr>
+                <td>结果统计与可视化</td>
+                <td>系统自动对收集到的数据进行统计分析，生成饼图、柱状图等可视化图表，直观展示各项结果占比。</td>
+            </tr>
+            <tr>
+                <td>数据导出</td>
+                <td>支持将原始答卷数据和统计结果导出为Excel等格式，方便管理员进行更深入的数据分析和存档。</td>
+            </tr>
+            <tr>
+                <td>置顶功能</td>
+                <td>管理员可将进行中的重要问卷置顶，在公共服务平台的信息公开列表中优先显示，提高参与度。</td>
+            </tr>
+            <tr>
+                <td>匿名与实名设置</td>
+                <td>创建问卷时可选择是否允许匿名提交，以适应不同场景需求（如敏感问题反馈 vs. 需要追溯具体用户的调查）。</td>
+            </tr>
+            <tr>
+                <td>预览功能</td>
+                <td>管理员在发布问卷前可以预览问卷在用户端的实际效果，检查问题、选项和流程是否正确。</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>需求对照</h2>
+        <table>
+            <tr>
+                <th width="30%">需求项 (14.2.4)</th>
+                <th width="20%">是否支持</th>
+                <th width="50%">实现方式</th>
+            </tr>
+            <tr>
+                <td>新增、删除、查询、修改、发布、置顶功能</td>
+                <td>✓ 支持</td>
+                <td>通过管理平台提供完整的问卷管理操作界面，支持按条件查询筛选。</td>
+            </tr>
+            <tr>
+                <td>查看参与问卷调查</td>
+                <td>✓ 支持</td>
+                <td>用户可在公共服务平台查看可参与的问卷列表并进行填写提交。管理员可在管理平台查看参与详情（如非匿名）。</td>
+            </tr>
+             <tr>
+                <td>查看所有调查结果</td>
+                <td>✓ 支持</td>
+                <td>管理员可在管理平台查看所有已结束问卷的详细结果和原始数据。若设置公开，用户也可在公共平台查看汇总结果。</td>
+            </tr>
+             <tr>
+                <td>查看问卷调查各项结果统计</td>
+                <td>✓ 支持</td>
+                <td>系统自动生成统计图表和数据摘要，管理员可在管理平台查看。</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="navigation">
+         <a href="park_activity_process.html">← 上一个：园区活动</a>
+        <div>
+            <a href="notification_announcement_process.html">通知公告</a> |
+            <a href="policy_document_process.html">政策文件</a> |
+            <a href="park_activity_process.html">园区活动</a> |
+            <a href="survey_process.html">调查问卷</a> |
+            <a href="demand_publishing_process.html">需求发布</a>
+        </div>
+        <a href="demand_publishing_process.html">下一个：需求发布 →</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM已加载，准备初始化jsPlumb for Survey');
+
+            if (typeof jsPlumb === 'undefined') {
+                console.error('错误：jsPlumb库未加载！');
+                 var errorDiv = document.createElement('div');
+                errorDiv.style.color = 'red';
+                errorDiv.style.padding = '20px';
+                errorDiv.style.backgroundColor = '#ffeeee';
+                errorDiv.style.border = '1px solid red';
+                errorDiv.style.margin = '10px';
+                errorDiv.innerHTML = '<strong>错误：jsPlumb库未能加载</strong><p>请检查 jsplumb.min.js 文件路径和加载情况。</p>';
+                document.getElementById('survey-swimlane').appendChild(errorDiv);
+                return;
+            }
+
+            try {
+                console.log('jsPlumb已加载，版本：', jsPlumb.version);
+
+                var instance = jsPlumb.getInstance({
+                    Connector: ["Flowchart", { cornerRadius: 5, stub: 30 }],
+                    Endpoint: ["Dot", { radius: 4 }],
+                    EndpointStyle: { fill: "#52c41a" }, // Green theme for user/public
+                    PaintStyle: { stroke: "#52c41a", strokeWidth: 2 },
+                    HoverPaintStyle: { stroke: "#389e0d", strokeWidth: 3 },
+                    ConnectionOverlays: [
+                        ["Arrow", { location: 1, width: 10, length: 10, foldback: 0.8 }],
+                        ["Label", { cssClass: "connection-label", label: "", location: 0.5 }]
+                    ],
+                    Container: "survey-swimlane" // Use the correct container ID
+                });
+
+                console.log('jsPlumb实例已创建 for Survey');
+
+                 // 连接线绘制 (增加延迟确保元素渲染完成)
+                setTimeout(function() {
+                    console.log('开始绘制调查问卷流程连接线...');
+                    try {
+                        // 管理员内部流程
+                        instance.connect({ source: "a1", target: "a2", anchors: ["Bottom", "Top"], overlays: [["Label", { label: "设置参数", cssClass: "connection-label" }]] });
+                        instance.connect({ source: "a2", target: "a3", anchors: ["Bottom", "Top"], overlays: [["Label", { label: "确认发布", cssClass: "connection-label" }]] });
+
+                        // 管理员 -> 系统 (发布)
+                        instance.connect({ source: "a3", target: "c1", anchors: ["Right", "Left"] });
+
+                        // 系统内部流程
+                        instance.connect({ source: "c1", target: "c2", anchors: ["Bottom", "Top"], overlays: [["Label", { label: "处理发布", cssClass: "connection-label" }]] });
+                        instance.connect({ source: "c2", target: "c3", anchors: ["Bottom", "Top"], overlays: [["Label", { label: "接收回复", cssClass: "connection-label" }]] });
+
+                        // 系统 -> 用户 (推送/展示)
+                        instance.connect({ source: "c2", target: "d1", anchors: ["Right", "Left"] });
+
+                        // 用户内部流程
+                        instance.connect({ source: "d1", target: "d2", anchors: ["Bottom", "Top"], overlays: [["Label", { label: "查看并参与", cssClass: "connection-label" }]] });
+                        instance.connect({ source: "d2", target: "d3", anchors: ["Bottom", "Top"], overlays: [["Label", { label: "提交完成", cssClass: "connection-label" }]] });
+
+                         // 用户 -> 系统 (提交问卷)
+                        instance.connect({ source: "d2", target: "c3", anchors: ["Left", "Right"] }); // User submits to system
+
+                        // 系统 -> 管理员 (查看结果)
+                        instance.connect({ source: "c3", target: "a4", anchors: ["Left", "Bottom"], overlays: [["Label", { label: "提供结果", cssClass: "connection-label" }]] });
+
+
+                        console.log('调查问卷流程连接线绘制完成');
+
+                        // 添加重绘按钮
+                        var buttonDiv = document.createElement('div');
+                        buttonDiv.style.margin = '10px 0';
+                        buttonDiv.innerHTML = '<button id="repaintBtnSurvey" style="padding: 5px 10px; background-color: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer;">强制重绘连接线</button>';
+                        document.querySelector('.process-diagram').appendChild(buttonDiv);
+
+                        document.getElementById('repaintBtnSurvey').addEventListener('click', function() {
+                            console.log('手动重绘调查问卷连接线');
+                            instance.repaintEverything();
+                        });
+
+                    } catch (e) {
+                        console.error('创建调查问卷连接失败：', e);
+                    }
+                }, 500); // 延迟500ms
+
+                window.addEventListener('resize', function() {
+                    console.log('窗口大小改变，重绘调查问卷连接');
+                    instance.repaintEverything();
+                });
+
+            } catch (error) {
+                console.error('jsPlumb初始化错误 (Survey):', error);
+                 var errorMsg = document.createElement('div');
+                errorMsg.style.color = 'red';
+                errorMsg.style.padding = '20px';
+                errorMsg.style.backgroundColor = '#ffeeee';
+                errorMsg.style.border = '1px solid red';
+                errorMsg.style.margin = '10px';
+                errorMsg.innerHTML = '<strong>jsPlumb初始化错误:</strong> ' + error.message;
+                document.getElementById('survey-swimlane').appendChild(errorMsg);
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区停车管理 - 公共服务平台设计</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1890ff;
+            border-bottom: 2px solid #1890ff;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #096dd9;
+            margin-top: 30px;
+            border-bottom: 1px solid #e8e8e8;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #1890ff;
+            margin-top: 25px;
+        }
+        h4 {
+            color: #555;
+            margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .feature-card {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #f9f9f9;
+        }
+        .feature-title {
+            font-weight: bold;
+            color: #1890ff;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        ul, ol {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .nav-link {
+            display: inline-block;
+            margin-right: 15px;
+            text-decoration: none;
+            color: #1890ff;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .navbar {
+            margin: 20px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        .mock-ui {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px dashed #d9d9d9;
+        }
+        .highlight {
+            background-color: #fffbe6;
+            border-left: 4px solid #faad14;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .process-flow {
+            background-color: #f0f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html" class="nav-link">返回目录</a>
+    </div>
+
+    <h1>公共服务平台停车管理功能设计</h1>
+    
+    <div class="section">
+        <h2>1. 功能概述</h2>
+        
+        <p>公共服务平台的停车管理功能主要面向园区企业、员工和访客，提供便捷的停车服务体验，包括临时停车缴费、月卡申请和管理、企业停车管理等功能。本文档详细描述这些功能的设计方案和用户交互流程。</p>
+        
+        <div class="highlight">
+            <p><strong>核心功能包括：</strong></p>
+            <ol>
+                <li>临时停车缴费</li>
+                <li>停车月卡申请与管理</li>
+                <li>企业车辆与访客管理</li>
+                <li>停车费用查询与支付</li>
+                <li>发票申请与查询</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>2. 临时停车服务</h2>
+        
+        <div class="feature-card">
+            <div class="feature-title">2.1 临时停车缴费</div>
+            <p><strong>功能描述：</strong>允许临时进入园区的车辆在离开前便捷缴纳停车费用。</p>
+            
+            <h4>2.1.1 关键功能点</h4>
+            <ul>
+                <li>车牌号查询：用户输入车牌号查询当前停车费用</li>
+                <li>费用展示：显示入场时间、停车时长、费用计算明细</li>
+                <li>多种支付方式：支持微信支付、支付宝支付、银联支付等个人支付方式</li>
+                <li>企业代付：支持所属企业预付款支付或其他企业支付方式</li>
+                <li>支付确认：支付完成后显示支付凭证，支持分享和保存</li>
+                <li>历史记录：记录并展示用户的历史缴费记录</li>
+            </ul>
+            
+            <h4>2.1.2 用户界面设计</h4>
+            <div class="mock-ui">
+                <p><strong>临时停车缴费页面布局：</strong></p>
+                <ul>
+                    <li>顶部：页面标题、返回按钮</li>
+                    <li>车牌输入区：车牌号输入框、查询按钮</li>
+                    <li>费用信息区：入场时间、当前时间、停车时长、应付金额</li>
+                    <li>支付方式选择区：微信支付、支付宝支付、企业代付等选项</li>
+                    <li>底部：确认支付按钮</li>
+                </ul>
+            </div>
+            
+            <h4>2.1.3 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+用户输入车牌号 -> 系统查询停车信息 -> 展示费用明细 -> 
+用户选择支付方式 -> 完成支付 -> 显示支付凭证 -> 系统放行
+                </pre>
+            </div>
+            
+            <h4>2.1.4 特殊场景处理</h4>
+            <ul>
+                <li>车牌识别错误：提供人工服务入口，可联系客服处理</li>
+                <li>费用争议：提供费用计算明细和申诉渠道</li>
+                <li>支付失败：提供重新支付和其他支付方式选择</li>
+                <li>网络异常：支持离线模式和后续补缴</li>
+            </ul>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">2.2 发票申请</div>
+            <p><strong>功能描述：</strong>允许用户为临时停车费用申请开具电子发票。</p>
+            
+            <h4>2.2.1 关键功能点</h4>
+            <ul>
+                <li>发票类型选择：普通发票或专用发票</li>
+                <li>开票信息管理：添加、编辑、选择开票抬头信息</li>
+                <li>发票金额确认：显示可开票金额和已开票金额</li>
+                <li>发票用途选择：如交通费、差旅费等</li>
+                <li>电子发票接收：支持邮箱接收和应用内查看</li>
+                <li>发票状态跟踪：查看发票申请进度和处理状态</li>
+            </ul>
+            
+            <h4>2.2.2 用户界面设计</h4>
+            <div class="mock-ui">
+                <p><strong>发票申请页面布局：</strong></p>
+                <ul>
+                    <li>顶部：页面标题、返回按钮</li>
+                    <li>订单选择区：可选择单次或多次停车费用开票</li>
+                    <li>开票信息区：开票类型、抬头、税号等信息</li>
+                    <li>接收方式区：邮箱、手机号等接收方式</li>
+                    <li>底部：确认申请按钮</li>
+                </ul>
+            </div>
+            
+            <h4>2.2.3 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+用户选择需开票的停车记录 -> 填写/选择开票信息 -> 确认申请 -> 
+系统提交开票申请 -> 财务人员处理 -> 电子发票生成 -> 发送至用户
+                </pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>3. 月卡服务</h2>
+        
+        <div class="feature-card">
+            <div class="feature-title">3.1 月卡申请</div>
+            <p><strong>功能描述：</strong>允许企业或个人用户申请停车月卡，享受长期停车权益。</p>
+            
+            <h4>3.1.1 关键功能点</h4>
+            <ul>
+                <li>月卡类型选择：根据用户类型和需求选择适合的月卡类型</li>
+                <li>申请信息填写：车牌号、车主信息、联系方式等</li>
+                <li>证明材料上传：身份证、行驶证、工作证明等（如需）</li>
+                <li>月卡费用计算：根据月卡类型和时长自动计算费用</li>
+                <li>在线支付：支持多种支付方式完成月卡费用支付</li>
+                <li>申请状态查询：查看申请进度和审核结果</li>
+            </ul>
+            
+            <h4>3.1.2 用户界面设计</h4>
+            <div class="mock-ui">
+                <p><strong>月卡申请页面布局：</strong></p>
+                <ul>
+                    <li>顶部：页面标题、步骤指示器</li>
+                    <li>月卡选择区：展示不同类型月卡及其价格、权益</li>
+                    <li>申请信息区：表单填写区域，包含必要的申请信息字段</li>
+                    <li>材料上传区：支持拍照或上传证明材料</li>
+                    <li>费用确认区：展示费用计算明细和总金额</li>
+                    <li>底部：提交申请按钮</li>
+                </ul>
+            </div>
+            
+            <h4>3.1.3 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+用户选择月卡类型 -> 填写申请信息 -> 上传证明材料 -> 
+确认费用 -> 完成支付 -> 系统生成申请 -> 管理员审核 -> 
+审核通过后激活月卡 -> 通知用户
+                </pre>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">3.2 月卡续费</div>
+            <p><strong>功能描述：</strong>允许用户为即将到期的月卡续费，延长使用期限。</p>
+            
+            <h4>3.2.1 关键功能点</h4>
+            <ul>
+                <li>到期提醒：月卡到期前自动推送续费提醒</li>
+                <li>续费选择：支持选择续费时长（1个月、3个月、6个月、12个月等）</li>
+                <li>优惠计算：长期续费提供阶梯式优惠</li>
+                <li>在线支付：支持多种支付方式完成续费</li>
+                <li>自动续费：支持设置自动续费，到期自动扣款</li>
+                <li>续费记录：查看历史续费记录和费用明细</li>
+            </ul>
+            
+            <h4>3.2.2 用户界面设计</h4>
+            <div class="mock-ui">
+                <p><strong>月卡续费页面布局：</strong></p>
+                <ul>
+                    <li>顶部：页面标题、当前月卡信息</li>
+                    <li>续费选择区：不同续费时长选项及对应价格</li>
+                    <li>支付方式区：选择支付方式</li>
+                    <li>自动续费设置：开启/关闭自动续费选项</li>
+                    <li>底部：确认续费按钮</li>
+                </ul>
+            </div>
+            
+            <h4>3.2.3 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+系统发送到期提醒 -> 用户进入续费页面 -> 选择续费时长 -> 
+选择支付方式 -> 完成支付 -> 系统自动延长月卡有效期 -> 通知用户
+                </pre>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">3.3 月卡变更</div>
+            <p><strong>功能描述：</strong>允许用户变更月卡绑定的车辆或其他信息。</p>
+            
+            <h4>3.3.1 关键功能点</h4>
+            <ul>
+                <li>车牌变更：更换绑定的车牌号</li>
+                <li>联系信息变更：更新手机号、邮箱等联系方式</li>
+                <li>月卡类型升级：升级为更高级别的月卡类型</li>
+                <li>申请审核：变更申请需经过管理员审核</li>
+                <li>变更记录：记录历史变更信息</li>
+            </ul>
+            
+            <h4>3.3.2 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+用户提交变更申请 -> 填写变更信息 -> 系统生成变更申请 -> 
+管理员审核 -> 审核通过后更新月卡信息 -> 通知用户
+                </pre>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">3.4 月卡转让</div>
+            <p><strong>功能描述：</strong>允许用户将月卡转让给其他用户使用。</p>
+            
+            <h4>3.4.1 关键功能点</h4>
+            <ul>
+                <li>转让申请：提交月卡转让申请</li>
+                <li>受让人信息：填写受让人的基本信息和车辆信息</li>
+                <li>转让规则：展示转让的条件和限制</li>
+                <li>审核流程：管理员审核转让申请</li>
+                <li>转让记录：记录转让历史</li>
+            </ul>
+            
+            <h4>3.4.2 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+用户提交转让申请 -> 填写受让人信息 -> 系统生成转让申请 -> 
+管理员审核 -> 审核通过后更新月卡归属 -> 通知双方用户
+                </pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>4. 企业服务</h2>
+        
+        <div class="feature-card">
+            <div class="feature-title">4.1 企业车辆管理</div>
+            <p><strong>功能描述：</strong>允许企业管理员管理企业车辆和员工车辆信息。</p>
+            
+            <h4>4.1.1 关键功能点</h4>
+            <ul>
+                <li>车辆信息管理：添加、编辑、删除企业车辆信息</li>
+                <li>车辆分类：公务车、员工车辆等分类管理</li>
+                <li>权限设置：设置不同车辆的停车权限</li>
+                <li>批量操作：支持批量导入和导出车辆信息</li>
+                <li>月卡管理：统一管理企业名下的多张月卡</li>
+                <li>使用统计：查看企业车辆的停车使用情况和费用</li>
+            </ul>
+            
+            <h4>4.1.2 用户界面设计</h4>
+            <div class="mock-ui">
+                <p><strong>企业车辆管理页面布局：</strong></p>
+                <ul>
+                    <li>顶部：页面标题、搜索框、筛选器</li>
+                    <li>功能区：添加车辆、批量导入、导出等操作按钮</li>
+                    <li>车辆列表：展示车牌号、车主、类型、状态等信息</li>
+                    <li>详情区：点击车辆可查看和编辑详情</li>
+                    <li>统计区：显示车辆总数、月卡数量等统计信息</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">4.2 访客停车管理</div>
+            <p><strong>功能描述：</strong>允许企业管理员管理访客的停车事宜。</p>
+            
+            <h4>4.2.1 关键功能点</h4>
+            <ul>
+                <li>访客停车码生成：生成企业专属的访客停车二维码</li>
+                <li>访客车辆登记：预先登记访客车辆信息</li>
+                <li>费用设置：设置由企业承担或访客自付</li>
+                <li>有效期设置：设置访客停车码的有效期</li>
+                <li>使用记录：查看访客停车使用记录</li>
+                <li>费用统计：按部门或项目统计访客停车费用</li>
+            </ul>
+            
+            <h4>4.2.2 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+企业管理员生成访客停车码 -> 分享给访客 -> 访客到达时出示二维码 -> 
+系统记录入场信息 -> 访客出场时系统计算费用 -> 
+费用自动从企业预存款中扣除或由访客支付
+                </pre>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">4.3 企业账单查询</div>
+            <p><strong>功能描述：</strong>允许企业查看和管理停车相关的账单。</p>
+            
+            <h4>4.3.1 关键功能点</h4>
+            <ul>
+                <li>账单查询：按月查询企业的停车费用账单</li>
+                <li>明细查看：查看详细的费用构成和计费明细</li>
+                <li>在线支付：支持多种支付方式缴纳账单</li>
+                <li>账单统计：提供停车费用的统计分析</li>
+                <li>费用分摊：支持将费用分摊到不同部门或成本中心</li>
+                <li>导出功能：支持导出账单和明细数据</li>
+            </ul>
+            
+            <h4>4.3.2 用户界面设计</h4>
+            <div class="mock-ui">
+                <p><strong>企业账单查询页面布局：</strong></p>
+                <ul>
+                    <li>顶部：页面标题、时间筛选器</li>
+                    <li>账单摘要：显示账单总金额、已付金额、未付金额</li>
+                    <li>账单列表：按月份或类型列出账单</li>
+                    <li>详情区：点击账单可查看费用明细</li>
+                    <li>操作区：支付按钮、申请发票按钮、导出按钮</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">4.4 预存款管理</div>
+            <p><strong>功能描述：</strong>允许企业管理停车费用预存款。</p>
+            
+            <h4>4.4.1 关键功能点</h4>
+            <ul>
+                <li>预存充值：在线充值预存款</li>
+                <li>余额查询：查看当前预存款余额</li>
+                <li>消费记录：查看预存款的使用明细</li>
+                <li>自动充值：设置余额不足时自动充值</li>
+                <li>额度管理：设置部门或项目的预存款使用额度</li>
+                <li>余额提醒：余额低于设定阈值时发送提醒</li>
+            </ul>
+            
+            <h4>4.4.2 业务流程</h4>
+            <div class="process-flow">
+                <pre>
+企业用户选择充值金额 -> 选择支付方式 -> 完成支付 -> 
+系统增加预存款余额 -> 预存款用于自动支付停车费用 -> 
+系统记录每笔消费明细 -> 余额不足时发送提醒
+                </pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>5. 个人中心</h2>
+        
+        <div class="feature-card">
+            <div class="feature-title">5.1 车辆管理</div>
+            <p><strong>功能描述：</strong>允许个人用户管理自己的车辆信息。</p>
+            
+            <h4>5.1.1 关键功能点</h4>
+            <ul>
+                <li>车辆添加：添加个人车辆信息</li>
+                <li>车辆编辑：修改车辆信息（如车型、颜色等）</li>
+                <li>默认车辆设置：设置默认使用的车辆</li>
+                <li>车辆认证：上传行驶证等资料进行认证</li>
+                <li>月卡绑定：查看车辆绑定的月卡信息</li>
+            </ul>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">5.2 停车记录查询</div>
+            <p><strong>功能描述：</strong>允许用户查询历史停车记录。</p>
+            
+            <h4>5.2.1 关键功能点</h4>
+            <ul>
+                <li>记录查询：按时间、车牌等条件查询停车记录</li>
+                <li>详情查看：查看每次停车的详细信息（入场时间、出场时间、费用等）</li>
+                <li>费用明细：查看费用计算明细</li>
+                <li>缴费凭证：查看和下载缴费凭证</li>
+                <li>申请发票：对历史记录申请发票</li>
+                <li>记录导出：导出停车记录</li>
+            </ul>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">5.3 发票管理</div>
+            <p><strong>功能描述：</strong>允许用户管理停车费用的发票。</p>
+            
+            <h4>5.3.1 关键功能点</h4>
+            <ul>
+                <li>发票申请：对停车费用申请开具发票</li>
+                <li>申请记录：查看发票申请的处理状态</li>
+                <li>发票查看：查看和下载电子发票</li>
+                <li>发票重发：申请重新发送电子发票</li>
+                <li>开票信息管理：管理常用的开票信息</li>
+            </ul>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">5.4 个人设置</div>
+            <p><strong>功能描述：</strong>允许用户设置个人偏好和通知选项。</p>
+            
+            <h4>5.4.1 关键功能点</h4>
+            <ul>
+                <li>联系信息设置：更新手机号、邮箱等联系方式</li>
+                <li>通知设置：设置接收哪些类型的通知（如到期提醒、费用通知等）</li>
+                <li>支付偏好设置：设置默认的支付方式</li>
+                <li>隐私设置：设置个人信息的可见范围</li>
+                <li>账号安全：修改密码、绑定手机等安全设置</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="navbar">
+        <a href="index.html" class="nav-link">返回目录</a>
+    </div>
+</body>
+</html> 

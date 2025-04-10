@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>停车管理系统 - 业务流程泳道图索引</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #1890ff;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .flow-links {
+            margin-top: 30px;
+        }
+        .flow-card {
+            border: 1px solid #e8e8e8;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+            background-color: #fff;
+        }
+        .flow-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .flow-title {
+            margin-top: 0;
+            color: #1890ff;
+            font-size: 18px;
+        }
+        .flow-desc {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .view-btn {
+            display: inline-block;
+            background-color: #1890ff;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .view-btn:hover {
+            background-color: #096dd9;
+        }
+        .back-link {
+            display: block;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .process-section {
+            margin-bottom: 20px;
+        }
+        .btn-container {
+            display: flex;
+            align-items: center;
+        }
+        .sub-links {
+            margin-left: 20px;
+        }
+        .sub-link {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>停车管理系统 - 业务流程泳道图索引</h1>
+    
+    <p>本页面提供停车管理系统各个业务流程的泳道图导航，点击各流程查看详细泳道图。将各流程拆分为单独页面可以提高渲染效率，确保连接线正确显示。</p>
+    
+    <div class="flow-links">
+        <div class="process-section">
+            <h3>停车月卡申请与审批流程</h3>
+            <p>描述了个人和企业用户如何申请停车月卡，包括信息填写、审批、支付等完整流程。</p>
+            <div class="btn-container">
+                <a href="swimlane_monthly_card.html" class="view-btn">查看流程泳道图</a>
+                <div class="sub-links">
+                    <a href="swimlane_monthly_card_personal.html" class="sub-link">个人用户流程</a>
+                    <a href="swimlane_monthly_card_enterprise.html" class="sub-link">企业用户流程</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flow-card">
+            <h3 class="flow-title">2. 临时停车缴费流程</h3>
+            <p class="flow-desc">描述临时停车用户如何进行停车缴费，从入场到出场的完整流程。</p>
+            <a href="swimlane_temp_parking.html" class="view-btn">查看泳道图</a>
+        </div>
+        
+        <div class="flow-card">
+            <h3 class="flow-title">3. 企业访客停车码流程</h3>
+            <p class="flow-desc">描述企业如何生成访客停车码，访客如何使用，以及费用如何结算的流程。</p>
+            <a href="swimlane_visitor_parking.html" class="view-btn">查看泳道图</a>
+        </div>
+        
+        <div class="flow-card">
+            <h3 class="flow-title">4. 企业账单管理与支付流程</h3>
+            <p class="flow-desc">描述企业账单如何生成、推送、查看和支付的完整流程。</p>
+            <a href="swimlane_billing.html" class="view-btn">查看泳道图</a>
+        </div>
+        
+        <div class="flow-card">
+            <h3 class="flow-title">5. 开票申请与处理流程</h3>
+            <p class="flow-desc">描述企业用户如何申请开票，园区财务管理员如何处理开票申请的流程。</p>
+            <a href="swimlane_invoice.html" class="view-btn">查看泳道图</a>
+        </div>
+        
+        <div class="flow-card">
+            <h3 class="flow-title">6. 停车月卡转让流程</h3>
+            <p class="flow-desc">描述月卡持有者如何将未到期的月卡权限转让给其他用户的完整流程。</p>
+            <a href="swimlane_card_transfer.html" class="view-btn">查看泳道图</a>
+        </div>
+        
+        <div class="flow-card">
+            <h3 class="flow-title">7. 停车月卡续费流程</h3>
+            <p class="flow-desc">描述月卡持有者如何在月卡到期前对其进行续费的完整流程。</p>
+            <a href="swimlane_card_renewal.html" class="view-btn">查看泳道图</a>
+        </div>
+        
+        <div class="flow-card">
+            <h3 class="flow-title">8. 全部流程（集成版）</h3>
+            <p class="flow-desc">包含全部流程的集成版本，仅建议在需要比较不同流程时使用。可能会导致浏览器性能下降。</p>
+            <a href="swimlane_process.html" class="view-btn">查看泳道图</a>
+        </div>
+    </div>
+    
+    <a href="business_process.html" class="back-link">返回业务流程设计文档</a>
+</body>
+</html> 

@@ -1,0 +1,42 @@
+.information-index {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.info-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-list-item {
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 12px 24px;
+  border-radius: 4px;
+}
+
+.info-list-item:hover {
+  background-color: #f0f5ff;
+}
+
+.info-title {
+  font-size: 16px;
+}
+
+.info-more-button {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.info-more-button p {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .information-index {
+    padding: 0 8px;
+  }
+} 

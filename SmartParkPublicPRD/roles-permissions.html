@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户角色与权限 - 智慧园区公共服务平台</title>
+    <style>
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            border-bottom: 2px solid #2E6AE6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #0F2645;
+            font-size: 28px;
+        }
+        h2 {
+            color: #2E6AE6;
+            font-size: 24px;
+            margin-top: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #1D4073;
+            font-size: 20px;
+            margin-top: 30px;
+        }
+        p, ul, ol {
+            margin-bottom: 16px;
+        }
+        ul, ol {
+            padding-left: 25px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f6f8fd;
+            color: #1D4073;
+        }
+        .navigation {
+            background-color: #f6f8fd;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        .navigation ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .navigation li {
+            margin-right: 20px;
+            margin-bottom: 10px;
+        }
+        .navigation a {
+            color: #2E6AE6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+        .highlight {
+            background-color: #f6f8fd;
+            padding: 15px;
+            border-left: 4px solid #4CBBFF;
+            margin: 20px 0;
+        }
+        .role-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .role-card h4 {
+            color: #2E6AE6;
+            margin-top: 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>用户角色与权限</h1>
+        <p>本文档详细定义了智慧园区公共服务平台的用户角色体系与权限控制策略，确保平台功能安全可控地提供给不同类型的用户使用。</p>
+    </header>
+
+    <div class="navigation">
+        <h3>文档导航</h3>
+        <ul>
+            <li><a href="index.html">文档概述</a></li>
+            <li><a href="user-research.html">用户研究与场景分析</a></li>
+            <li><a href="roles-permissions.html">用户角色与权限</a></li>
+            <li><a href="functional-structure.html">功能结构设计</a></li>
+            <li><a href="business-process.html">业务流程设计</a></li>
+            <li><a href="ui-interaction.html">界面与交互设计</a></li>
+            <li><a href="non-functional.html">非功能性需求</a></li>
+            <li><a href="implementation.html">实施计划</a></li>
+        </ul>
+    </div>
+
+    <h2>3. 用户角色与权限</h2>
+    
+    <h3>3.1 用户角色体系</h3>
+    
+    <p>平台用户角色体系分为三个主要用户类型（企业管理员、企业员工、访客/公众用户）和后台管理角色。各角色定义及权限范围如下：</p>
+    
+    <div class="role-card">
+        <h4>企业管理员</h4>
+        <ul>
+            <li><strong>定义</strong>：园区入驻企业的管理层人员，负责企业在园区内的各项事务管理</li>
+            <li><strong>子角色</strong>：
+                <ul>
+                    <li>企业超级管理员（默认企业法人，拥有全部企业管理权限）</li>
+                    <li>企业财务管理员（专注于账单、合同等财务相关权限）</li>
+                    <li>企业HR管理员（专注于员工管理相关权限）</li>
+                </ul>
+            </li>
+            <li><strong>权限范围</strong>：企业信息管理、合同查看与申请、账单管理与支付、员工管理与权限分配、企业服务申请与管理等</li>
+        </ul>
+    </div>
+    
+    <div class="role-card">
+        <h4>企业员工</h4>
+        <ul>
+            <li><strong>定义</strong>：园区入驻企业的普通员工，日常需使用园区各类服务和设施</li>
+            <li><strong>子角色</strong>：
+                <ul>
+                    <li>普通员工（基础服务使用权限）</li>
+                    <li>部门负责人（拥有部门级别的审批与管理权限）</li>
+                </ul>
+            </li>
+            <li><strong>权限范围</strong>：个人信息管理、日常服务申请、资源预订、访客申请、园区活动参与等</li>
+        </ul>
+    </div>
+    
+    <div class="role-card">
+        <h4>访客/公众用户</h4>
+        <ul>
+            <li><strong>定义</strong>：临时访问园区或有意向入驻的外部用户</li>
+            <li><strong>子角色</strong>：
+                <ul>
+                    <li>注册访客（已创建账号但未关联企业的用户）</li>
+                    <li>临时访客（通过临时通行码访问园区的用户）</li>
+                    <li>潜在客户（有入驻意向的企业用户）</li>
+                </ul>
+            </li>
+            <li><strong>权限范围</strong>：园区基本信息查询、临时访问申请、入驻咨询、公开活动报名、临时停车缴费等</li>
+        </ul>
+    </div>
+    
+    <div class="role-card">
+        <h4>园区管理角色</h4>
+        <ul>
+            <li><strong>定义</strong>：园区运营方工作人员，负责平台后台管理</li>
+            <li><strong>子角色</strong>：
+                <ul>
+                    <li>系统管理员（平台最高权限）</li>
+                    <li>招商管理员（负责企业入驻相关管理）</li>
+                    <li>财务管理员（负责账单与缴费管理）</li>
+                    <li>物业管理员（负责服务工单与资源管理）</li>
+                    <li>活动管理员（负责园区活动管理）</li>
+                </ul>
+            </li>
+            <li><strong>权限范围</strong>：平台配置管理、企业管理、账单管理、资源管理、服务管理、数据分析等</li>
+        </ul>
+    </div>
+
+    <h3>3.2 角色权限矩阵</h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>功能模块</th>
+                <th>功能点</th>
+                <th>企业超级管理员</th>
+                <th>企业财务管理员</th>
+                <th>企业HR管理员</th>
+                <th>企业普通员工</th>
+                <th>访客/公众用户</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="4">企业管理</td>
+                <td>企业信息查看</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓ (仅查看)</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>企业信息编辑</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>员工管理</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>部门设置</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td rowspan="4">合同管理</td>
+                <td>合同查看</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>合同续签申请</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>合同变更申请</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>合同资料上传</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td rowspan="4">账单管理</td>
+                <td>账单查看</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>账单缴费</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>缴费记录查询</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>发票申请</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td rowspan="4">服务申请</td>
+                <td>企业级服务申请</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>会议室预订</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>维修报障</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>服务状态查询</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓ (仅本人)</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td rowspan="4">访客管理</td>
+                <td>访客邀请</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>访客记录查看</td>
+                <td>✓ (全企业)</td>
+                <td>✓ (全企业)</td>
+                <td>✓ (全企业)</td>
+                <td>✓ (仅本人)</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>访客批量导入</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>访客通行权限</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✗</td>
+                <td>✓ (仅申请)</td>
+            </tr>
+            <tr>
+                <td rowspan="4">园区活动</td>
+                <td>活动查看</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓ (仅公开)</td>
+            </tr>
+            <tr>
+                <td>活动报名</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓ (仅公开)</td>
+            </tr>
+            <tr>
+                <td>企业活动发布</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✓</td>
+                <td>✗</td>
+                <td>✗</td>
+            </tr>
+            <tr>
+                <td>活动资料下载</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓ (仅公开)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>3.3 权限设计原则</h3>
+    
+    <div class="highlight">
+        <h4>最小权限原则</h4>
+        <p>用户只能获得完成其工作所需的最小权限集合，避免权限过度分配导致的安全风险。</p>
+    </div>
+    
+    <div class="highlight">
+        <h4>职责分离原则</h4>
+        <p>敏感操作需要多角色协作完成，避免单一角色掌握过多权限，如企业财务操作与HR管理应分离。</p>
+    </div>
+    
+    <div class="highlight">
+        <h4>层级授权原则</h4>
+        <p>上级角色可以授予下级角色部分权限，但不能超出自身权限范围，确保权限可控传递。</p>
+    </div>
+    
+    <div class="highlight">
+        <h4>权限统一管理原则</h4>
+        <p>平台应提供统一的权限管理界面，便于企业管理员高效管理和调整下属员工的权限。</p>
+    </div>
+
+    <h3>3.4 访问控制策略</h3>
+    
+    <h4>1. 身份认证机制</h4>
+    <ul>
+        <li><strong>账号密码认证</strong>：所有用户通过账号密码进行基础身份认证</li>
+        <li><strong>短信验证码</strong>：敏感操作或异常登录时进行二次验证</li>
+        <li><strong>企业认证</strong>：企业管理员需完成实名认证和营业执照验证</li>
+        <li><strong>员工认证</strong>：员工需通过企业管理员审核确认身份</li>
+    </ul>
+    
+    <h4>2. 会话管理</h4>
+    <ul>
+        <li><strong>登录超时</strong>：非活跃状态30分钟后自动登出</li>
+        <li><strong>并发登录控制</strong>：同一账号不允许多设备同时登录</li>
+        <li><strong>会话跟踪</strong>：记录用户登录地点、设备等信息，发现异常时通知</li>
+    </ul>
+    
+    <h4>3. 数据访问控制</h4>
+    <ul>
+        <li><strong>企业数据隔离</strong>：确保企业用户只能访问本企业相关数据</li>
+        <li><strong>个人数据保护</strong>：员工个人敏感信息仅对有权限的管理员可见</li>
+        <li><strong>数据脱敏</strong>：针对敏感信息（如身份证号、电话）进行适度脱敏展示</li>
+    </ul>
+    
+    <h4>4. 操作审计</h4>
+    <ul>
+        <li><strong>操作日志</strong>：记录所有关键操作，包括操作人、操作内容、操作时间等</li>
+        <li><strong>操作追溯</strong>：提供操作历史查询功能，便于追溯责任</li>
+        <li><strong>异常预警</strong>：对敏感操作（如大量删除、批量修改）进行风险预警</li>
+    </ul>
+
+    <h3>3.5 角色切换与管理</h3>
+    
+    <h4>1. 用户角色申请与分配流程</h4>
+    <ol>
+        <li>用户注册成为基础访客/公众用户</li>
+        <li>申请加入企业并提交相关证明材料</li>
+        <li>企业管理员审核用户身份并分配相应角色</li>
+        <li>用户接收角色分配通知，获得相应权限</li>
+        <li>企业管理员可根据需要调整用户角色</li>
+    </ol>
+    
+    <h4>2. 多角色用户管理</h4>
+    <p>用户可能同时具备多个角色，如同时是企业A的管理员和企业B的普通员工，平台需支持：</p>
+    <ul>
+        <li>快速角色切换功能，用户可在不同角色间便捷切换</li>
+        <li>角色权限明确区分，避免混淆</li>
+        <li>操作日志与角色关联，明确记录用户以何种角色执行操作</li>
+    </ul>
+    
+    <h4>3. 角色生命周期管理</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>阶段</th>
+                <th>操作</th>
+                <th>权限变化</th>
+                <th>负责人</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>角色创建</td>
+                <td>人员入职/加入企业</td>
+                <td>获得基础权限</td>
+                <td>企业管理员</td>
+            </tr>
+            <tr>
+                <td>角色调整</td>
+                <td>岗位变动/职责变化</td>
+                <td>权限增加或减少</td>
+                <td>企业管理员</td>
+            </tr>
+            <tr>
+                <td>角色冻结</td>
+                <td>长期休假/临时离岗</td>
+                <td>权限暂时禁用</td>
+                <td>企业管理员/HR管理员</td>
+            </tr>
+            <tr>
+                <td>角色注销</td>
+                <td>离职/退出企业</td>
+                <td>权限完全撤销</td>
+                <td>企业管理员/HR管理员</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <footer style="margin-top: 50px; text-align: center; color: #666; border-top: 1px solid #eee; padding-top: 20px;">
+        <p>智慧园区公共服务平台产品需求设计文档 © 2023 湘江科创基地</p>
+    </footer>
+</body>
+</html>

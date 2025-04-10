@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区 - 停车管理系统用户旅程图</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #1890ff;
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 20px;
+        }
+        h4 {
+            font-size: 18px;
+        }
+        .journey-container {
+            margin: 30px 0;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+        .journey-title {
+            background-color: #f0f5ff;
+            color: #1890ff;
+            padding: 10px 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 5px 5px 0 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .journey-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+        .journey-steps::before {
+            content: '';
+            position: absolute;
+            top: 35px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 1;
+        }
+        .journey-step {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            width: 18%;
+        }
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #1890ff;
+            color: #1890ff;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 15px;
+        }
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .step-desc {
+            font-size: 14px;
+            color: #666;
+        }
+        .journey-details {
+            margin-top: 40px;
+        }
+        .step-detail {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        .step-detail h4 {
+            color: #1890ff;
+            margin-bottom: 10px;
+        }
+        .step-actions {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .step-actions h5 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .emotion {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        .positive {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: #52c41a;
+        }
+        .neutral {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            color: #1890ff;
+        }
+        .negative {
+            background-color: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: #ff4d4f;
+        }
+        .touchpoint {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 14px;
+            background-color: #f0f5ff;
+            color: #1890ff;
+            border: 1px solid #d6e4ff;
+        }
+        .highlight {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #1890ff;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区 - 停车管理系统用户旅程图</h1>
+    
+    <h2>2.4 用户旅程图</h2>
+    
+    <div class="highlight">
+        <p>用户旅程图是一种可视化工具，用于描述用户在使用产品或服务过程中的体验、互动和情感变化。以下是停车管理系统中几个核心场景的用户旅程图，帮助我们理解用户在不同场景中的体验流程，识别优化点和潜在的问题。</p>
+    </div>
+    
+    <!-- 企业月卡申请旅程图 -->
+    <div class="journey-container">
+        <div class="journey-title">企业管理员 - 停车月卡申请旅程</div>
+        
+        <div class="journey-steps">
+            <div class="journey-step">
+                <div class="step-number">1</div>
+                <div class="step-title">发起申请</div>
+                <div class="step-desc">登录系统并进入停车月卡申请页面</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">2</div>
+                <div class="step-title">填写信息</div>
+                <div class="step-desc">批量输入员工信息和车辆信息</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">3</div>
+                <div class="step-title">确认费用</div>
+                <div class="step-desc">查看优惠计算后的费用明细</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">4</div>
+                <div class="step-title">在线支付</div>
+                <div class="step-desc">选择支付方式完成支付</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">5</div>
+                <div class="step-title">等待审批</div>
+                <div class="step-desc">查看申请状态，等待审批结果</div>
+            </div>
+        </div>
+        
+        <div class="journey-details">
+            <div class="step-detail">
+                <h4>1. 发起申请</h4>
+                <p>企业管理员王经理需要为新入职的多名员工申请停车月卡。他打开浏览器，登录公共服务平台后，进入"服务大厅" → "配套服务" → "停车月卡"功能模块。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>登录系统，导航到月卡申请页面</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span> <span class="emotion neutral">期待</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">公共服务平台</span> <span class="touchpoint">停车月卡模块</span></p>
+                    <p><strong>痛点：</strong>如果功能导航不清晰，可能难以找到入口</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>2. 填写信息</h4>
+                <p>王经理选择"企业批量申请"选项，上传预先准备好的员工信息表格（包含姓名、部门、车牌号、车型等信息），系统自动解析表格并填充到申请表单中。他检查信息无误后，选择月卡类型（标准月卡）和时长（3个月）。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>上传批量信息，选择月卡类型和时长</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion neutral">专注</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">批量导入表单</span> <span class="touchpoint">月卡选择界面</span></p>
+                    <p><strong>痛点：</strong>如果批量导入格式有误，需要重新调整格式再上传</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>3. 确认费用</h4>
+                <p>系统根据企业类型自动计算优惠后的费用。王经理看到系统显示的费用明细：5名员工×标准月卡×3个月=4500元，企业A类优惠95折，最终应付4275元。他仔细核对后确认费用无误。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>查看费用明细，核对优惠计算</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">安心</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">费用计算模块</span> <span class="touchpoint">优惠显示</span></p>
+                    <p><strong>痛点：</strong>如果企业优惠政策有变动，可能会困惑为何计算方式不同</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>4. 在线支付</h4>
+                <p>王经理选择使用企业预付款支付方式。系统显示当前企业预付款余额充足，他点击"确认支付"按钮。系统验证通过，显示支付成功，并自动生成支付凭证和申请记录。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>选择支付方式，确认支付</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">安心</span> <span class="emotion positive">满意</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">支付选择界面</span> <span class="touchpoint">支付结果页</span></p>
+                    <p><strong>痛点：</strong>如果企业预付款余额不足，需要临时切换支付方式</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>5. 等待审批</h4>
+                <p>王经理在"我的申请"中看到刚才提交的月卡申请状态为"审批中"。系统提示预计1-2个工作日内完成审批，并会通过系统消息和短信通知审批结果。他退出系统，等待园区运营管理员的审批。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>查看申请状态，等待审批结果</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">期待</span> <span class="emotion neutral">耐心</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">申请状态页</span> <span class="touchpoint">系统通知</span></p>
+                    <p><strong>痛点：</strong>审批时间过长可能导致员工无法及时使用停车位</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 企业账单管理与开票旅程图 -->
+    <div class="journey-container">
+        <div class="journey-title">企业财务 - 账单管理与开票旅程</div>
+        
+        <div class="journey-steps">
+            <div class="journey-step">
+                <div class="step-number">1</div>
+                <div class="step-title">接收账单</div>
+                <div class="step-desc">收到系统推送的账单通知</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">2</div>
+                <div class="step-title">查看账单</div>
+                <div class="step-desc">登录查看账单详细信息</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">3</div>
+                <div class="step-title">支付账单</div>
+                <div class="step-desc">选择支付方式完成付款</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">4</div>
+                <div class="step-title">申请开票</div>
+                <div class="step-desc">选择开票信息提交申请</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">5</div>
+                <div class="step-title">获取发票</div>
+                <div class="step-desc">接收并下载电子发票</div>
+            </div>
+        </div>
+        
+        <div class="journey-details">
+            <div class="step-detail">
+                <h4>1. 接收账单</h4>
+                <p>企业财务陈经理收到手机短信和系统消息，提示本月停车费用账单已生成。消息中包含账单编号、总金额和支付截止日期等基本信息。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>接收并查看账单通知</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">关注</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">短信通知</span> <span class="touchpoint">系统消息</span></p>
+                    <p><strong>痛点：</strong>如果通知渠道单一，可能错过账单提醒</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>2. 查看账单</h4>
+                <p>陈经理登录公共服务平台，进入"企业账单"模块，找到并点击最新的停车费用账单。系统显示详细的账单信息，包括员工月卡费用和访客临时停车费用的明细，以及费用计算规则说明。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>登录系统，查看账单详情</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span> <span class="emotion neutral">审慎</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">企业账单模块</span> <span class="touchpoint">账单详情页</span></p>
+                    <p><strong>痛点：</strong>如果账单明细不清晰，可能需要额外核对工作</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>3. 支付账单</h4>
+                <p>核对无误后，陈经理点击"支付账单"按钮。在支付方式选择页面，他选择使用企业预付款支付，插入U盘密钥进行身份验证操作。系统验证通过，显示支付成功，并生成支付凭证。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>选择支付方式，完成支付验证</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">安心</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">支付方式选择</span> <span class="touchpoint">U盘密钥验证</span></p>
+                    <p><strong>痛点：</strong>U盘密钥操作可能带来额外的硬件依赖和复杂性</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>4. 申请开票</h4>
+                <p>支付完成后，陈经理点击"申请开票"按钮。系统自动关联已支付的账单信息。他从开票信息列表中选择企业抬头(之前已在"开票变更"中设置)，确认开票金额和类型后提交申请。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>选择开票信息，提交开票申请</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion neutral">期待</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">开票申请页</span> <span class="touchpoint">开票信息选择</span></p>
+                    <p><strong>痛点：</strong>如果没有事先设置开票信息，需要切换到"开票变更"模块</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>5. 获取发票</h4>
+                <p>第二天，陈经理收到系统通知，开票申请已审核通过，电子发票已生成。他登录系统，在"我的开票"模块下载电子发票PDF文件，并转发给企业财务部门用于报销入账。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>查看开票结果，下载电子发票</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">完成感</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">开票结果通知</span> <span class="touchpoint">发票下载页</span></p>
+                    <p><strong>痛点：</strong>审核时间过长可能影响企业财务流程</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 临时停车缴费旅程图 -->
+    <div class="journey-container">
+        <div class="journey-title">访客用户 - 临时停车缴费旅程</div>
+        
+        <div class="journey-steps">
+            <div class="journey-step">
+                <div class="step-number">1</div>
+                <div class="step-title">访问园区</div>
+                <div class="step-desc">驾车到达并停放在访客区域</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">2</div>
+                <div class="step-title">准备离场</div>
+                <div class="step-desc">完成访问后准备缴费离场</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">3</div>
+                <div class="step-title">查询费用</div>
+                <div class="step-desc">扫码进入系统查询停车费用</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">4</div>
+                <div class="step-title">支付费用</div>
+                <div class="step-desc">选择支付方式完成支付</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">5</div>
+                <div class="step-title">离场</div>
+                <div class="step-desc">获取电子凭证，驶离停车场</div>
+            </div>
+        </div>
+        
+        <div class="journey-details">
+            <div class="step-detail">
+                <h4>1. 访问园区</h4>
+                <p>张先生驾车来到园区停车场，入口处车牌识别系统自动记录他的车牌号和入场时间。他按照指示牌，将车辆停放在访客停车区域，前往园区内的公司参加会议。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>驾车入场，寻找停车位</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">车牌识别系统</span> <span class="touchpoint">指示牌</span></p>
+                    <p><strong>痛点：</strong>不熟悉园区布局，可能难以找到合适停车位</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>2. 准备离场</h4>
+                <p>会议结束后，张先生返回停车场准备离开。他注意到停车场入口处和电梯间的缴费指南，其中有扫码缴费的二维码和操作说明。他用手机扫描二维码，跳转到公共服务平台的临停缴费页面。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>查看缴费指南，扫描二维码</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">好奇</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">缴费指南</span> <span class="touchpoint">二维码</span></p>
+                    <p><strong>痛点：</strong>如果扫码不方便，可能需要寻找其他缴费途径</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>3. 查询费用</h4>
+                <p>进入临停缴费页面后，张先生输入自己的车牌号。系统显示他的停车信息：入场时间、停车时长（2小时30分钟）和应缴费用（15元）。页面还显示了费用计算规则说明。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>输入车牌，查看费用信息</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span> <span class="emotion positive">理解</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">临停缴费页面</span> <span class="touchpoint">费用显示</span></p>
+                    <p><strong>痛点：</strong>如果计费规则复杂，可能难以理解费用构成</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>4. 支付费用</h4>
+                <p>张先生确认费用后，选择微信支付方式。系统跳转到微信支付界面，他完成支付操作。系统显示支付成功，并提示出场时限为15分钟。同时，页面提供了"申请开票"选项。张先生点击申请开票，填写个人信息后提交。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>选择支付方式，完成支付，申请开票</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">便捷</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">支付方式选择</span> <span class="touchpoint">微信支付界面</span> <span class="touchpoint">开票申请</span></p>
+                    <p><strong>痛点：</strong>支付后如果未及时申请开票，可能需要额外操作</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>5. 离场</h4>
+                <p>支付完成后，系统自动向张先生的手机发送电子缴费凭证。他驾车前往出口，车牌识别系统检测到他已缴费，自动抬杆放行。张先生顺利离开停车场，同时收到系统发送的电子发票。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>接收电子凭证，驶离停车场</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">完成感</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">电子凭证</span> <span class="touchpoint">出口道闸</span> <span class="touchpoint">电子发票</span></p>
+                    <p><strong>痛点：</strong>如果车牌识别出错，可能需要人工干预</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 企业访客二维码停车旅程图 -->
+    <div class="journey-container">
+        <div class="journey-title">企业访客 - 二维码停车旅程</div>
+        
+        <div class="journey-steps">
+            <div class="journey-step">
+                <div class="step-number">1</div>
+                <div class="step-title">获取二维码</div>
+                <div class="step-desc">从企业获取访客停车二维码</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">2</div>
+                <div class="step-title">二维码验证</div>
+                <div class="step-desc">进入停车场时扫码验证</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">3</div>
+                <div class="step-title">停车使用</div>
+                <div class="step-desc">在访客区域停车并完成来访</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">4</div>
+                <div class="step-title">系统记账</div>
+                <div class="step-desc">系统记录停车时长并计费</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">5</div>
+                <div class="step-title">直接离场</div>
+                <div class="step-desc">无需支付直接驶离停车场</div>
+            </div>
+        </div>
+        
+        <div class="journey-details">
+            <div class="step-detail">
+                <h4>1. 获取二维码</h4>
+                <p>李先生需要前往园区内某企业参加业务洽谈。会前，企业前台刘小姐通过公共服务平台的"访客停车管理"功能，生成一个访客停车二维码，并通过微信发送给李先生。二维码信息中包含使用有效期、企业信息和使用说明。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>接收企业发送的访客停车二维码</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">便捷</span> <span class="emotion positive">期待</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">微信消息</span> <span class="touchpoint">二维码图片</span></p>
+                    <p><strong>痛点：</strong>如果二维码图片不清晰或接收失败，可能影响后续使用</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>2. 二维码验证</h4>
+                <p>李先生驾车到达园区停车场入口，系统先通过摄像头自动识别车牌。随后，他出示手机上的访客停车二维码给入口处的扫码设备。系统验证二维码有效性，记录车牌信息，并将此次停车与企业账户关联。验证通过后，道闸自动抬起，李先生驶入停车场。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>出示二维码，等待验证通过</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span> <span class="emotion positive">顺利</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">车牌识别系统</span> <span class="touchpoint">二维码扫描设备</span></p>
+                    <p><strong>痛点：</strong>如果扫码验证失败，需要寻找其他入场方式</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>3. 停车使用</h4>
+                <p>系统引导李先生前往访客专区停车。他按照指引找到空余车位并停好车辆。系统在后台记录他的入场时间和停车位置信息。李先生离开车辆，前往企业所在办公区与业务伙伴会面。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>寻找停车位，停车，前往目的地</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span> <span class="emotion positive">放心</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">停车引导系统</span> <span class="touchpoint">访客停车区</span></p>
+                    <p><strong>痛点：</strong>访客区域车位不足时可能需要多次寻找</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>4. 系统记账</h4>
+                <p>李先生在企业的会议持续了3小时。期间，停车管理系统持续记录他的车辆停放时长。当会议结束后，系统根据停车时长和企业访客停车的收费标准，自动计算产生的费用，并将其添加至该企业的访客停车费用台账中，等待企业后续确认。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>（无需操作，后台自动进行）</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">无感知</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">停车管理后台系统</span></p>
+                    <p><strong>痛点：</strong>无法实时查看已产生的费用情况</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>5. 直接离场</h4>
+                <p>会议结束后，李先生返回停车场准备离开。他驾车前往出口，系统自动识别他的车牌，确认为企业访客二维码停车。道闸自动抬起，李先生直接离场，无需支付任何费用。系统生成一条出场记录，并向企业管理员推送一条访客停车费用确认通知。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>驾车前往出口，直接离场</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">便捷</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">车牌识别系统</span> <span class="touchpoint">出口道闸</span></p>
+                    <p><strong>痛点：</strong>如果系统未正确关联企业账户，可能无法顺利离场</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 停车月卡转让旅程图 -->
+    <div class="journey-container">
+        <div class="journey-title">企业员工 - 停车月卡转让旅程</div>
+        
+        <div class="journey-steps">
+            <div class="journey-step">
+                <div class="step-number">1</div>
+                <div class="step-title">发起转让</div>
+                <div class="step-desc">登录系统申请月卡转让</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">2</div>
+                <div class="step-title">选择接收人</div>
+                <div class="step-desc">指定月卡的接收人信息</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">3</div>
+                <div class="step-title">企业审批</div>
+                <div class="step-desc">企业管理员审核转让申请</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">4</div>
+                <div class="step-title">接收确认</div>
+                <div class="step-desc">接收人确认接收月卡</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">5</div>
+                <div class="step-title">转让完成</div>
+                <div class="step-desc">系统更新月卡权限记录</div>
+            </div>
+        </div>
+        
+        <div class="journey-details">
+            <div class="step-detail">
+                <h4>1. 发起转让</h4>
+                <p>张女士因工作调动即将离开当前企业，但她的停车月卡还有两个月有效期。她登录公共服务平台，进入"用户中心" → "我的月卡"模块，找到自己的有效月卡，点击"申请转让"按钮。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>登录系统，找到月卡信息，点击转让按钮</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">期待</span> <span class="emotion neutral">探索</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">公共服务平台</span> <span class="touchpoint">我的月卡模块</span></p>
+                    <p><strong>痛点：</strong>如果转让功能不明显，可能难以找到入口</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>2. 选择接收人</h4>
+                <p>系统显示月卡转让申请表单。张女士填写接收人王先生的基本信息（姓名、手机号、所属企业、车牌号等）。系统提示她当前月卡剩余价值为500元，她可以选择全部转让或部分转让。她选择全部转让，并填写转让原因为"工作调动"，然后提交申请。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>填写接收人信息，选择转让内容，提交申请</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span> <span class="emotion positive">满意</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">转让申请表单</span> <span class="touchpoint">转让选项</span></p>
+                    <p><strong>痛点：</strong>如果接收人信息填写错误，可能导致转让失败</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>3. 企业审批</h4>
+                <p>张女士的转让申请自动提交给企业管理员李经理。李经理收到系统通知，登录公共服务平台查看月卡转让申请详情。他核实张女士确实因工作调动需要转让月卡，且接收人王先生是公司新入职员工，符合月卡转让条件。李经理点击"审批通过"按钮，系统记录审批结果和时间。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为(企业管理员)：</strong>查看申请，核实信息，进行审批</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">负责</span> <span class="emotion neutral">审慎</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">转让申请详情</span> <span class="touchpoint">审批操作界面</span></p>
+                    <p><strong>痛点：</strong>如果企业管理员审批不及时，可能影响双方用户体验</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>4. 接收确认</h4>
+                <p>审批通过后，系统通过短信通知接收人王先生有一个月卡转让申请等待确认。王先生收到短信后，登录公共服务平台，在"我的消息"中找到转让确认通知。他查看月卡详情（车位类型、有效期、剩余价值等），确认无误后点击"接受转让"按钮。系统要求他确认车牌信息和使用协议。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为(接收人)：</strong>接收通知，查看月卡详情，确认接收</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">惊喜</span> <span class="emotion positive">满意</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">短信通知</span> <span class="touchpoint">转让确认界面</span></p>
+                    <p><strong>痛点：</strong>如果接收人不熟悉系统，可能不知如何确认接收</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>5. 转让完成</h4>
+                <p>王先生确认接收后，系统自动完成月卡转让流程：停止张女士车牌的月卡权限，同时为王先生的车牌开通月卡权限，有效期为原月卡的剩余时间。系统向双方发送转让完成的通知，并更新相关记录。张女士可以查看自己的历史月卡记录，王先生可以在"我的月卡"中查看新获得的月卡详情。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>接收转让完成通知，查看月卡状态</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">完成感</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">转让完成通知</span> <span class="touchpoint">月卡记录更新</span></p>
+                    <p><strong>痛点：</strong>如果系统未及时更新权限，可能影响接收人使用体验</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 停车月卡续费旅程图 -->
+    <div class="journey-container">
+        <div class="journey-title">企业员工 - 停车月卡续费旅程</div>
+        
+        <div class="journey-steps">
+            <div class="journey-step">
+                <div class="step-number">1</div>
+                <div class="step-title">收到提醒</div>
+                <div class="step-desc">接收月卡即将到期提醒</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">2</div>
+                <div class="step-title">查看详情</div>
+                <div class="step-desc">登录查看月卡到期信息</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">3</div>
+                <div class="step-title">选择续费</div>
+                <div class="step-desc">选择续费时长和支付方式</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">4</div>
+                <div class="step-title">完成支付</div>
+                <div class="step-desc">在线支付续费金额</div>
+            </div>
+            <div class="journey-step">
+                <div class="step-number">5</div>
+                <div class="step-title">续期完成</div>
+                <div class="step-desc">系统自动更新月卡有效期</div>
+            </div>
+        </div>
+        
+        <div class="journey-details">
+            <div class="step-detail">
+                <h4>1. 收到提醒</h4>
+                <p>赵先生的停车月卡还有10天即将到期。系统自动向他发送短信和APP推送通知，提醒他月卡即将到期，需要及时续费。通知中包含当前月卡信息、到期日期和续费入口链接。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>接收并查看到期提醒</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">提醒</span> <span class="emotion neutral">关注</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">短信提醒</span> <span class="touchpoint">APP推送</span></p>
+                    <p><strong>痛点：</strong>如果通知太晚，可能来不及安排续费</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>2. 查看详情</h4>
+                <p>赵先生点击通知中的链接，登录公共服务平台的"我的月卡"模块。系统显示他的月卡详情，包括当前卡类型（标准月卡）、所属车位区域、到期日期、历史续费记录等信息。界面上突出显示"立即续费"按钮。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>登录系统，查看月卡详情</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">专注</span> <span class="emotion neutral">评估</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">月卡详情页</span> <span class="touchpoint">续费按钮</span></p>
+                    <p><strong>痛点：</strong>如果历史使用记录不完整，可能影响续费决策</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>3. 选择续费</h4>
+                <p>赵先生点击"立即续费"按钮，进入续费设置页面。他选择续费时长为3个月，系统显示续费金额为900元，并提示如选择半年或一年有额外折扣。他决定维持3个月续费，并选择微信支付方式。系统自动生成续费订单。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>选择续费时长，选择支付方式</p>
+                    <p><strong>情感状态：</strong><span class="emotion neutral">决策</span> <span class="emotion neutral">计划</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">续费选项</span> <span class="touchpoint">支付方式选择</span></p>
+                    <p><strong>痛点：</strong>如果续费选项不够灵活，可能不符合用户需求</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>4. 完成支付</h4>
+                <p>系统跳转到微信支付界面，赵先生确认支付信息无误后，输入支付密码完成支付。系统处理支付结果，并显示支付成功页面，同时显示新的有效期至下一年同月。系统生成电子收据，可供查看和下载。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>确认支付信息，完成支付操作</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">安心</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">微信支付界面</span> <span class="touchpoint">支付结果页</span></p>
+                    <p><strong>痛点：</strong>支付过程中断连可能导致状态不明确</p>
+                </div>
+            </div>
+            
+            <div class="step-detail">
+                <h4>5. 续期完成</h4>
+                <p>支付成功后，系统自动更新赵先生的月卡有效期，并发送续费成功的通知。赵先生可以在"我的月卡"中查看更新后的月卡信息，包括新的到期日期和续费记录。系统会在新的到期日前再次发送到期提醒。</p>
+                <div class="step-actions">
+                    <h5>用户行为与体验</h5>
+                    <p><strong>用户行为：</strong>查看更新后的月卡信息</p>
+                    <p><strong>情感状态：</strong><span class="emotion positive">满意</span> <span class="emotion positive">放心</span></p>
+                    <p><strong>接触点：</strong><span class="touchpoint">续费成功通知</span> <span class="touchpoint">更新后的月卡信息</span></p>
+                    <p><strong>痛点：</strong>如果系统未及时更新权限，可能影响正常使用</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="journey">
+        <h4>用户旅程四：未付款开票申请流程</h4>
+        
+        <table class="journey-table">
+            <tr>
+                <th width="5%">步骤</th>
+                <th width="15%">阶段</th>
+                <th width="20%">用户行为</th>
+                <th width="20%">情感状态</th>
+                <th width="20%">接触点</th>
+                <th width="20%">痛点/机会</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>需求触发</td>
+                <td>企业财务人员需要在付款前先获取发票</td>
+                <td>紧张、忧虑（担心无法在付款前获取发票）</td>
+                <td>公共服务平台 - 企业账单页面</td>
+                <td>传统流程通常要求先付款再开票，不符合部分企业财务制度要求</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>查看账单</td>
+                <td>登录公共服务平台，进入"企业账单"模块，查看需要开票的账单</td>
+                <td>专注（需要确认账单准确性）</td>
+                <td>公共服务平台 - 企业账单页面</td>
+                <td>账单信息是否清晰完整，便于财务审核</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>选择开票申请</td>
+                <td>点击"开票申请"按钮，进入开票申请流程</td>
+                <td>期待（希望流程简单直接）</td>
+                <td>公共服务平台 - 开票申请页面</td>
+                <td>开票入口是否明显，操作路径是否清晰</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>选择未付款开票</td>
+                <td>在开票申请页面，选择"未付款开票"选项</td>
+                <td>满意（发现系统支持未付款开票功能）</td>
+                <td>开票申请 - 开票方式选择</td>
+                <td>是否明确标识未付款开票功能，用户是否容易找到</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>选择开票信息</td>
+                <td>从已保存的开票信息中选择企业抬头，或添加新的开票信息</td>
+                <td>专注（需确保开票信息准确）</td>
+                <td>开票申请 - 开票信息选择页面</td>
+                <td>历史开票信息是否便于选择，新增开票信息流程是否简便</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>确认开票信息</td>
+                <td>核对开票金额、开票内容、收票方式等信息</td>
+                <td>谨慎（避免信息错误导致后续麻烦）</td>
+                <td>开票申请 - 开票信息确认页面</td>
+                <td>信息展示是否清晰，是否有错误提示和修改功能</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>提交申请</td>
+                <td>确认无误后，点击"提交申请"按钮</td>
+                <td>期待（等待审核通过）</td>
+                <td>开票申请 - 提交确认页面</td>
+                <td>提交过程是否流畅，有无明确的提交成功提示</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>等待审核</td>
+                <td>等待园区财务管理员审核开票申请</td>
+                <td>耐心等待（希望能快速审核）</td>
+                <td>开票申请 - 申请状态页面</td>
+                <td>是否有清晰的申请状态展示，审核进度是否可见</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>接收通知</td>
+                <td>接收审核通过的系统通知</td>
+                <td>满意（申请获得通过）</td>
+                <td>系统通知、短信、邮件等</td>
+                <td>通知是否及时、明确，是否包含后续操作指引</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>获取发票</td>
+                <td>在系统中下载电子发票，或等待纸质发票寄送</td>
+                <td>满意（成功获取所需发票）</td>
+                <td>公共服务平台 - 我的发票页面</td>
+                <td>发票获取方式是否便捷，电子发票是否容易下载和打印</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>后续付款</td>
+                <td>使用发票完成企业内部报销流程，随后完成账单付款</td>
+                <td>轻松（流程顺利完成）</td>
+                <td>公共服务平台 - 企业账单支付页面</td>
+                <td>已开票账单是否有明确标识，付款流程是否便捷</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="journey">
+        <h4>用户旅程五：企业预付款支付账单流程</h4>
+        
+        <table class="journey-table">
+            <tr>
+                <th width="5%">步骤</th>
+                <th width="15%">阶段</th>
+                <th width="20%">用户行为</th>
+                <th width="20%">情感状态</th>
+                <th width="20%">接触点</th>
+                <th width="20%">痛点/机会</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>预付款充值</td>
+                <td>企业财务登录系统进行预付款充值</td>
+                <td>主动（提前安排资金）</td>
+                <td>公共服务平台 - 预付款管理页面</td>
+                <td>预付款入口是否明显，充值流程是否简便</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>选择充值金额</td>
+                <td>选择充值金额（可一次性充值较大金额用于后续多次支付）</td>
+                <td>谨慎（合理规划资金使用）</td>
+                <td>预付款充值 - 金额输入页面</td>
+                <td>是否提供充值建议，历史充值记录是否可查</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>选择支付方式</td>
+                <td>选择支付方式（微信支付、银联支付、银行B2B支付等）</td>
+                <td>关注（选择最便捷的支付方式）</td>
+                <td>预付款充值 - 支付方式选择页面</td>
+                <td>支付方式是否多样化，操作是否便捷</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>完成充值</td>
+                <td>完成支付并确认充值成功</td>
+                <td>放心（充值已完成）</td>
+                <td>预付款充值 - 充值结果页面</td>
+                <td>充值结果是否明确显示，账户余额是否实时更新</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>接收账单</td>
+                <td>收到系统推送的账单通知</td>
+                <td>关注（需确认账单详情）</td>
+                <td>系统通知、短信、邮件等</td>
+                <td>通知是否及时、醒目，内容是否清晰</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>查看账单</td>
+                <td>登录系统查看账单详情</td>
+                <td>专注（核对账单信息）</td>
+                <td>公共服务平台 - 企业账单页面</td>
+                <td>账单信息是否清晰完整，费用明细是否详细</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>选择支付方式</td>
+                <td>选择"预付款支付"作为支付方式</td>
+                <td>满意（可以使用已充值的预付款）</td>
+                <td>企业账单 - 支付方式选择页面</td>
+                <td>预付款支付选项是否明显，余额是否清晰显示</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>确认支付</td>
+                <td>确认使用预付款支付账单</td>
+                <td>专注（确保支付正确）</td>
+                <td>企业账单 - 支付确认页面</td>
+                <td>确认界面是否清晰，支付信息是否准确</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>完成支付</td>
+                <td>点击确认完成支付</td>
+                <td>轻松（支付过程简便）</td>
+                <td>企业账单 - 支付结果页面</td>
+                <td>支付结果是否明确显示，操作是否便捷</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>接收支付凭证</td>
+                <td>系统自动生成支付凭证并推送通知</td>
+                <td>满意（获得所需凭证）</td>
+                <td>公共服务平台 - 支付凭证页面</td>
+                <td>凭证生成是否及时，获取方式是否便捷</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>查看预付款余额</td>
+                <td>查看支付后的预付款余额</td>
+                <td>关注（了解剩余资金情况）</td>
+                <td>公共服务平台 - 预付款管理页面</td>
+                <td>余额显示是否实时更新，历史交易记录是否清晰</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td>申请开票</td>
+                <td>支付完成后，进入开票申请流程</td>
+                <td>期待（完成最后一步）</td>
+                <td>公共服务平台 - 开票申请页面</td>
+                <td>已支付账单开票入口是否明显，申请流程是否便捷</td>
+            </tr>
+        </table>
+    </div>
+    
+</body>
+</html> 

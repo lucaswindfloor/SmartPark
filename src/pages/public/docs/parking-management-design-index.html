@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区停车管理系统设计文档</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1890ff;
+            border-bottom: 2px solid #1890ff;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #096dd9;
+            margin-top: 30px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .toc {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .toc ul {
+            padding-left: 20px;
+        }
+        .toc li {
+            margin-bottom: 8px;
+        }
+        .toc a {
+            color: #1890ff;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .document-card {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            transition: all 0.3s;
+        }
+        .document-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        .document-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1890ff;
+            margin-bottom: 10px;
+        }
+        .document-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .document-link {
+            display: inline-block;
+            background-color: #1890ff;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .document-link:hover {
+            background-color: #096dd9;
+        }
+        .author-info {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区停车管理系统设计文档</h1>
+    
+    <div class="section">
+        <p>本文档详细描述了智慧园区停车管理系统的需求分析、功能设计、界面设计和实施计划。系统分为两个平台：智慧园区综合管理平台（面向园区管理方）和公共服务平台（面向园区企业及员工、公众），为园区提供全方位的车辆管理服务。</p>
+    </div>
+    
+    <div class="toc">
+        <h2>目录</h2>
+        <ul>
+            <li><a href="#document-part1">第一部分：产品概述与系统架构</a></li>
+            <li><a href="#document-part2">第二部分：综合管理平台功能设计</a></li>
+            <li><a href="#document-part3">第三部分：财务管理与公共服务平台功能设计</a></li>
+            <li><a href="#document-part4">第四部分：系统整合与实施计划</a></li>
+            <li><a href="#document-part5">第五部分：用户场景与非功能需求</a></li>
+            <li><a href="#document-review">评审与优化建议</a></li>
+        </ul>
+    </div>
+    
+    <div class="section">
+        <h2>文档概览</h2>
+        
+        <div id="document-part1" class="document-card">
+            <div class="document-title">第一部分：产品概述与系统架构</div>
+            <div class="document-description">
+                本部分介绍智慧园区停车管理系统的产品概述、用户角色分析、核心需求分析、系统整体架构设计以及主要业务流程。
+            </div>
+            <div class="document-content">
+                <ul>
+                    <li>产品概述</li>
+                    <li>用户角色与需求分析</li>
+                    <li>系统架构设计</li>
+                    <li>数据流程和业务流程</li>
+                </ul>
+            </div>
+            <a href="parking-management-design-part1.html" class="document-link">查看详情</a>
+        </div>
+        
+        <div id="document-part2" class="document-card">
+            <div class="document-title">第二部分：综合管理平台功能设计</div>
+            <div class="document-description">
+                本部分详细描述智慧园区综合管理平台中停车管理相关功能的设计，包括停车场基础设施管理、收费方案管理、车辆管理和月卡管理等功能模块。
+            </div>
+            <div class="document-content">
+                <ul>
+                    <li>停车场基础设施管理</li>
+                    <li>收费方案管理</li>
+                    <li>车辆管理</li>
+                    <li>月卡管理</li>
+                </ul>
+            </div>
+            <a href="parking-management-design-part2.html" class="document-link">查看详情</a>
+        </div>
+        
+        <div id="document-part3" class="document-card">
+            <div class="document-title">第三部分：财务管理与公共服务平台功能设计</div>
+            <div class="document-description">
+                本部分详细描述停车管理相关的财务功能设计以及公共服务平台中面向企业和个人用户的停车服务功能设计。
+            </div>
+            <div class="document-content">
+                <ul>
+                    <li>停车账单管理</li>
+                    <li>临时停车预收费管理</li>
+                    <li>停车收款管理</li>
+                    <li>停车发票管理</li>
+                    <li>临时停车缴费</li>
+                    <li>企业访客停车管理</li>
+                    <li>停车月卡申请与管理</li>
+                </ul>
+            </div>
+            <a href="parking-management-design-part3.html" class="document-link">查看详情</a>
+        </div>
+        
+        <div id="document-part4" class="document-card">
+            <div class="document-title">第四部分：系统整合与实施计划</div>
+            <div class="document-description">
+                本部分详细描述停车管理系统与其他系统的整合设计，用户界面设计建议，以及功能实施计划和系统优化建议。
+            </div>
+            <div class="document-content">
+                <ul>
+                    <li>系统整合设计</li>
+                    <li>用户界面设计建议</li>
+                    <li>功能优先级划分</li>
+                    <li>系统优化建议</li>
+                    <li>系统扩展性建议</li>
+                </ul>
+            </div>
+            <a href="parking-management-design-part4.html" class="document-link">查看详情</a>
+        </div>
+        
+        <div id="document-part5" class="document-card">
+            <div class="document-title">第五部分：用户场景与非功能需求</div>
+            <div class="document-description">
+                本部分通过具体用户故事线展示系统的实际应用场景，并详细阐述系统的非功能性需求和未来功能规划。
+            </div>
+            <div class="document-content">
+                <ul>
+                    <li>用户故事线（企业员工购买月卡、访客临时停车缴费等）</li>
+                    <li>性能需求</li>
+                    <li>安全性需求</li>
+                    <li>可用性需求</li>
+                    <li>用户体验需求</li>
+                    <li>未来功能规划</li>
+                </ul>
+            </div>
+            <a href="parking-management-design-part5.html" class="document-link">查看详情</a>
+        </div>
+        
+        <div id="document-review" class="document-card">
+            <div class="document-title">评审与优化建议</div>
+            <div class="document-description">
+                本部分通过对当前停车管理系统需求设计的评审，结合公共服务平台业务需求和财务管理系统业务需求，提出了优化建议和完善方向。
+            </div>
+            <div class="document-content">
+                <ul>
+                    <li>需求分析与设计评审</li>
+                    <li>公共服务平台业务需求优化建议</li>
+                    <li>财务管理系统业务需求优化建议</li>
+                    <li>系统集成与数据流优化建议</li>
+                    <li>总结与实施建议</li>
+                </ul>
+            </div>
+            <a href="parking-management-design-review.html" class="document-link">查看详情</a>
+        </div>
+    </div>
+    
+    <div class="author-info">
+        <p>编制日期：2023年4月3日</p>
+        <p>版本：V1.0</p>
+        <p>备注：本文档为智慧园区停车管理系统的产品需求设计文档，仅供内部参考使用。</p>
+    </div>
+</body>
+</html>

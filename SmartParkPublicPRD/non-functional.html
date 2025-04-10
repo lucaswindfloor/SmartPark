@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非功能需求 - 智慧园区公共服务平台产品需求设计</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #0066cc;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #0066cc;
+            margin-top: 30px;
+            border-left: 4px solid #0066cc;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #0066cc;
+            margin-top: 25px;
+        }
+        h4 {
+            margin-top: 20px;
+        }
+        p, li {
+            margin-bottom: 10px;
+        }
+        .nav {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .nav a {
+            margin-right: 15px;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        .req-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .req-card h4 {
+            margin-top: 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            color: #0066cc;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .key-point {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .priority-high {
+            color: #cc3300;
+            font-weight: bold;
+        }
+        .priority-medium {
+            color: #ff6600;
+            font-weight: bold;
+        }
+        .priority-low {
+            color: #009933;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>7. 非功能需求</h1>
+    
+    <div class="nav">
+        <a href="index.html">文档概述</a>
+        <a href="user-research.html">用户研究</a>
+        <a href="roles-permissions.html">角色权限</a>
+        <a href="functional-structure.html">功能结构</a>
+        <a href="business-process.html">业务流程</a>
+        <a href="ui-interaction.html">UI与交互</a>
+        <a href="non-functional.html">非功能需求</a>
+        <a href="implementation.html">实施计划</a>
+    </div>
+    
+    <h2>7.1 性能需求</h2>
+    
+    <div class="req-card">
+        <h4>7.1.1 响应时间</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>页面加载时间</td>
+                <td>
+                    <ul>
+                        <li>首页加载时间：≤2秒（首次访问）；≤1秒（再次访问）</li>
+                        <li>一般页面加载时间：≤1.5秒</li>
+                        <li>数据密集型页面：≤3秒</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>操作响应时间</td>
+                <td>
+                    <ul>
+                        <li>按钮点击响应：≤100毫秒</li>
+                        <li>表单提交响应：≤1秒</li>
+                        <li>数据查询响应：≤2秒</li>
+                        <li>报表生成：≤5秒</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>API响应时间</td>
+                <td>
+                    <ul>
+                        <li>简单API请求：≤300毫秒</li>
+                        <li>复杂API请求：≤1秒</li>
+                        <li>数据导出：≤10秒（根据数据量可适当调整）</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+        <p><strong>测量方法</strong>：使用性能监控工具在不同网络环境下测量页面加载和操作响应时间，记录95%用户体验数据。</p>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.1.2 并发处理能力</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>系统并发用户数</td>
+                <td>
+                    <ul>
+                        <li>平均并发用户：500人（园区规模10000人时）</li>
+                        <li>峰值并发用户：2000人（特殊活动或紧急情况）</li>
+                        <li>系统设计应考虑未来用户规模增长</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>业务处理能力</td>
+                <td>
+                    <ul>
+                        <li>一般业务处理：≥100笔/秒</li>
+                        <li>账单批量处理：≥500笔/分钟</li>
+                        <li>报表查询：≥50次/分钟</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+        </table>
+        <p><strong>测量方法</strong>：使用负载测试工具模拟多用户并发操作，验证系统在设定负载下的响应能力。</p>
+    </div>
+    
+    <h2>7.2 可用性需求</h2>
+    
+    <div class="req-card">
+        <h4>7.2.1 系统可用性</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>系统服务时间</td>
+                <td>
+                    <ul>
+                        <li>正常服务时间：7×24小时全天候服务</li>
+                        <li>计划内维护时间：每月不超过4小时，应安排在用户低峰期（凌晨2:00-6:00）</li>
+                        <li>维护通知：计划内维护提前3天通知用户</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>系统可用率</td>
+                <td>
+                    <ul>
+                        <li>整体系统可用率：≥99.9%（不含计划内维护时间）</li>
+                        <li>核心功能可用率：≥99.95%（账单支付、门禁管理等）</li>
+                        <li>非核心功能可用率：≥99.5%</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>故障恢复时间</td>
+                <td>
+                    <ul>
+                        <li>一般故障恢复时间：≤30分钟</li>
+                        <li>严重故障恢复时间：≤2小时</li>
+                        <li>灾难性故障恢复时间：≤8小时</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+        <p><strong>测量方法</strong>：通过系统监控工具记录系统运行状态，计算各项指标，并形成可用性报告。</p>
+    </div>
+    
+    <h2>7.3 安全与隐私需求</h2>
+    
+    <div class="req-card">
+        <h4>7.3.1 用户认证与授权</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>身份认证</td>
+                <td>
+                    <ul>
+                        <li>支持多因素认证：账号密码+手机验证码/邮箱验证</li>
+                        <li>企业管理员和财务角色必须启用双因素认证</li>
+                        <li>支持第三方认证（微信、支付宝等）</li>
+                        <li>密码策略：长度≥8位，必须包含大小写字母、数字和特殊字符</li>
+                        <li>密码有效期：90天，提前7天提醒修改</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>权限控制</td>
+                <td>
+                    <ul>
+                        <li>基于RBAC（角色基础访问控制）模型</li>
+                        <li>最小权限原则：用户仅能访问其角色所需的功能和数据</li>
+                        <li>权限粒度：模块级、功能级、数据级</li>
+                        <li>敏感操作必须经过额外授权</li>
+                        <li>权限变更需要审批流程</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>会话管理</td>
+                <td>
+                    <ul>
+                        <li>会话超时：无操作30分钟后自动登出</li>
+                        <li>并发会话控制：同一账号最多允许2个并发登录</li>
+                        <li>异常登录检测：非常用设备登录时发送通知</li>
+                        <li>登录失败处理：连续5次失败后锁定账号30分钟</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.3.2 数据安全</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>数据加密</td>
+                <td>
+                    <ul>
+                        <li>传输加密：所有数据传输必须使用HTTPS协议（TLS 1.2或更高版本）</li>
+                        <li>存储加密：敏感信息（如密码、证件号码）必须加密存储</li>
+                        <li>密钥管理：采用安全的密钥管理策略，定期轮换密钥</li>
+                        <li>支付信息：符合支付卡行业数据安全标准（PCI DSS）</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>数据脱敏</td>
+                <td>
+                    <ul>
+                        <li>身份证号：显示前3位和后4位，中间用*替代</li>
+                        <li>手机号码：显示前3位和后4位，中间用*替代</li>
+                        <li>银行卡号：仅显示后4位，其余用*替代</li>
+                        <li>地址信息：详细地址参照最小必要原则展示</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>数据防泄漏</td>
+                <td>
+                    <ul>
+                        <li>API访问控制：限制API调用频率和总量</li>
+                        <li>敏感操作审计：记录数据导出、批量查询等操作</li>
+                        <li>水印技术：导出文件包含用户信息水印</li>
+                        <li>终端安全：支持移动设备远程数据擦除</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.3.3 系统安全</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>防攻击措施</td>
+                <td>
+                    <ul>
+                        <li>防XSS攻击：输入验证和输出编码</li>
+                        <li>防SQL注入：使用参数化查询</li>
+                        <li>防CSRF攻击：使用CSRF Token</li>
+                        <li>防暴力破解：账号锁定和验证码机制</li>
+                        <li>DDoS防护：采用流量清洗和CDN服务</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>漏洞管理</td>
+                <td>
+                    <ul>
+                        <li>安全扫描：每月进行安全漏洞扫描</li>
+                        <li>补丁管理：关键漏洞48小时内修复</li>
+                        <li>第三方依赖：定期检查并更新有安全漏洞的组件</li>
+                        <li>渗透测试：每半年进行一次渗透测试</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>安全审计</td>
+                <td>
+                    <ul>
+                        <li>操作日志：记录所有关键操作，包含用户、时间、操作内容、IP地址等</li>
+                        <li>登录日志：记录所有登录尝试，包括成功和失败</li>
+                        <li>审计日志存储：日志保存时间不少于6个月</li>
+                        <li>日志保护：防止未授权的日志修改或删除</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h2>7.4 可靠性需求</h2>
+    
+    <div class="req-card">
+        <h4>7.4.1 系统容错能力</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>故障检测</td>
+                <td>
+                    <ul>
+                        <li>实时监控：关键组件健康状态实时监控</li>
+                        <li>自动检测：能够自动检测应用、服务和基础设施故障</li>
+                        <li>告警机制：故障发生时及时通知技术团队</li>
+                        <li>根因分析：提供故障根因快速定位能力</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>服务降级</td>
+                <td>
+                    <ul>
+                        <li>核心功能保障：在系统负载过高时优先保障核心业务功能</li>
+                        <li>优雅降级：非核心功能可降级或暂时关闭</li>
+                        <li>降级策略：明确的功能降级顺序和触发条件</li>
+                        <li>用户通知：降级时向用户提供明确提示</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>业务连续性</td>
+                <td>
+                    <ul>
+                        <li>事务一致性：确保业务操作的原子性和一致性</li>
+                        <li>断点续传：文件上传支持断点续传</li>
+                        <li>会话恢复：浏览器刷新后可恢复表单内容</li>
+                        <li>操作幂等：防止重复提交导致的数据错误</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.4.2 数据备份与恢复</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>数据备份策略</td>
+                <td>
+                    <ul>
+                        <li>全量备份：每周进行一次全量数据备份</li>
+                        <li>增量备份：每天进行增量数据备份</li>
+                        <li>实时同步：关键业务数据实时同步到备份系统</li>
+                        <li>备份验证：定期验证备份数据的可用性</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>数据恢复能力</td>
+                <td>
+                    <ul>
+                        <li>恢复时间目标（RTO）：关键业务数据≤4小时，非关键数据≤8小时</li>
+                        <li>恢复点目标（RPO）：关键业务数据≤30分钟，非关键数据≤24小时</li>
+                        <li>选择性恢复：支持指定时间点和指定对象的恢复</li>
+                        <li>恢复演练：每季度进行一次恢复演练</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>数据留存</td>
+                <td>
+                    <ul>
+                        <li>交易数据：保留至少5年</li>
+                        <li>用户操作日志：保留至少6个月</li>
+                        <li>系统日志：保留至少3个月</li>
+                        <li>备份数据：重要备份保留至少1年</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h2>7.5 可扩展性需求</h2>
+    
+    <div class="req-card">
+        <h4>7.5.1 系统扩展能力</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>水平扩展</td>
+                <td>
+                    <ul>
+                        <li>应用层可水平扩展：支持多实例部署，无状态设计</li>
+                        <li>数据库扩展：支持主从架构和读写分离</li>
+                        <li>缓存扩展：支持分布式缓存集群</li>
+                        <li>负载均衡：自动化的负载均衡机制</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>容量规划</td>
+                <td>
+                    <ul>
+                        <li>系统设计支持未来3年的用户增长（年增长率50%）</li>
+                        <li>数据存储容量每年增长预估100GB</li>
+                        <li>峰值处理能力可弹性扩展至平时的5倍</li>
+                        <li>提供容量预警机制，在达到阈值前提前通知</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>功能扩展</td>
+                <td>
+                    <ul>
+                        <li>模块化设计：新功能可快速集成</li>
+                        <li>API扩展性：预留API版本控制机制</li>
+                        <li>第三方集成：标准化的接口适配层</li>
+                        <li>配置驱动：核心流程支持配置化调整</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.5.2 多租户支持</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>数据隔离</td>
+                <td>
+                    <ul>
+                        <li>租户数据严格隔离，确保数据安全</li>
+                        <li>支持不同隔离级别：逻辑隔离、物理隔离</li>
+                        <li>跨租户的管理视图，便于平台运营</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>租户定制</td>
+                <td>
+                    <ul>
+                        <li>租户级别的功能开关控制</li>
+                        <li>支持租户特定的业务规则配置</li>
+                        <li>界面品牌定制：Logo、主题色等</li>
+                        <li>报表和数据展示的租户级别定制</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>租户管理</td>
+                <td>
+                    <ul>
+                        <li>租户生命周期管理：创建、配置、暂停、注销</li>
+                        <li>租户资源配额管理</li>
+                        <li>租户使用情况监控和统计</li>
+                        <li>租户间数据迁移工具</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h2>7.6 可维护性需求</h2>
+    
+    <div class="req-card">
+        <h4>7.6.1 系统监控与诊断</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>全面监控</td>
+                <td>
+                    <ul>
+                        <li>基础设施监控：服务器、网络、存储等硬件资源使用情况</li>
+                        <li>应用监控：服务状态、响应时间、错误率等</li>
+                        <li>业务监控：关键业务流程的执行情况和成功率</li>
+                        <li>用户体验监控：页面加载时间、操作响应时间等</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>告警机制</td>
+                <td>
+                    <ul>
+                        <li>多级告警：根据严重程度分级</li>
+                        <li>多渠道通知：邮件、短信、企业微信等</li>
+                        <li>告警聚合：相似告警智能聚合，避免告警风暴</li>
+                        <li>告警升级：重要告警未处理时自动升级</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>问题诊断</td>
+                <td>
+                    <ul>
+                        <li>日志集中管理：统一的日志收集和检索平台</li>
+                        <li>分布式追踪：支持跨服务的请求追踪</li>
+                        <li>性能分析：提供慢查询、慢操作分析能力</li>
+                        <li>问题重现：关键操作可记录详细日志便于重现</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.6.2 运维效率</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>自动化部署</td>
+                <td>
+                    <ul>
+                        <li>支持CI/CD流程，实现自动化构建、测试和部署</li>
+                        <li>支持蓝绿部署、金丝雀发布等先进部署策略</li>
+                        <li>环境一致性：开发、测试、生产环境配置一致</li>
+                        <li>自动化回滚：发现问题可快速回滚到稳定版本</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>配置管理</td>
+                <td>
+                    <ul>
+                        <li>集中配置：系统配置集中管理，支持远程修改</li>
+                        <li>动态配置：支持配置热更新，无需重启服务</li>
+                        <li>配置版本控制：记录配置变更历史，支持回滚</li>
+                        <li>环境配置隔离：不同环境使用独立配置</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>运维工具</td>
+                <td>
+                    <ul>
+                        <li>提供运维控制台，集中管理系统各组件</li>
+                        <li>支持常见运维操作的自助服务</li>
+                        <li>提供问题诊断工具包</li>
+                        <li>支持灾备切换演练</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h2>7.7 合规性与法律需求</h2>
+    
+    <div class="req-card">
+        <h4>7.7.1 数据合规</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>个人信息保护</td>
+                <td>
+                    <ul>
+                        <li>符合《个人信息保护法》要求，收集使用个人信息需明确告知并获得同意</li>
+                        <li>提供个人数据导出和删除功能</li>
+                        <li>未成年人信息特殊保护措施</li>
+                        <li>隐私政策更新机制</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>数据安全合规</td>
+                <td>
+                    <ul>
+                        <li>符合《数据安全法》要求，建立数据分类分级管理</li>
+                        <li>敏感数据处理符合相关行业规范</li>
+                        <li>数据出境安全评估机制</li>
+                        <li>数据安全事件应急响应机制</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>行业合规</td>
+                <td>
+                    <ul>
+                        <li>符合园区管理相关法规和标准</li>
+                        <li>支付处理符合金融监管要求</li>
+                        <li>电子合同符合《电子签名法》要求</li>
+                        <li>发票开具符合税务监管要求</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.7.2 审计与证明</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>合规证明</td>
+                <td>
+                    <ul>
+                        <li>具备相关系统安全等级保护认证（三级）</li>
+                        <li>通过ISO 27001信息安全管理体系认证</li>
+                        <li>提供合规性证明文件</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>审计支持</td>
+                <td>
+                    <ul>
+                        <li>提供完整的审计日志记录</li>
+                        <li>支持外部审计机构的审计需求</li>
+                        <li>保留足够的证据链</li>
+                        <li>定期合规自查机制</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+        </table>
+    </div>
+    
+    <h2>7.8 用户体验需求</h2>
+    
+    <div class="req-card">
+        <h4>7.8.1 易用性</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>操作简便性</td>
+                <td>
+                    <ul>
+                        <li>常用功能不超过3次点击可达</li>
+                        <li>表单设计符合用户直觉，填写顺序合理</li>
+                        <li>提供批量操作功能，减少重复劳动</li>
+                        <li>关键流程提供向导式引导</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>易学性</td>
+                <td>
+                    <ul>
+                        <li>新用户上手时间≤30分钟</li>
+                        <li>提供上下文帮助和操作提示</li>
+                        <li>配备详细的用户手册和操作视频</li>
+                        <li>复杂功能提供示例和最佳实践</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>容错性</td>
+                <td>
+                    <ul>
+                        <li>操作前提供明确提示，避免误操作</li>
+                        <li>关键操作提供撤销和恢复机制</li>
+                        <li>错误提示友好清晰，指导用户正确操作</li>
+                        <li>表单支持草稿保存，防止信息丢失</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="req-card">
+        <h4>7.8.2 可访问性</h4>
+        <table>
+            <tr>
+                <th width="20%">需求项</th>
+                <th width="60%">详细描述</th>
+                <th width="20%">优先级</th>
+            </tr>
+            <tr>
+                <td>无障碍设计</td>
+                <td>
+                    <ul>
+                        <li>符合WCAG 2.1 AA级别要求</li>
+                        <li>支持键盘导航和屏幕阅读器</li>
+                        <li>提供足够的色彩对比度</li>
+                        <li>避免依赖单一感官的交互方式</li>
+                    </ul>
+                </td>
+                <td class="priority-medium">中</td>
+            </tr>
+            <tr>
+                <td>多设备支持</td>
+                <td>
+                    <ul>
+                        <li>支持桌面端、平板和移动端访问</li>
+                        <li>支持主流浏览器：Chrome、Firefox、Safari、Edge最新版本</li>
+                        <li>移动端支持Android 7.0+和iOS 11.0+系统</li>
+                        <li>低网速环境下仍能基本可用</li>
+                    </ul>
+                </td>
+                <td class="priority-high">高</td>
+            </tr>
+            <tr>
+                <td>多语言支持</td>
+                <td>
+                    <ul>
+                        <li>支持简体中文界面</li>
+                        <li>预留英文界面切换能力</li>
+                        <li>日期、货币等格式符合本地化需求</li>
+                    </ul>
+                </td>
+                <td class="priority-low">低</td>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="key-point">
+        <p><strong>非功能需求优先级说明</strong></p>
+        <ul>
+            <li><span class="priority-high">高优先级</span>：必须满足的核心需求，影响系统基本可用性和安全性</li>
+            <li><span class="priority-medium">中优先级</span>：重要需求，影响系统使用效率和用户体验</li>
+            <li><span class="priority-low">低优先级</span>：增强型需求，可在基本功能完善后逐步实现</li>
+        </ul>
+    </div>
+    
+</body>
+</html> 

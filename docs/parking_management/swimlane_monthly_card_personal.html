@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人用户月卡申请流程 - 停车管理系统</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            color: #2980b9;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            margin-bottom: 20px;
+        }
+        .process-description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .note {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+        }
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #f57c00;
+        }
+        /* 泳道图样式 */
+        .swimlane-container {
+            position: relative;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            min-height: 800px;
+        }
+        .swimlane {
+            position: relative;
+            width: 100%;
+            height: 2000px;
+            font-size: 14px;
+        }
+        .lane {
+            position: absolute;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            height: 100%;
+            width: 220px;
+            border-right: none;
+        }
+        .lane:last-child {
+            border-right: 1px solid #ddd;
+        }
+        .lane-header {
+            position: absolute;
+            height: 50px;
+            width: 100%;
+            background-color: #e3f2fd;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        .lane-body {
+            position: absolute;
+            top: 50px;
+            height: calc(100% - 50px);
+            width: 100%;
+        }
+        .process-step {
+            position: absolute;
+            width: 180px;
+            height: 60px;
+            left: 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            border: 1px solid #2196f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 5px;
+            z-index: 10;
+            margin-bottom: 40px;
+        }
+        .process-step.start-end {
+            background-color: #e3f2fd;
+            border-color: #0d47a1;
+        }
+        .process-step.decision {
+            background-color: #fff3e0;
+            border-color: #ff9800;
+            border-radius: 0;
+            transform: rotate(45deg);
+        }
+        .process-step.decision span {
+            transform: rotate(-45deg);
+        }
+        .view-controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn.reset {
+            background-color: #e74c3c;
+        }
+        .btn.reset:hover {
+            background-color: #c0392b;
+        }
+        /* 用于连接线的样式 */
+        .jtk-connector {
+            z-index: 4;
+        }
+        .jtk-endpoint {
+            z-index: 5;
+        }
+        .jtk-overlay {
+            z-index: 6;
+        }
+        ._jsPlumb_connector {
+            z-index: 4;
+        }
+        ._jsPlumb_endpoint {
+            z-index: 5;
+        }
+        ._jsPlumb_overlay {
+            z-index: 6;
+        }
+    </style>
+    <script src="jsplumb.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>个人用户月卡申请流程</h1>
+        
+        <div class="section">
+            <h2 class="section-title">流程概述</h2>
+            <div class="process-description">
+                <p>个人用户月卡申请流程是针对非企业用户在停车管理系统中申请停车月卡的完整流程。该流程涉及个人用户、园区运营管理员、园区财务管理员和系统自动化处理等多个角色，确保个人用户能够便捷地办理和使用停车月卡。</p>
+                <p>流程从个人用户提交月卡申请开始，经过园区管理审批、费用支付，最终完成月卡的发放和使用。整个流程设计简洁明了，便于个人用户快速完成申请。</p>
+            </div>
+            
+            <div class="note">
+                <div class="note-title">申请流程说明：</div>
+                <ul>
+                    <li>个人用户可通过微信小程序或网页端填写月卡申请，提供车辆信息和停车需求</li>
+                    <li>园区运营管理员负责审核申请的合理性，包括验证车辆信息、查看车位供需情况等</li>
+                    <li>支持在线支付方式，包括微信支付和支付宝等常见支付渠道</li>
+                    <li>月卡激活后会自动将车牌信息添加到白名单，支持一个月卡关联最多2辆车（但同一时间只能有1辆入场）</li>
+                    <li>系统会在月卡到期前自动提醒用户续费，支持自动续费功能</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">个人用户月卡申请流程泳道图</h2>
+            
+            <div class="view-controls">
+                <button class="btn reset" id="resetView">重置视图</button>
+                <button class="btn" id="zoomIn">放大</button>
+                <button class="btn" id="zoomOut">缩小</button>
+            </div>
+            
+            <div class="swimlane-container" id="personalMonthlyCardContainer">
+                <div class="swimlane" id="personalMonthlyCard">
+                    <!-- 个人用户泳道 -->
+                    <div class="lane" style="left: 0px;">
+                        <div class="lane-header">个人用户</div>
+                        <div class="lane-body">
+                            <!-- 个人用户流程步骤 -->
+                            <div class="process-step start-end" id="pu-start" style="top: 50px;">
+                                开始
+                            </div>
+                            <div class="process-step" id="pu-login" style="top: 150px;">
+                                登录系统
+                            </div>
+                            <div class="process-step" id="pu-fill-info" style="top: 250px;">
+                                填写月卡申请信息
+                            </div>
+                            <div class="process-step" id="pu-set-multi-car" style="top: 350px;">
+                                设置一人多车选项
+                            </div>
+                            <div class="process-step" id="pu-submit-application" style="top: 450px;">
+                                提交月卡申请
+                            </div>
+                            <div class="process-step" id="pu-select-payment" style="top: 800px;">
+                                选择支付方式
+                            </div>
+                            <div class="process-step" id="pu-wechat-payment" style="top: 900px;">
+                                微信支付
+                            </div>
+                            <div class="process-step" id="pu-alipay-payment" style="top: 1000px;">
+                                支付宝支付
+                            </div>
+                            <div class="process-step" id="pu-bank-payment" style="top: 1050px;">
+                                银联支付
+                            </div>
+                            <div class="process-step" id="pu-pay-fee" style="top: 1150px;">
+                                支付月卡费用
+                            </div>
+                            <div class="process-step" id="pu-receive-card" style="top: 1250px;">
+                                收到月卡激活通知
+                            </div>
+                            <div class="process-step" id="pu-view-records" style="top: 1350px;">
+                                查看月卡记录
+                            </div>
+                            <div class="process-step start-end" id="pu-end" style="top: 1450px;">
+                                结束
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 园区运营管理员泳道 -->
+                    <div class="lane" style="left: 220px;">
+                        <div class="lane-header">园区运营管理员</div>
+                        <div class="lane-body">
+                            <!-- 园区运营管理员流程步骤 -->
+                            <div class="process-step" id="pm-set-monthly-price" style="top: 100px;">
+                                设置月卡定价标准
+                            </div>
+                            <div class="process-step" id="pm-multi-car-config" style="top: 250px;">
+                                配置一人多车规则
+                            </div>
+                            <div class="process-step" id="pm-receive-application" style="top: 450px;">
+                                接收月卡申请
+                            </div>
+                            <div class="process-step" id="pm-check-spaces" style="top: 600px;">
+                                检查车位情况
+                            </div>
+                            <div class="process-step decision" id="pm-approve" style="top: 750px;">
+                                <span>审批通过？</span>
+                            </div>
+                            <div class="process-step" id="pm-assist-recharge" style="top: 1200px;">
+                                协助月卡充值
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 园区财务管理员泳道 -->
+                    <div class="lane" style="left: 440px;">
+                        <div class="lane-header">园区财务管理员</div>
+                        <div class="lane-body">
+                            <!-- 园区财务管理员流程步骤 -->
+                            <div class="process-step" id="fm-set-discount" style="top: 100px;">
+                                设置个人优惠策略
+                            </div>
+                            <div class="process-step" id="fm-generate-invoice" style="top: 850px;">
+                                生成费用账单
+                            </div>
+                            <div class="process-step" id="fm-apply-discount" style="top: 950px;">
+                                应用优惠策略
+                            </div>
+                            <div class="process-step" id="fm-check-payment" style="top: 1150px;">
+                                确认收款记录
+                            </div>
+                            <div class="process-step" id="fm-process-invoice" style="top: 1300px;">
+                                处理开票申请
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 系统泳道 -->
+                    <div class="lane" style="left: 660px;">
+                        <div class="lane-header">系统</div>
+                        <div class="lane-body">
+                            <!-- 系统流程步骤 -->
+                            <div class="process-step" id="sys-validate-rule" style="top: 250px;">
+                                验证一人多车规则
+                            </div>
+                            <div class="process-step" id="sys-notify-admin" style="top: 450px;">
+                                通知园区管理员
+                            </div>
+                            <div class="process-step" id="sys-notify-rejection" style="top: 750px;">
+                                通知申请拒绝
+                            </div>
+                            <div class="process-step" id="sys-notify-invoice" style="top: 850px;">
+                                通知用户付款
+                            </div>
+                            <div class="process-step" id="sys-calc-discount" style="top: 950px;">
+                                计算优惠金额
+                            </div>
+                            <div class="process-step" id="sys-process-payment" style="top: 1150px;">
+                                处理在线支付
+                            </div>
+                            <div class="process-step" id="sys-activate-card" style="top: 1250px;">
+                                激活月卡
+                            </div>
+                            <div class="process-step" id="sys-update-records" style="top: 1350px;">
+                                更新购买记录
+                            </div>
+                            <div class="process-step" id="sys-notify-success" style="top: 1450px;">
+                                通知申请成功
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 停车场泳道 -->
+                    <div class="lane" style="left: 880px;">
+                        <div class="lane-header">停车场</div>
+                        <div class="lane-body">
+                            <!-- 停车场流程步骤 -->
+                            <div class="process-step" id="park-update-whitelist" style="top: 1200px;">
+                                更新车辆白名单
+                            </div>
+                            <div class="process-step" id="park-recognize-plates" style="top: 1300px;">
+                                识别月卡车牌
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化jsPlumb
+            var personalInstance = jsPlumb.getInstance({
+                Connector: ["Flowchart", { cornerRadius: 5 }],
+                Endpoint: ["Dot", { radius: 4 }],
+                EndpointStyle: { fill: "#2196f3" },
+                PaintStyle: { stroke: "#2196f3", strokeWidth: 2 },
+                HoverPaintStyle: { stroke: "#1565c0", strokeWidth: 3 },
+                ConnectionOverlays: [
+                    ["Arrow", { location: 1, width: 10, length: 10, foldback: 0.8 }],
+                    ["Label", { 
+                        cssClass: "connection-label",
+                        label: "",
+                        location: 0.5,
+                        id: "label"
+                    }]
+                ],
+                Container: "personalMonthlyCard"
+            });
+
+            // 连接个人用户泳道的流程
+            personalInstance.connect({ source: "pu-start", target: "pu-login", anchor: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pu-login", target: "pu-fill-info", anchor: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pu-fill-info", target: "pu-set-multi-car", anchor: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pu-set-multi-car", target: "pu-submit-application", anchor: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pu-submit-application", target: "sys-notify-admin", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "提交申请", location: 0.5 }]] });
+            personalInstance.connect({ source: "sys-notify-invoice", target: "pu-select-payment", 
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "通知付款", location: 0.5 }]] });
+                
+            // 支付方式选择
+            personalInstance.connect({ source: "pu-select-payment", target: "pu-wechat-payment",
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "选择微信支付", location: 0.5 }]] });
+            personalInstance.connect({ source: "pu-select-payment", target: "pu-alipay-payment",
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "选择支付宝", location: 0.5 }]] });
+            personalInstance.connect({ source: "pu-select-payment", target: "pu-bank-payment",
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "选择银联支付", location: 0.5 }]] });
+            personalInstance.connect({ source: "pu-wechat-payment", target: "pu-pay-fee", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pu-alipay-payment", target: "pu-pay-fee", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pu-bank-payment", target: "pu-pay-fee", 
+                anchors: ["Bottom", "Top"] });
+            
+            personalInstance.connect({ source: "pu-pay-fee", target: "sys-process-payment",
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "支付月卡费用", location: 0.5 }]] });
+            personalInstance.connect({ source: "pu-receive-card", target: "pu-view-records", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pu-view-records", target: "pu-end", 
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "完成", location: 0.5 }]] });
+
+            // 连接园区运营管理员泳道的流程
+            personalInstance.connect({ source: "pm-set-monthly-price", target: "pm-multi-car-config", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pm-multi-car-config", target: "sys-validate-rule",
+                anchors: ["Right", "Left"] });
+            personalInstance.connect({ source: "sys-notify-admin", target: "pm-receive-application", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "通知审批", location: 0.5 }]] });
+            personalInstance.connect({ source: "pm-receive-application", target: "pm-check-spaces", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pm-check-spaces", target: "pm-approve", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "pm-approve", target: "fm-generate-invoice", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "是", location: 0.5 }]] });
+            personalInstance.connect({ source: "pm-approve", target: "sys-notify-rejection", 
+                anchors: ["Right", "Left"], 
+                overlays: [["Label", { label: "否", location: 0.5 }]] });
+            personalInstance.connect({ source: "sys-activate-card", target: "pm-assist-recharge",
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "月卡激活", location: 0.5 }]] });
+
+            // 连接园区财务管理员泳道的流程
+            personalInstance.connect({ source: "fm-set-discount", target: "sys-calc-discount",
+                anchors: ["Right", "Left"] });
+            personalInstance.connect({ source: "fm-generate-invoice", target: "fm-apply-discount", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "fm-apply-discount", target: "sys-notify-invoice", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "发送账单", location: 0.5 }]] });
+            personalInstance.connect({ source: "sys-process-payment", target: "fm-check-payment", 
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "支付记录", location: 0.5 }]] });
+            personalInstance.connect({ source: "fm-check-payment", target: "sys-activate-card", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "确认支付", location: 0.5 }]] });
+            personalInstance.connect({ source: "fm-check-payment", target: "fm-process-invoice",
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "处理开票", location: 0.5 }]] });
+
+            // 连接系统泳道的流程
+            personalInstance.connect({ source: "sys-validate-rule", target: "pu-set-multi-car",
+                anchors: ["Left", "Right"] });
+            personalInstance.connect({ source: "sys-calc-discount", target: "fm-apply-discount",
+                anchors: ["Left", "Right"] });
+            personalInstance.connect({ source: "sys-activate-card", target: "park-update-whitelist", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "激活月卡", location: 0.5 }]] });
+            personalInstance.connect({ source: "sys-activate-card", target: "sys-update-records", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "sys-update-records", target: "sys-notify-success", 
+                anchors: ["Bottom", "Top"] });
+            personalInstance.connect({ source: "sys-notify-success", target: "pu-receive-card", 
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "通知成功", location: 0.5 }]] });
+
+            // 连接停车场泳道的流程
+            personalInstance.connect({ source: "park-update-whitelist", target: "park-recognize-plates", 
+                anchors: ["Bottom", "Top"] });
+
+            // 缩放功能
+            var currentZoom = 1;
+            var zoomStep = 0.1;
+            var swimlane = document.getElementById('personalMonthlyCard');
+            
+            document.getElementById('zoomIn').addEventListener('click', function() {
+                currentZoom += zoomStep;
+                applyZoom();
+            });
+            
+            document.getElementById('zoomOut').addEventListener('click', function() {
+                if (currentZoom > zoomStep) {
+                    currentZoom -= zoomStep;
+                    applyZoom();
+                }
+            });
+            
+            document.getElementById('resetView').addEventListener('click', function() {
+                currentZoom = 1;
+                applyZoom();
+                personalInstance.repaintEverything();
+            });
+            
+            function applyZoom() {
+                swimlane.style.transform = 'scale(' + currentZoom + ')';
+                swimlane.style.transformOrigin = '0 0';
+                personalInstance.setZoom(currentZoom);
+                personalInstance.repaintEverything();
+            }
+
+            // 监听窗口变化，重绘连接线
+            window.addEventListener('resize', function() {
+                personalInstance.repaintEverything();
+            });
+
+            // 滚动时重绘连接线
+            document.getElementById('personalMonthlyCardContainer').addEventListener('scroll', function() {
+                personalInstance.repaintEverything();
+            });
+        });
+    </script>
+</body>
+</html> 

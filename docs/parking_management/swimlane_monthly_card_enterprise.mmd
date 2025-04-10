@@ -1,0 +1,85 @@
+flowchart TD
+    subgraph 企业用户
+        e1-1["登录企业管理平台"] :::enterpriseStyle
+        e1-2["进入员工月卡管理"] :::enterpriseStyle
+        e1-3["批量导入员工车辆信息"] :::enterpriseStyle
+        e1-4["提交月卡申请"] :::enterpriseStyle
+        e1-5["查看申请状态"] :::enterpriseStyle
+        e1-6["接收拒绝通知"] :::enterpriseStyle
+        e1-7["接收批准通知"] :::enterpriseStyle
+        e1-8["选择支付方式"] :::enterpriseStyle
+        e1-8-detail["● 预付款支付(指定费项)
+                    ● 预付款支付(全部费项)
+                    ● 微信支付
+                    ● 银行B2B/B2C支付"] :::enterpriseStyle
+        e1-9["插入U盘密钥验证"] :::enterpriseStyle
+        e1-10["完成企业账单支付"] :::enterpriseStyle
+        e1-11["管理企业月卡列表"] :::enterpriseStyle
+        e1-12["选择/设置开票信息"] :::enterpriseStyle
+        e1-13["申请开票"] :::enterpriseStyle
+    end
+    subgraph 园区管理员
+        a1-1["接收月卡申请"] :::adminStyle
+        a1-2["核实申请信息"] :::adminStyle
+        a1-3["审批月卡申请"] :::adminStyle
+    end
+    subgraph 园区财务管理员
+        f1-1["复核月卡账单"] :::financeStyle
+        f1-2["推送账单通知"] :::financeStyle
+        f1-3["收款管理"] :::financeStyle
+        f1-4["审核开票申请"] :::financeStyle
+        f1-4-detail["● 确保租金与停车费分开开票
+                    ● 验证开票信息准确性"] :::financeStyle
+        f1-5["生成电子发票"] :::financeStyle
+    end
+    subgraph 系统
+        s1-1["创建月卡申请记录"] :::systemStyle
+        s1-2["通知管理员审核"] :::systemStyle
+        s1-3["计算月卡费用"] :::systemStyle
+        s1-4["应用企业优惠政策"] :::systemStyle
+        s1-4-detail["● A类企业优惠20%
+                    ● B类企业优惠15%
+                    ● C类企业优惠10%"] :::systemStyle
+        s1-5["生成月卡账单"] :::systemStyle
+        s1-6["发送批准通知"] :::systemStyle
+        s1-7["发送拒绝通知"] :::systemStyle
+        s1-8["处理支付"] :::systemStyle
+        s1-9["更新月卡权限"] :::systemStyle
+        s1-10["同步车牌识别系统"] :::systemStyle
+    end
+    e1-1 --> e1-2
+    e1-2 --> e1-3
+    e1-3 --> e1-4
+    e1-7 --> e1-8
+    e1-8 --> e1-9
+    e1-9 --> e1-10
+    e1-10 --> e1-11
+    e1-11 --> e1-12
+    e1-12 --> e1-13
+    a1-1 --> a1-2
+    a1-2 --> a1-3
+    f1-1 --> f1-2
+    f1-3 --> f1-4
+    s1-1 --> s1-2
+    s1-3 --> s1-4
+    s1-4 --> s1-5
+    s1-5 --> s1-6
+    s1-8 --> s1-9
+    s1-9 --> s1-10
+    e1-4 --> s1-1
+    s1-2 --> a1-1
+    a1-3 --> s1-3
+    a1-3 --> s1-7
+    s1-5 --> f1-1
+    f1-2 --> s1-6
+    s1-6 --> e1-7
+    s1-7 --> e1-6
+    e1-10 --> s1-8
+    s1-8 --> f1-3
+    e1-13 --> f1-4
+
+    classDef enterpriseStyle fill:#f6ffed,stroke:#52c41a,color:#000
+    classDef adminStyle fill:#e6f7ff,stroke:#1890ff,color:#000
+    classDef financeStyle fill:#f9f0ff,stroke:#722ed1,color:#000
+    classDef systemStyle fill:#f5f5f5,stroke:#bfbfbf,color:#000
+    

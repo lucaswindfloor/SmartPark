@@ -1,0 +1,74 @@
+@startuml
+!theme plain
+skinparam dpi 300
+skinparam ActivityBackgroundColor white
+skinparam ActivityBorderColor black
+|企业用户|
+:e1-1 [#f6ffed/#52c41a];
+:e1-2 [#f6ffed/#52c41a];
+:e1-3 [#f6ffed/#52c41a];
+:e1-4 [#f6ffed/#52c41a];
+:e1-5 [#f6ffed/#52c41a];
+:e1-6 [#f6ffed/#52c41a];
+:e1-7 [#f6ffed/#52c41a];
+:e1-8 [#f6ffed/#52c41a];
+:e1-8-detail [#f6ffed/#52c41a];
+:e1-9 [#f6ffed/#52c41a];
+:e1-10 [#f6ffed/#52c41a];
+:e1-11 [#f6ffed/#52c41a];
+:e1-12 [#f6ffed/#52c41a];
+:e1-13 [#f6ffed/#52c41a];
+|园区管理员|
+:a1-1 [#e6f7ff/#1890ff];
+:a1-2 [#e6f7ff/#1890ff];
+:a1-3 [#e6f7ff/#1890ff];
+|园区财务管理员|
+:f1-1 [#f9f0ff/#722ed1];
+:f1-2 [#f9f0ff/#722ed1];
+:f1-3 [#f9f0ff/#722ed1];
+:f1-4 [#f9f0ff/#722ed1];
+:f1-4-detail [#f9f0ff/#722ed1];
+:f1-5 [#f9f0ff/#722ed1];
+|系统|
+:s1-1 [#f5f5f5/#bfbfbf];
+:s1-2 [#f5f5f5/#bfbfbf];
+:s1-3 [#f5f5f5/#bfbfbf];
+:s1-4 [#f5f5f5/#bfbfbf];
+:s1-4-detail [#f5f5f5/#bfbfbf];
+:s1-5 [#f5f5f5/#bfbfbf];
+:s1-6 [#f5f5f5/#bfbfbf];
+:s1-7 [#f5f5f5/#bfbfbf];
+:s1-8 [#f5f5f5/#bfbfbf];
+:s1-9 [#f5f5f5/#bfbfbf];
+:s1-10 [#f5f5f5/#bfbfbf];
+e1-1 --> e1-2
+e1-2 --> e1-3
+e1-3 --> e1-4
+e1-7 --> e1-8
+e1-8 --> e1-9
+e1-9 --> e1-10
+e1-10 --> e1-11
+e1-11 --> e1-12
+e1-12 --> e1-13
+a1-1 --> a1-2
+a1-2 --> a1-3
+f1-1 --> f1-2
+f1-3 --> f1-4
+s1-1 --> s1-2
+s1-3 --> s1-4
+s1-4 --> s1-5
+s1-5 --> s1-6
+s1-8 --> s1-9
+s1-9 --> s1-10
+e1-4 --> s1-1
+s1-2 --> a1-1
+a1-3 --> s1-3
+a1-3 --> s1-7
+s1-5 --> f1-1
+f1-2 --> s1-6
+s1-6 --> e1-7
+s1-7 --> e1-6
+e1-10 --> s1-8
+s1-8 --> f1-3
+e1-13 --> f1-4
+@enduml

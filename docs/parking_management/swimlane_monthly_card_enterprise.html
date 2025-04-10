@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业用户月卡申请流程 - 停车管理系统</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            color: #2980b9;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            margin-bottom: 20px;
+        }
+        .process-description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .note {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 20px;
+        }
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #f57c00;
+        }
+        /* 泳道图样式 - 垂直布局 */
+        .swimlane-container {
+            position: relative;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            min-height: 800px;
+        }
+        .swimlane {
+            position: relative;
+            width: 100%;
+            height: 2400px;
+            font-size: 14px;
+        }
+        .lane {
+            position: absolute;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            height: 100%;
+            width: 220px;
+            border-right: none;
+        }
+        .lane:last-child {
+            border-right: 1px solid #ddd;
+        }
+        .lane-header {
+            position: absolute;
+            height: 50px;
+            width: 100%;
+            background-color: #e3f2fd;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        .lane-body {
+            position: absolute;
+            top: 50px;
+            height: calc(100% - 50px);
+            width: 100%;
+        }
+        .process-step {
+            position: absolute;
+            width: 180px;
+            height: 60px;
+            left: 20px;
+            border-radius: 5px;
+            background-color: #fff;
+            border: 1px solid #2196f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 5px;
+            z-index: 10;
+            margin-bottom: 40px;
+        }
+        .process-step.start-end {
+            background-color: #e3f2fd;
+            border-color: #0d47a1;
+        }
+        .process-step.decision {
+            background-color: #fff3e0;
+            border-color: #ff9800;
+            border-radius: 0;
+            transform: rotate(45deg);
+            width: 120px;
+            height: 120px;
+        }
+        .process-step.decision span {
+            transform: rotate(-45deg);
+        }
+        .view-controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn.reset {
+            background-color: #e74c3c;
+        }
+        .btn.reset:hover {
+            background-color: #c0392b;
+        }
+        /* 用于连接线的样式 */
+        .jtk-connector {
+            z-index: 4;
+        }
+        .jtk-endpoint {
+            z-index: 5;
+        }
+        .jtk-overlay {
+            z-index: 6;
+        }
+        ._jsPlumb_connector {
+            z-index: 4;
+        }
+        ._jsPlumb_endpoint {
+            z-index: 5;
+        }
+        ._jsPlumb_overlay {
+            z-index: 6;
+        }
+        .connection-label {
+            background-color: white;
+            padding: 2px 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+    <script src="jsplumb.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>企业用户月卡申请流程</h1>
+        
+        <div class="section">
+            <h2 class="section-title">流程概述</h2>
+            <div class="process-description">
+                <p>企业用户月卡申请流程是针对企业管理员在停车管理系统中为企业员工申请停车月卡的完整流程。该流程涉及企业管理员、园区运营管理员、园区财务管理员和系统自动化处理等多个角色，确保企业用户能够便捷地管理员工的停车权限。</p>
+                <p>流程从企业管理员提交月卡申请开始，经过园区管理审批、财务结算，最终完成月卡的发放和使用。该流程支持批量处理，方便企业管理大量员工停车需求。</p>
+            </div>
+            
+            <div class="note">
+                <div class="note-title">申请流程说明：</div>
+                <ul>
+                    <li>企业管理员可为多名员工同时申请月卡，系统支持批量操作和导入员工信息</li>
+                    <li>园区运营管理员负责审核申请的合理性，包括验证车辆信息、企业配额等</li>
+                    <li>园区财务管理员负责处理费用账单和优惠策略的应用</li>
+                    <li>根据企业的级别和协议，可能会自动应用不同的优惠政策（如某些类型企业享有特殊折扣）</li>
+                    <li>支持预付款支付、微信支付、银行B2C支付等多种在线支付方式，企业B2B支付需U盘密钥验证</li>
+                    <li>批量操作支持一次性为多名员工申请，便于大型企业管理</li>
+                    <li>支持一人多车设置，最多可设置两辆车，采用"先出场的车辆享受月卡"规则</li>
+                    <li>月卡购买后支持申请开票、查看购买记录、办理转让等后续操作</li>
+                    <li>园区运营管理员可设置停车场总车位数，系统动态计算剩余车位</li>
+                    <li>支持出入口二维码管理，可下载和打印用于快速缴费</li>
+                    <li>月卡定价支持设置基础价格和企业类型优惠（含赠送时长）</li>
+                    <li>提供车辆分类管理，包括白名单、黑名单、免费车辆等</li>
+                    <li>支持账单的批量复核、收回、撤销和废弃操作</li>
+                    <li>企业可通过预付款方式提前充值，用于各类停车费用支付</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">企业用户月卡申请流程泳道图</h2>
+            
+            <div class="view-controls">
+                <button class="btn reset" id="resetView">重置视图</button>
+                <button class="btn" id="zoomIn">放大</button>
+                <button class="btn" id="zoomOut">缩小</button>
+            </div>
+            
+            <div class="swimlane-container" id="enterpriseMonthlyCardContainer">
+                <div class="swimlane" id="enterpriseMonthlyCard">
+                    <!-- 企业管理员泳道 -->
+                    <div class="lane" style="left: 0px;">
+                        <div class="lane-header">企业管理员</div>
+                        <div class="lane-body">
+                            <!-- 企业管理员流程步骤 -->
+                            <div class="process-step start-end" id="em-start" style="top: 50px;">
+                                开始
+                            </div>
+                            <div class="process-step" id="em-login" style="top: 150px;">
+                                登录企业管理后台
+                            </div>
+                            <div class="process-step" id="em-select-employees" style="top: 250px;">
+                                选择/导入员工信息
+                            </div>
+                            <div class="process-step" id="em-set-card-type" style="top: 350px;">
+                                选择月卡类型
+                            </div>
+                            <div class="process-step" id="em-set-multi-car" style="top: 450px;">
+                                设置一人多车选项
+                            </div>
+                            <div class="process-step" id="em-submit-application" style="top: 550px;">
+                                提交月卡申请
+                            </div>
+                            <div class="process-step" id="em-select-payment" style="top: 800px;">
+                                选择支付方式
+                            </div>
+                            <div class="process-step" id="em-prepaid-payment" style="top: 850px;">
+                                选择预付款支付
+                            </div>
+                            <div class="process-step" id="em-check-prepaid-balance" style="top: 880px;">
+                                查询预付款余额
+                            </div>
+                            <div class="process-step" id="em-usb-verification" style="top: 950px;">
+                                插入U盘密钥验证
+                            </div>
+                            <div class="process-step" id="em-online-payment" style="top: 1000px;">
+                                选择微信/银行B2C支付
+                            </div>
+                            <div class="process-step" id="em-pay-invoice" style="top: 1050px;">
+                                支付账单
+                            </div>
+                            <div class="process-step" id="em-confirm" style="top: 1100px;">
+                                确认月卡生效
+                            </div>
+                            <div class="process-step" id="em-subsequent-operations" style="top: 1200px;">
+                                后续操作（查看记录/申请开票/转让等）
+                            </div>
+                            <div class="process-step start-end" id="em-end" style="top: 1300px;">
+                                结束
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 园区运营管理员泳道 -->
+                    <div class="lane" style="left: 220px;">
+                        <div class="lane-header">园区运营管理员</div>
+                        <div class="lane-body">
+                            <!-- 园区运营管理员流程步骤 -->
+                            <div class="process-step" id="pm-set-monthly-price" style="top: 100px;">
+                                设置月卡定价标准
+                            </div>
+                            <div class="process-step" id="pm-manage-vehicles" style="top: 250px;">
+                                管理车辆分类
+                            </div>
+                            <div class="process-step" id="pm-receive-application" style="top: 550px;">
+                                接收月卡申请
+                            </div>
+                            <div class="process-step" id="pm-check-quota" style="top: 700px;">
+                                检查企业配额
+                            </div>
+                            <div class="process-step decision" id="pm-approve" style="top: 850px;">
+                                <span>审批通过？</span>
+                            </div>
+                            <div class="process-step" id="pm-assist-recharge" style="top: 1000px;">
+                                协助月卡充值
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 园区财务管理员泳道 -->
+                    <div class="lane" style="left: 440px;">
+                        <div class="lane-header">园区财务管理员</div>
+                        <div class="lane-body">
+                            <!-- 园区财务管理员流程步骤 -->
+                            <div class="process-step" id="fm-set-enterprise-type" style="top: 100px;">
+                                设置企业类型优惠
+                            </div>
+                            <div class="process-step" id="fm-set-gift-time" style="top: 200px;">
+                                设置赠送时长优惠
+                            </div>
+                            <div class="process-step" id="fm-set-tier-discount" style="top: 300px;">
+                                设置阶梯式优惠
+                            </div>
+                            <div class="process-step" id="fm-check-enterprise" style="top: 850px;">
+                                查询企业类型
+                            </div>
+                            <div class="process-step" id="fm-generate-invoice" style="top: 1000px;">
+                                生成账单
+                            </div>
+                            <div class="process-step" id="fm-batch-review" style="top: 1150px;">
+                                批量复核账单
+                            </div>
+                            <div class="process-step" id="fm-apply-discount" style="top: 1300px;">
+                                应用企业优惠
+                            </div>
+                            <div class="process-step" id="fm-check-payment" style="top: 1450px;">
+                                确认收款
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 系统泳道 -->
+                    <div class="lane" style="left: 660px;">
+                        <div class="lane-header">系统</div>
+                        <div class="lane-body">
+                            <!-- 系统流程步骤 -->
+                            <div class="process-step" id="sys-verify-vehicle" style="top: 250px;">
+                                车辆分类权限验证
+                            </div>
+                            <div class="process-step" id="sys-calc-enterprise-discount" style="top: 850px;">
+                                计算企业类型优惠
+                            </div>
+                            <div class="process-step" id="sys-calc-gift-time" style="top: 900px;">
+                                计算赠送时长
+                            </div>
+                            <div class="process-step" id="sys-calc-tier-discount" style="top: 950px;">
+                                计算阶梯式优惠
+                            </div>
+                            <div class="process-step" id="sys-notify-admin" style="top: 550px;">
+                                通知园区管理员
+                            </div>
+                            <div class="process-step" id="sys-notify-rejection" style="top: 850px;">
+                                通知申请拒绝
+                            </div>
+                            <div class="process-step" id="sys-notify-invoice" style="top: 1150px;">
+                                通知企业付款
+                            </div>
+                            <div class="process-step" id="sys-verify-key" style="top: 900px;">
+                                验证U盘密钥
+                            </div>
+                            <div class="process-step" id="sys-auto-bill" style="top: 1300px;">
+                                自动生成推送账单
+                            </div>
+                            <div class="process-step" id="sys-activate-cards" style="top: 1450px;">
+                                激活月卡
+                            </div>
+                            <div class="process-step" id="sys-update-records" style="top: 1600px;">
+                                更新购买记录
+                            </div>
+                            <div class="process-step" id="sys-notify-success" style="top: 1750px;">
+                                通知申请成功
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 停车场泳道 -->
+                    <div class="lane" style="left: 880px;">
+                        <div class="lane-header">停车场</div>
+                        <div class="lane-body">
+                            <!-- 停车场流程步骤 -->
+                            <div class="process-step" id="park-classify-vehicle" style="top: 250px;">
+                                车辆分类识别
+                            </div>
+                            <div class="process-step" id="park-update-whitelist" style="top: 1450px;">
+                                更新车辆白名单
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化jsPlumb
+            var enterpriseInstance = jsPlumb.getInstance({
+                Connector: ["Flowchart", { cornerRadius: 5 }],
+                Endpoint: ["Dot", { radius: 4 }],
+                EndpointStyle: { fill: "#2196f3" },
+                PaintStyle: { stroke: "#2196f3", strokeWidth: 2 },
+                HoverPaintStyle: { stroke: "#1565c0", strokeWidth: 3 },
+                ConnectionOverlays: [
+                    ["Arrow", { location: 1, width: 10, length: 10, foldback: 0.8 }],
+                    ["Label", { 
+                        cssClass: "connection-label",
+                        label: "",
+                        location: 0.5,
+                        id: "label"
+                    }]
+                ],
+                Container: "enterpriseMonthlyCard"
+            });
+
+            // 连接企业管理员泳道的流程
+            enterpriseInstance.connect({ source: "em-start", target: "em-login", anchor: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-login", target: "em-select-employees", anchor: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-select-employees", target: "em-set-card-type", anchor: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-set-card-type", target: "em-set-multi-car", anchor: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-set-multi-car", target: "em-submit-application", anchor: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-submit-application", target: "sys-notify-admin", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "提交申请", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "sys-notify-invoice", target: "em-select-payment", 
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "选择支付方式", location: 0.5 }]] });
+            
+            // 支付流程分支
+            enterpriseInstance.connect({ source: "em-select-payment", target: "em-prepaid-payment", 
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "选择预付款", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "em-select-payment", target: "em-usb-verification", 
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "选择B2B支付", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "em-select-payment", target: "em-online-payment", 
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "选择在线支付", location: 0.5 }]] });
+            
+            enterpriseInstance.connect({ source: "em-prepaid-payment", target: "em-check-prepaid-balance",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-check-prepaid-balance", target: "em-pay-invoice",
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "余额充足", location: 0.5 }]] });
+            
+            enterpriseInstance.connect({ source: "em-usb-verification", target: "sys-verify-key",
+                anchors: ["Right", "Left"] });
+            enterpriseInstance.connect({ source: "sys-verify-key", target: "em-pay-invoice", 
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "验证通过", location: 0.5 }]] });
+            
+            enterpriseInstance.connect({ source: "em-online-payment", target: "em-pay-invoice",
+                anchors: ["Bottom", "Top"] });
+            
+            enterpriseInstance.connect({ source: "em-pay-invoice", target: "em-confirm",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-confirm", target: "em-subsequent-operations",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "em-subsequent-operations", target: "em-end", 
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "完成", location: 0.5 }]] });
+
+            // 连接园区运营管理员泳道的流程
+            enterpriseInstance.connect({ source: "sys-notify-admin", target: "pm-receive-application", 
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "通知审批", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "pm-receive-application", target: "pm-check-quota",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "pm-check-quota", target: "pm-approve",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "pm-approve", target: "fm-check-enterprise", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "是", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "pm-approve", target: "sys-notify-rejection", 
+                anchors: ["Right", "Left"], 
+                overlays: [["Label", { label: "否", location: 0.5 }]] });
+
+            // 连接园区财务管理员泳道的流程
+            enterpriseInstance.connect({ source: "fm-set-enterprise-type", target: "fm-set-gift-time",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "fm-set-gift-time", target: "fm-set-tier-discount",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "fm-check-enterprise", target: "sys-calc-enterprise-discount",
+                anchors: ["Right", "Left"] });
+            enterpriseInstance.connect({ source: "sys-calc-enterprise-discount", target: "sys-calc-gift-time",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "sys-calc-gift-time", target: "sys-calc-tier-discount",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "sys-calc-tier-discount", target: "fm-generate-invoice",
+                anchors: ["Left", "Top"] });
+            enterpriseInstance.connect({ source: "fm-generate-invoice", target: "fm-apply-discount",
+                anchors: ["Bottom", "Top"] });
+            enterpriseInstance.connect({ source: "fm-apply-discount", target: "sys-notify-invoice", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "发送账单", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "fm-check-payment", target: "sys-activate-cards", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "确认支付", location: 0.5 }]] });
+
+            // 连接系统泳道的流程
+            enterpriseInstance.connect({ source: "sys-activate-cards", target: "sys-update-records", 
+                anchors: ["Bottom", "Top"],
+                overlays: [["Label", { label: "更新记录", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "sys-update-records", target: "park-update-whitelist", 
+                anchors: ["Right", "Left"],
+                overlays: [["Label", { label: "激活月卡", location: 0.5 }]] });
+            enterpriseInstance.connect({ source: "sys-activate-cards", target: "sys-notify-success",
+                anchors: ["Right", "Left"] });
+            enterpriseInstance.connect({ source: "sys-notify-success", target: "em-confirm", 
+                anchors: ["Left", "Right"],
+                overlays: [["Label", { label: "通知成功", location: 0.5 }]] });
+
+            // 连接停车场泳道的流程
+            enterpriseInstance.connect({ source: "park-update-whitelist", target: "park-classify-vehicle",
+                anchors: ["Bottom", "Top"] });
+
+            // 缩放功能
+            var currentZoom = 1;
+            var zoomStep = 0.1;
+            var swimlane = document.getElementById('enterpriseMonthlyCard');
+            
+            document.getElementById('zoomIn').addEventListener('click', function() {
+                currentZoom += zoomStep;
+                applyZoom();
+            });
+            
+            document.getElementById('zoomOut').addEventListener('click', function() {
+                if (currentZoom > zoomStep) {
+                    currentZoom -= zoomStep;
+                    applyZoom();
+                }
+            });
+            
+            document.getElementById('resetView').addEventListener('click', function() {
+                currentZoom = 1;
+                applyZoom();
+                enterpriseInstance.repaintEverything();
+            });
+            
+            function applyZoom() {
+                swimlane.style.transform = 'scale(' + currentZoom + ')';
+                swimlane.style.transformOrigin = '0 0';
+                enterpriseInstance.setZoom(currentZoom);
+                enterpriseInstance.repaintEverything();
+            }
+
+            // 监听窗口变化，重绘连接线
+            window.addEventListener('resize', function() {
+                enterpriseInstance.repaintEverything();
+            });
+
+            // 滚动时重绘连接线
+            document.getElementById('enterpriseMonthlyCardContainer').addEventListener('scroll', function() {
+                enterpriseInstance.repaintEverything();
+            });
+        });
+    </script>
+</body>
+</html> 

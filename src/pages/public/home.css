@@ -1,0 +1,219 @@
+/* Home page styles */
+.home-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Message alert styles */
+.message-alert {
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Section card styles */
+.section-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  margin-bottom: 16px;
+}
+
+.section-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Activity carousel styles */
+.activity-carousel {
+  margin-bottom: 16px;
+}
+
+.carousel-item {
+  height: 280px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.carousel-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+}
+
+.carousel-overlay h3 {
+  color: white;
+  margin: 8px 0;
+  font-size: 22px;
+}
+
+/* Service menu styles */
+.menu-card {
+  margin-top: 24px;
+}
+
+.service-login-tip {
+  padding: 40px 0;
+  text-align: center;
+}
+
+.service-item-card {
+  text-align: center;
+  transition: all 0.3s;
+  border-radius: 12px;
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.service-item-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.service-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.service-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Information section styles */
+.info-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.info-link {
+  color: #1890ff;
+  transition: all 0.3s;
+}
+
+.info-link:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}
+
+.info-more-button {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.info-more-button p {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Park display styles */
+.ant-tabs-tab {
+  font-size: 16px;
+}
+
+/* Gallery carousel styles */
+.gallery-carousel .carousel-item {
+  height: 300px;
+}
+
+.gallery-carousel .carousel-overlay {
+  padding: 16px;
+}
+
+/* Property showcase styles */
+.property-card {
+  height: 100%;
+  transition: all 0.3s;
+  overflow: hidden;
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.property-card .ant-card-cover img {
+  transition: all 0.5s;
+}
+
+.property-card:hover .ant-card-cover img {
+  transform: scale(1.05);
+}
+
+.property-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+/* Space registration styles */
+.space-registration {
+  text-align: center;
+  padding: 20px;
+  background: #f0f9ff;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.space-registration h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .home-page {
+    padding: 12px;
+  }
+  
+  .carousel-item {
+    height: 200px;
+  }
+  
+  .carousel-overlay h3 {
+    font-size: 18px;
+  }
+  
+  .service-icon {
+    font-size: 28px;
+  }
+
+  .gallery-carousel .carousel-item {
+    height: 200px;
+  }
+}
+
+@media (max-width: 576px) {
+  .service-item-card {
+    padding: 12px 8px;
+  }
+  
+  .service-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  
+  .service-title {
+    font-size: 14px;
+  }
+} 

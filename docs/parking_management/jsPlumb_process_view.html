@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>业务流程角色泳道图 - jsPlumb版</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+        h3 {
+            margin-top: 30px;
+            color: #2980b9;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .process-description {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .swimlane-note {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* 泳道图样式 */
+        .swimlane-container {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            position: relative;
+            height: 900px;
+            overflow-y: auto;
+        }
+        .swimlane {
+            position: relative;
+            height: 100%;
+            display: flex;
+        }
+        .lane {
+            flex: 1;
+            border-right: 1px dashed #ddd;
+            padding: 10px;
+            position: relative;
+        }
+        .lane:last-child {
+            border-right: none;
+        }
+        .lane-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            background-color: #f5f5f5;
+            margin-bottom: 40px;
+        }
+        .process-step {
+            width: 80%;
+            margin: 30px auto;
+            padding: 15px 10px;
+            border-radius: 5px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+            z-index: 5;
+        }
+        .process-step:hover {
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .process-step:hover + .jtk-connector {
+            z-index: 9;
+            stroke-width: 3px;
+        }
+        .user-step {
+            background-color: #d4efdf;
+            border-left: 4px solid #27ae60;
+        }
+        .manager-step {
+            background-color: #f5b7b1;
+            border-left: 4px solid #e74c3c;
+        }
+        .admin-step {
+            background-color: #fdebd0;
+            border-left: 4px solid #f39c12;
+        }
+        .service-step {
+            background-color: #d7bde2;
+            border-left: 4px solid #9b59b6;
+        }
+        .finance-step {
+            background-color: #aed6f1;
+            border-left: 4px solid #3498db;
+        }
+        .system-step {
+            background-color: #e5e8e8;
+            border-left: 4px solid #95a5a6;
+        }
+        
+        /* 角色图例 */
+        .role-legend {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            gap: 10px;
+        }
+        .role-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        .role-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+        }
+        
+        /* 连接线样式 */
+        .connection-label {
+            background-color: white;
+            padding: 2px 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #666;
+            z-index: 8;
+            box-shadow: 0px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        /* 导航菜单 */
+        .process-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            margin: 0 -30px 20px;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+        }
+        .process-nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        .process-nav-link {
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .process-nav-link:hover,
+        .process-nav-link.active {
+            background-color: #e9ecef;
+            color: #3498db;
+        }
+        .reset-view-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .reset-view-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        /* 增加反馈效果 */
+        .lane-zoom {
+            transition: all 0.2s;
+        }
+        .lane-zoom:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+    </style>
+    <!-- jsPlumb库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>业务流程角色泳道图</h1>
+        
+        <div class="process-nav">
+            <div class="process-nav-links">
+                <a href="#intro" class="process-nav-link">泳道图说明</a>
+                <a href="#registration" class="process-nav-link">用户注册流程</a>
+                <a href="#service" class="process-nav-link">服务申请流程</a>
+            </div>
+            <button id="reset-view-btn" class="reset-view-btn">重置视图</button>
+        </div>
+        
+        <h2 id="intro">1. 泳道图说明</h2>
+        <p>本文档使用泳道图的方式展示公共服务平台各项业务流程，按照不同参与角色组织，清晰展示各角色在流程中的职责和操作步骤。泳道图横向展示不同角色，纵向展示流程的时间顺序。</p>
+        
+        <div class="role-legend">
+            <div class="role-item"><div class="role-color" style="background-color: #27ae60;"></div> 企业员工</div>
+            <div class="role-item"><div class="role-color" style="background-color: #e74c3c;"></div> 企业管理员</div>
+            <div class="role-item"><div class="role-color" style="background-color: #f39c12;"></div> 园区管理员</div>
+            <div class="role-item"><div class="role-color" style="background-color: #9b59b6;"></div> 物业服务人员</div>
+            <div class="role-item"><div class="role-color" style="background-color: #3498db;"></div> 财务管理员</div>
+            <div class="role-item"><div class="role-color" style="background-color: #95a5a6;"></div> 系统</div>
+        </div>
+        
+        <h2 id="registration">2. 核心业务流程</h2>
+        
+        <h3>2.1 用户注册与企业关联流程</h3>
+        <div class="process-description">
+            <p>用户完成注册并与企业建立关联的完整流程，包括员工加入企业和企业管理员注册两种主要场景，并涵盖了验证失败、审批拒绝等异常情况处理。</p>
+        </div>
+        
+        <div class="swimlane-container" id="registration-flow">
+            <div class="swimlane">
+                <div class="lane lane-zoom">
+                    <div class="lane-header">用户</div>
+                    <div class="process-step user-step" id="u1-1">选择注册入口</div>
+                    <div class="process-step user-step" id="u1-2" style="margin-top: 60px;">输入手机号并验证</div>
+                    <div class="process-step user-step" id="u1-2a" style="margin-top: 60px; background-color: #fadbd8; border-left-color: #c0392b;">验证失败（重新验证）</div>
+                    <div class="process-step user-step" id="u1-3" style="margin-top: 60px;">填写个人基本信息</div>
+                    <div class="process-step user-step" id="u1-4" style="margin-top: 60px;">选择用户类型</div>
+                    <div class="process-step user-step" id="u1-5a" style="margin-top: 60px;">选择已有企业</div>
+                    <div class="process-step user-step" id="u1-5b" style="margin-top: 60px;">填写新企业信息并上传资质</div>
+                    <div class="process-step user-step" id="u1-6" style="margin-top: 60px;">完成身份验证和人脸录入</div>
+                    <div class="process-step user-step" id="u1-6a" style="margin-top: 60px; background-color: #fadbd8; border-left-color: #c0392b;">身份验证失败（重新验证）</div>
+                    <div class="process-step user-step" id="u1-7" style="margin-top: 60px;">确认提交申请</div>
+                    <div class="process-step user-step" id="u1-8" style="margin-top: 60px;">查询申请状态</div>
+                    <div class="process-step user-step" id="u1-9" style="margin-top: 60px;">接收审批结果通知</div>
+                    <div class="process-step user-step" id="u1-10" style="margin-top: 60px;">修改申请（如被退回）</div>
+                    <div class="process-step user-step" id="u1-11" style="margin-top: 60px;">完成注册</div>
+                </div>
+                <div class="lane lane-zoom">
+                    <div class="lane-header">企业管理员</div>
+                    <div class="process-step manager-step" id="m1-1" style="margin-top: 450px;">接收员工加入申请</div>
+                    <div class="process-step manager-step" id="m1-2" style="margin-top: 60px;">审核员工信息</div>
+                    <div class="process-step manager-step" id="m1-3a" style="margin-top: 60px;">批准加入申请</div>
+                    <div class="process-step manager-step" id="m1-3b" style="margin-top: 60px; background-color: #fadbd8; border-left-color: #c0392b;">拒绝/退回申请（附理由）</div>
+                    <div class="process-step manager-step" id="m1-4" style="margin-top: 60px;">设置员工权限</div>
+                </div>
+                <div class="lane lane-zoom">
+                    <div class="lane-header">园区管理员</div>
+                    <div class="process-step admin-step" id="a1-1" style="margin-top: 450px;">接收企业注册申请</div>
+                    <div class="process-step admin-step" id="a1-2" style="margin-top: 60px;">审核企业资质</div>
+                    <div class="process-step admin-step" id="a1-3a" style="margin-top: 60px;">批准企业注册</div>
+                    <div class="process-step admin-step" id="a1-3b" style="margin-top: 60px; background-color: #fadbd8; border-left-color: #c0392b;">拒绝/退回申请（附理由）</div>
+                    <div class="process-step admin-step" id="a1-4" style="margin-top: 60px;">配置企业服务权限</div>
+                </div>
+                <div class="lane lane-zoom">
+                    <div class="lane-header">系统</div>
+                    <div class="process-step system-step" id="s1-1" style="margin-top: 60px;">验证手机号</div>
+                    <div class="process-step system-step" id="s1-1a" style="margin-top: 60px; background-color: #fadbd8; border-left-color: #c0392b;">验证失败（已注册/格式错误）</div>
+                    <div class="process-step system-step" id="s1-2" style="margin-top: 60px;">检查用户信息完整性</div>
+                    <div class="process-step system-step" id="s1-3" style="margin-top: 60px;">身份证实名认证</div>
+                    <div class="process-step system-step" id="s1-3a" style="margin-top: 60px; background-color: #fadbd8; border-left-color: #c0392b;">身份验证失败</div>
+                    <div class="process-step system-step" id="s1-4" style="margin-top: 60px;">创建用户账号</div>
+                    <div class="process-step system-step" id="s1-5" style="margin-top: 60px;">关联用户与企业</div>
+                    <div class="process-step system-step" id="s1-6" style="margin-top: 60px;">生成审批通知</div>
+                    <div class="process-step system-step" id="s1-7" style="margin-top: 60px;">记录审批状态变更</div>
+                    <div class="process-step system-step" id="s1-8" style="margin-top: 60px;">发送审批结果通知</div>
+                    <div class="process-step system-step" id="s1-9" style="margin-top: 60px;">更新用户状态</div>
+                    <div class="process-step system-step" id="s1-10" style="margin-top: 60px;">生成门禁权限</div>
+                    <div class="process-step system-step" id="s1-11" style="margin-top: 60px;">发送注册成功通知</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="swimlane-note">
+            <strong>流程说明：</strong>
+            <ul>
+                <li>流程分为员工加入已有企业和企业管理员注册新企业两条主线</li>
+                <li>红色背景的步骤表示异常处理环节，包含验证失败和审批拒绝情况</li>
+                <li>企业员工需由企业管理员审批，企业管理员需由园区管理员审批</li>
+                <li>用户可随时查询申请状态，系统会实时推送状态变更通知</li>
+                <li>完成审批后生成相应门禁权限，完成整个注册流程</li>
+            </ul>
+        </div>
+        
+        <h3 id="service">2.2 服务申请与审批流程</h3>
+        <div class="process-description">
+            <p>用户提交各类服务申请并经过审批的通用流程，适用于维修申报、事件上报、退租申请等多种业务场景。</p>
+        </div>
+        
+        <div class="swimlane-container" id="service-flow">
+            <div class="swimlane">
+                <div class="lane lane-zoom">
+                    <div class="lane-header">企业员工/管理员</div>
+                    <div class="process-step user-step" id="u2-1">选择服务类型</div>
+                    <div class="process-step user-step" id="u2-2" style="margin-top: 60px;">填写申请信息</div>
+                    <div class="process-step user-step" id="u2-3" style="margin-top: 60px;">上传支持材料</div>
+                    <div class="process-step user-step" id="u2-4" style="margin-top: 60px;">提交申请</div>
+                    <div class="process-step user-step" id="u2-5" style="margin-top: 280px;">确认服务结果</div>
+                    <div class="process-step user-step" id="u2-6" style="margin-top: 60px;">评价服务</div>
+                </div>
+                <div class="lane lane-zoom">
+                    <div class="lane-header">园区管理员</div>
+                    <div class="process-step admin-step" id="a2-1" style="margin-top: 200px;">查看申请详情</div>
+                    <div class="process-step admin-step" id="a2-2" style="margin-top: 60px;">审批申请</div>
+                    <div class="process-step admin-step" id="a2-3" style="margin-top: 60px;">分配服务人员</div>
+                </div>
+                <div class="lane lane-zoom">
+                    <div class="lane-header">物业服务人员</div>
+                    <div class="process-step service-step" id="sv2-1" style="margin-top: 320px;">接收服务任务</div>
+                    <div class="process-step service-step" id="sv2-2" style="margin-top: 60px;">执行服务处理</div>
+                    <div class="process-step service-step" id="sv2-3" style="margin-top: 60px;">记录处理结果</div>
+                    <div class="process-step service-step" id="sv2-4" style="margin-top: 60px;">提交完成报告</div>
+                </div>
+                <div class="lane lane-zoom">
+                    <div class="lane-header">系统</div>
+                    <div class="process-step system-step" id="s2-1" style="margin-top: 180px;">生成申请单号</div>
+                    <div class="process-step system-step" id="s2-2" style="margin-top: 60px;">校验申请合规性</div>
+                    <div class="process-step system-step" id="s2-3" style="margin-top: 60px;">通知相关审批人</div>
+                    <div class="process-step system-step" id="s2-4" style="margin-top: 60px;">记录审批结果</div>
+                    <div class="process-step system-step" id="s2-5" style="margin-top: 60px;">通知申请人结果</div>
+                    <div class="process-step system-step" id="s2-6" style="margin-top: 60px;">记录服务完成状态</div>
+                    <div class="process-step system-step" id="s2-7" style="margin-top: 60px;">关闭申请单</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="swimlane-note">
+            注：此流程适用于维修申报、事件上报、退租申请等多种业务场景。不同服务类型的审批流程和处理人员可能有所不同。
+        </div>
+    </div>
+    
+    <script>
+        // 初始化jsPlumb实例
+        document.addEventListener('DOMContentLoaded', function() {
+            // 注册流程连接
+            let registrationJsPlumb = jsPlumb.getInstance({
+                Connector: ["Flowchart", { cornerRadius: 8, gap: 30, stub: [60, 60] }],
+                Endpoint: ["Dot", { radius: 3 }],
+                EndpointStyle: { fill: "#3498db" },
+                PaintStyle: { stroke: "#3498db", strokeWidth: 2 },
+                HoverPaintStyle: { stroke: "#2980b9", strokeWidth: 4 },
+                ConnectionOverlays: [
+                    ["Arrow", { location: 1, width: 12, length: 12, foldback: 0.7 }]
+                ],
+                Container: "registration-flow"
+            });
+            
+            // 用户泳道内连接 - 正常流程
+            registrationJsPlumb.connect({ source: "u1-1", target: "u1-2", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "u1-2", target: "u1-3", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "u1-3", target: "u1-4", anchor: ["Bottom", "Top"] });
+            
+            // 用户类型分支
+            registrationJsPlumb.connect({ 
+                source: "u1-4", 
+                target: "u1-5a", 
+                anchor: ["Bottom", "Top"],
+                overlays: [
+                    ["Label", { label: "选择员工", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "u1-4", 
+                target: "u1-5b", 
+                anchor: ["Bottom", "Top"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [30, 60] }],
+                overlays: [
+                    ["Label", { label: "选择管理员", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            // 继续正常流程
+            registrationJsPlumb.connect({ source: "u1-5a", target: "u1-6", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "u1-5b", target: "u1-6", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "u1-6", target: "u1-7", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "u1-7", target: "u1-8", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "u1-8", target: "u1-9", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "u1-9", target: "u1-11", anchor: ["Bottom", "Top"] });
+            
+            // 异常流程连接
+            registrationJsPlumb.connect({ 
+                source: "u1-2a", 
+                target: "u1-2", 
+                anchor: ["Top", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8 }],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "u1-6a", 
+                target: "u1-6", 
+                anchor: ["Top", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8 }],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "u1-10", 
+                target: "u1-7", 
+                anchor: ["Top", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8 }],
+                paintStyle: { stroke: "#d35400", strokeWidth: 2 }
+            });
+            
+            // 企业管理员泳道内连接
+            registrationJsPlumb.connect({ source: "m1-1", target: "m1-2", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "m1-2", target: "m1-3a", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "m1-2", target: "m1-3b", anchor: ["Right", "Top"] });
+            registrationJsPlumb.connect({ source: "m1-3a", target: "m1-4", anchor: ["Bottom", "Top"] });
+            
+            // 园区管理员泳道内连接
+            registrationJsPlumb.connect({ source: "a1-1", target: "a1-2", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "a1-2", target: "a1-3a", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "a1-2", target: "a1-3b", anchor: ["Right", "Top"] });
+            registrationJsPlumb.connect({ source: "a1-3a", target: "a1-4", anchor: ["Bottom", "Top"] });
+            
+            // 系统泳道内连接
+            registrationJsPlumb.connect({ source: "s1-1", target: "s1-2", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-2", target: "s1-3", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-3", target: "s1-4", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-4", target: "s1-5", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-5", target: "s1-6", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-6", target: "s1-7", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-7", target: "s1-8", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-8", target: "s1-9", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-9", target: "s1-10", anchor: ["Bottom", "Top"] });
+            registrationJsPlumb.connect({ source: "s1-10", target: "s1-11", anchor: ["Bottom", "Top"] });
+            
+            // 系统验证失败连接
+            registrationJsPlumb.connect({ 
+                source: "s1-1", 
+                target: "s1-1a", 
+                anchor: ["Right", "Top"],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "s1-3", 
+                target: "s1-3a", 
+                anchor: ["Right", "Top"],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 }
+            });
+            
+            // 跨泳道连接 - 数据验证
+            registrationJsPlumb.connect({ 
+                source: "u1-2", 
+                target: "s1-1", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#3498db", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "s1-1a", 
+                target: "u1-2a", 
+                anchor: ["Left", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "u1-6", 
+                target: "s1-3", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#3498db", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "s1-3a", 
+                target: "u1-6a", 
+                anchor: ["Left", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 }
+            });
+                        
+            // 跨泳道连接 - 申请提交
+            registrationJsPlumb.connect({ 
+                source: "u1-5a", 
+                target: "m1-1", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [100, 30] }],
+                paintStyle: { stroke: "#27ae60", strokeWidth: 2 },
+                overlays: [
+                    ["Label", { label: "员工申请", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "u1-5b", 
+                target: "a1-1", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [150, 30] }],
+                paintStyle: { stroke: "#27ae60", strokeWidth: 2 },
+                overlays: [
+                    ["Label", { label: "企业注册", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            // 跨泳道连接 - 审批结果
+            registrationJsPlumb.connect({ 
+                source: "m1-3b", 
+                target: "s1-7", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 },
+                overlays: [
+                    ["Label", { label: "拒绝申请", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "m1-4", 
+                target: "s1-7", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [30, 50] }],
+                paintStyle: { stroke: "#e74c3c", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "a1-3b", 
+                target: "s1-7", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [70, 30] }],
+                paintStyle: { stroke: "#c0392b", strokeWidth: 2 },
+                overlays: [
+                    ["Label", { label: "拒绝申请", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "a1-4", 
+                target: "s1-7", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#f39c12", strokeWidth: 2 }
+            });
+            
+            // 通知反馈和状态查询
+            registrationJsPlumb.connect({ 
+                source: "s1-8", 
+                target: "u1-9", 
+                anchor: ["Left", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#95a5a6", strokeWidth: 2 }
+            });
+            
+            registrationJsPlumb.connect({ 
+                source: "s1-11", 
+                target: "u1-11", 
+                anchor: ["Left", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#95a5a6", strokeWidth: 2 }
+            });
+            
+            // 申请被拒绝/退回后的修改提交
+            registrationJsPlumb.connect({ 
+                source: "u1-9", 
+                target: "u1-10", 
+                anchor: ["Left", "Top"],
+                connector: ["Flowchart", { cornerRadius: 8 }],
+                paintStyle: { stroke: "#d35400", strokeWidth: 2 },
+                overlays: [
+                    ["Label", { label: "申请被退回", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            // 服务申请流程连接
+            let serviceJsPlumb = jsPlumb.getInstance({
+                Connector: ["Flowchart", { cornerRadius: 8, gap: 30, stub: [60, 60] }],
+                Endpoint: ["Dot", { radius: 3 }],
+                EndpointStyle: { fill: "#3498db" },
+                PaintStyle: { stroke: "#3498db", strokeWidth: 2 },
+                HoverPaintStyle: { stroke: "#2980b9", strokeWidth: 4 },
+                ConnectionOverlays: [
+                    ["Arrow", { location: 1, width: 12, length: 12, foldback: 0.7 }]
+                ],
+                Container: "service-flow"
+            });
+            
+            // 企业员工泳道内连接
+            serviceJsPlumb.connect({ source: "u2-1", target: "u2-2", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "u2-2", target: "u2-3", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "u2-3", target: "u2-4", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "u2-5", target: "u2-6", anchor: ["Bottom", "Top"] });
+            
+            // 园区管理员泳道内连接
+            serviceJsPlumb.connect({ source: "a2-1", target: "a2-2", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "a2-2", target: "a2-3", anchor: ["Bottom", "Top"] });
+            
+            // 物业服务泳道内连接
+            serviceJsPlumb.connect({ source: "sv2-1", target: "sv2-2", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "sv2-2", target: "sv2-3", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "sv2-3", target: "sv2-4", anchor: ["Bottom", "Top"] });
+            
+            // 系统泳道内连接
+            serviceJsPlumb.connect({ source: "s2-1", target: "s2-2", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "s2-2", target: "s2-3", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "s2-4", target: "s2-5", anchor: ["Bottom", "Top"] });
+            serviceJsPlumb.connect({ source: "s2-6", target: "s2-7", anchor: ["Bottom", "Top"] });
+            
+            // 跨泳道连接
+            serviceJsPlumb.connect({ 
+                source: "u2-4", 
+                target: "s2-1", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#27ae60", strokeWidth: 2 }
+            });
+            
+            serviceJsPlumb.connect({ 
+                source: "s2-3", 
+                target: "a2-1", 
+                anchor: ["Left", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [40, 40] }],
+                paintStyle: { stroke: "#95a5a6", strokeWidth: 2 }
+            });
+            
+            serviceJsPlumb.connect({ 
+                source: "a2-2", 
+                target: "s2-4", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [40, 40] }],
+                paintStyle: { stroke: "#f39c12", strokeWidth: 2 },
+                overlays: [
+                    ["Label", { label: "拒绝", location: 0.5, cssClass: "connection-label" }]
+                ]
+            });
+            
+            serviceJsPlumb.connect({ 
+                source: "a2-3", 
+                target: "sv2-1", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [40, 40] }],
+                paintStyle: { stroke: "#f39c12", strokeWidth: 2 }
+            });
+            
+            serviceJsPlumb.connect({ 
+                source: "sv2-4", 
+                target: "s2-6", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [40, 40] }],
+                paintStyle: { stroke: "#9b59b6", strokeWidth: 2 }
+            });
+            
+            serviceJsPlumb.connect({ 
+                source: "s2-5", 
+                target: "u2-5", 
+                anchor: ["Left", "Right"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [40, 40] }],
+                paintStyle: { stroke: "#95a5a6", strokeWidth: 2 }
+            });
+            
+            serviceJsPlumb.connect({ 
+                source: "s2-6", 
+                target: "s2-5", 
+                anchor: ["Top", "Bottom"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [30, 30] }],
+                paintStyle: { stroke: "#95a5a6", strokeWidth: 2 }
+            });
+            
+            serviceJsPlumb.connect({ 
+                source: "u2-6", 
+                target: "s2-7", 
+                anchor: ["Right", "Left"],
+                connector: ["Flowchart", { cornerRadius: 8, stub: [50, 30] }],
+                paintStyle: { stroke: "#27ae60", strokeWidth: 2 }
+            });
+            
+            // 为连接线添加悬停效果
+            registrationJsPlumb.bind("mouseenter", function(conn) {
+                conn.setPaintStyle({ stroke: conn.getPaintStyle().stroke, strokeWidth: 4 });
+                conn.endpoints.forEach(function(endpoint) {
+                    endpoint.setPaintStyle({ fill: conn.getPaintStyle().stroke, radius: 5 });
+                });
+            });
+            
+            registrationJsPlumb.bind("mouseexit", function(conn) {
+                conn.setPaintStyle({ stroke: conn.getPaintStyle().stroke, strokeWidth: 2 });
+                conn.endpoints.forEach(function(endpoint) {
+                    endpoint.setPaintStyle({ fill: conn.getPaintStyle().stroke, radius: 3 });
+                });
+            });
+            
+            serviceJsPlumb.bind("mouseenter", function(conn) {
+                conn.setPaintStyle({ stroke: conn.getPaintStyle().stroke, strokeWidth: 4 });
+                conn.endpoints.forEach(function(endpoint) {
+                    endpoint.setPaintStyle({ fill: conn.getPaintStyle().stroke, radius: 5 });
+                });
+            });
+            
+            serviceJsPlumb.bind("mouseexit", function(conn) {
+                conn.setPaintStyle({ stroke: conn.getPaintStyle().stroke, strokeWidth: 2 });
+                conn.endpoints.forEach(function(endpoint) {
+                    endpoint.setPaintStyle({ fill: conn.getPaintStyle().stroke, radius: 3 });
+                });
+            });
+            
+            // 导航与视图控制
+            const navLinks = document.querySelectorAll('.process-nav-link');
+            const resetBtn = document.getElementById('reset-view-btn');
+            
+            // 更新活动导航链接
+            function updateActiveNavLink() {
+                const scrollPos = window.scrollY;
+                const sections = [
+                    document.getElementById('intro'),
+                    document.getElementById('registration'),
+                    document.getElementById('service')
+                ];
+                
+                let activeIndex = -1;
+                sections.forEach((section, index) => {
+                    if(section && scrollPos >= section.offsetTop - 100) {
+                        activeIndex = index;
+                    }
+                });
+                
+                navLinks.forEach((link, index) => {
+                    if(index === activeIndex) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+            
+            // 重置视图
+            resetBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                updateActiveNavLink();
+            });
+            
+            // 滚动时更新导航
+            window.addEventListener('scroll', updateActiveNavLink);
+            
+            // 初始化导航
+            updateActiveNavLink();
+            
+            // 点击导航链接平滑滚动
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 为过程步骤添加点击事件，使其连接线突出显示
+            document.querySelectorAll('.process-step').forEach(step => {
+                step.addEventListener('click', function() {
+                    const stepId = this.id;
+                    const incomingConns = [...registrationJsPlumb.getConnections(), ...serviceJsPlumb.getConnections()]
+                        .filter(conn => conn.targetId === stepId);
+                    const outgoingConns = [...registrationJsPlumb.getConnections(), ...serviceJsPlumb.getConnections()]
+                        .filter(conn => conn.sourceId === stepId);
+                    
+                    // 复位所有连接线样式
+                    [...registrationJsPlumb.getConnections(), ...serviceJsPlumb.getConnections()].forEach(conn => {
+                        const originalStroke = conn.getPaintStyle().stroke;
+                        conn.setPaintStyle({ stroke: originalStroke, strokeWidth: 2, opacity: 0.3 });
+                    });
+                    
+                    // 高亮相关连接线
+                    [...incomingConns, ...outgoingConns].forEach(conn => {
+                        const originalStroke = conn.getPaintStyle().stroke;
+                        conn.setPaintStyle({ stroke: originalStroke, strokeWidth: 4, opacity: 1 });
+                    });
+                    
+                    // 3秒后恢复
+                    setTimeout(() => {
+                        [...registrationJsPlumb.getConnections(), ...serviceJsPlumb.getConnections()].forEach(conn => {
+                            const originalStroke = conn.getPaintStyle().stroke;
+                            conn.setPaintStyle({ stroke: originalStroke, strokeWidth: 2, opacity: 1 });
+                        });
+                    }, 3000);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

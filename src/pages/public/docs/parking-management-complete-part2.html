@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区停车管理系统产品需求设计文档 - 第二部分</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1890ff;
+            border-bottom: 2px solid #1890ff;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #096dd9;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #0050b3;
+            margin-top: 25px;
+        }
+        h4 {
+            color: #003a8c;
+            margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .feature-card {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .feature-title {
+            font-weight: bold;
+            color: #1890ff;
+            margin-bottom: 10px;
+        }
+        .role-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            color: white;
+        }
+        .admin-role {
+            background-color: #722ed1;
+        }
+        .finance-role {
+            background-color: #13c2c2;
+        }
+        .enterprise-role {
+            background-color: #52c41a;
+        }
+        .public-role {
+            background-color: #fa8c16;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .highlight {
+            background-color: #fffbe6;
+            border-left: 4px solid #faad14;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .module-card {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f0f5ff;
+        }
+        .priority-high {
+            background-color: #fff1f0;
+            border-left: 4px solid #ff4d4f;
+            padding-left: 12px;
+        }
+        .priority-medium {
+            background-color: #fffbe6;
+            border-left: 4px solid #faad14;
+            padding-left: 12px;
+        }
+        .priority-low {
+            background-color: #f6ffed;
+            border-left: 4px solid #52c41a;
+            padding-left: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区停车管理系统产品需求设计文档 - 第二部分</h1>
+    
+    <div class="section">
+        <h2>3. 用户角色与权限</h2>
+        
+        <h3>3.1 角色职责定义</h3>
+        <table>
+            <tr>
+                <th width="20%">角色名称</th>
+                <th width="35%">职责描述</th>
+                <th width="45%">主要职能</th>
+            </tr>
+            <tr>
+                <td><span class="role-tag admin-role">超级管理员</span></td>
+                <td>拥有系统最高权限，可以管理其他管理员账号，查看和操作所有功能</td>
+                <td>
+                    <ul>
+                        <li>系统配置管理</li>
+                        <li>用户角色管理</li>
+                        <li>权限分配</li>
+                        <li>日志审计</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="role-tag admin-role">园区管理员</span></td>
+                <td>负责园区内停车场的规划和日常管理，制定收费标准和规则</td>
+                <td>
+                    <ul>
+                        <li>停车场基础信息管理</li>
+                        <li>车道口设备管理</li>
+                        <li>收费策略设置</li>
+                        <li>黑名单管理</li>
+                        <li>数据统计与分析</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="role-tag finance-role">财务管理员</span></td>
+                <td>负责停车费用的账单、收款和发票管理</td>
+                <td>
+                    <ul>
+                        <li>停车账单管理</li>
+                        <li>预收费管理</li>
+                        <li>收款管理</li>
+                        <li>发票管理</li>
+                        <li>财务报表生成</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="role-tag admin-role">客服人员</span></td>
+                <td>负责解答用户问题，处理异常情况和投诉</td>
+                <td>
+                    <ul>
+                        <li>用户问题处理</li>
+                        <li>异常情况处理</li>
+                        <li>车辆出入记录查询</li>
+                        <li>缴费状态查询</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="role-tag enterprise-role">企业管理员</span></td>
+                <td>企业指定的停车管理负责人，管理企业内部的车辆和停车相关事宜</td>
+                <td>
+                    <ul>
+                        <li>企业车辆管理</li>
+                        <li>月卡申请与管理</li>
+                        <li>访客停车管理</li>
+                        <li>停车费用账单查看</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="role-tag enterprise-role">企业员工</span></td>
+                <td>企业普通员工，需要在园区停车的用户</td>
+                <td>
+                    <ul>
+                        <li>个人车辆管理</li>
+                        <li>月卡申请与续费</li>
+                        <li>停车记录查询</li>
+                        <li>临时停车缴费</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="role-tag public-role">访客/公众</span></td>
+                <td>临时到访园区的外部人员</td>
+                <td>
+                    <ul>
+                        <li>临时停车缴费</li>
+                        <li>发票申请</li>
+                        <li>停车记录查询</li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+        
+        <h3>3.2 权限矩阵</h3>
+        <div class="highlight">
+            <p>权限标识：✓ - 完全权限 | ▲ - 部分权限 | ✕ - 无权限</p>
+        </div>
+        <table>
+            <tr>
+                <th>功能模块</th>
+                <th>超级管理员</th>
+                <th>园区管理员</th>
+                <th>财务管理员</th>
+                <th>客服人员</th>
+                <th>企业管理员</th>
+                <th>企业员工</th>
+                <th>访客/公众</th>
+            </tr>
+            <tr>
+                <td>系统配置管理</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>停车场基础设施管理</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✕</td>
+                <td>▲</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>收费方案管理</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>车辆管理</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✕</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>月卡管理</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>账单管理</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+            </tr>
+            <tr>
+                <td>收款管理</td>
+                <td>✓</td>
+                <td>✕</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>发票管理</td>
+                <td>✓</td>
+                <td>✕</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+            </tr>
+            <tr>
+                <td>临时停车缴费</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>✓</td>
+            </tr>
+            <tr>
+                <td>企业访客停车</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>✓</td>
+                <td>✕</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>统计分析</td>
+                <td>✓</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>✕</td>
+                <td>✕</td>
+            </tr>
+            <tr>
+                <td>日志审计</td>
+                <td>✓</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>▲</td>
+                <td>✕</td>
+                <td>✕</td>
+                <td>✕</td>
+            </tr>
+        </table>
+        
+        <h3>3.3 角色关系图</h3>
+        <div class="feature-card">
+            <p>智慧园区停车管理系统中的各角色关系如下：</p>
+            <ul>
+                <li><strong>超级管理员</strong>：系统最高管理者，可创建和管理其他管理员角色</li>
+                <li><strong>园区管理员</strong>：由超级管理员创建，负责停车业务管理</li>
+                <li><strong>财务管理员</strong>：由超级管理员创建，负责财务相关操作</li>
+                <li><strong>客服人员</strong>：由超级管理员或园区管理员创建，负责用户服务</li>
+                <li><strong>企业管理员</strong>：由园区管理员授权，企业内部指定的停车管理负责人</li>
+                <li><strong>企业员工</strong>：归属于企业，由企业管理员管理</li>
+                <li><strong>访客/公众</strong>：系统最基础的用户类型，可以临时使用停车服务</li>
+            </ul>
+            <p>角色间存在上下级关系和管理关系，上级角色通常可以查看和管理下级角色的相关数据和操作。</p>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>4. 功能结构设计</h2>
+        
+        <h3>4.1 功能结构图</h3>
+        <div class="feature-card">
+            <p>智慧园区停车管理系统的功能结构分为综合管理平台和公共服务平台两大部分，各自包含多个功能模块：</p>
+            <ul>
+                <li><strong>综合管理平台</strong>
+                    <ul>
+                        <li>停车场基础设施管理</li>
+                        <li>收费方案管理</li>
+                        <li>车辆管理</li>
+                        <li>月卡管理</li>
+                        <li>财务管理</li>
+                        <li>统计分析</li>
+                        <li>系统配置</li>
+                    </ul>
+                </li>
+                <li><strong>公共服务平台</strong>
+                    <ul>
+                        <li>临时停车服务</li>
+                        <li>月卡服务</li>
+                        <li>企业服务</li>
+                        <li>个人中心</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <h3>4.2 功能模块划分</h3>
+        
+        <div class="module-card">
+            <div class="feature-title">综合管理平台</div>
+            
+            <h4>4.2.1 停车场基础设施管理</h4>
+            <ul>
+                <li>停车场管理：增删改查停车场基本信息，设置车位数量和区域划分</li>
+                <li>车道口管理：管理出入口车道，关联摄像头、道闸等设备</li>
+                <li>设备管理：监控和管理停车场设备状态，远程控制和维护</li>
+            </ul>
+            
+            <h4>4.2.2 收费方案管理</h4>
+            <ul>
+                <li>月卡收费方案：设置不同类型月卡的价格和优惠策略</li>
+                <li>临时停车收费方案：设置不同时段、不同车型的停车收费标准</li>
+                <li>特殊日期管理：设置节假日等特殊日期的收费规则</li>
+            </ul>
+            
+            <h4>4.2.3 车辆管理</h4>
+            <ul>
+                <li>固定车辆管理：月卡车辆、企业白名单车辆的管理</li>
+                <li>临时车辆管理：记录和查询临时进入园区的车辆信息</li>
+                <li>黑名单管理：设置和管理禁止进入园区的车辆名单</li>
+            </ul>
+            
+            <h4>4.2.4 月卡管理</h4>
+            <ul>
+                <li>月卡申请审批：处理用户提交的月卡申请</li>
+                <li>月卡发放管理：管理月卡的发放、续期、作废等操作</li>
+                <li>月卡统计分析：分析月卡的使用情况和收入情况</li>
+            </ul>
+            
+            <h4>4.2.5 财务管理</h4>
+            <ul>
+                <li>停车账单管理：生成和管理企业的停车费用账单</li>
+                <li>预收费管理：管理企业为访客预存的停车费用</li>
+                <li>收款管理：记录和管理各类停车费用的收款情况</li>
+                <li>发票管理：处理用户的发票申请，管理已开具的发票</li>
+            </ul>
+            
+            <h4>4.2.6 统计分析</h4>
+            <ul>
+                <li>车流量分析：分析停车场的车流量情况，识别高峰期</li>
+                <li>收入分析：分析停车收入的构成和趋势</li>
+                <li>使用率分析：分析停车场资源的利用率</li>
+                <li>报表生成：生成各类统计报表，支持导出</li>
+            </ul>
+            
+            <h4>4.2.7 系统配置</h4>
+            <ul>
+                <li>用户管理：管理系统用户和角色</li>
+                <li>权限配置：设置各角色的功能权限</li>
+                <li>系统参数配置：设置系统的全局参数</li>
+                <li>日志管理：查看系统操作日志和异常日志</li>
+            </ul>
+        </div>
+        
+        <div class="module-card">
+            <div class="feature-title">公共服务平台</div>
+            
+            <h4>4.2.8 临时停车服务</h4>
+            <ul>
+                <li>临时停车缴费：查询和支付临时停车费用</li>
+                <li>发票申请：申请临时停车费用的发票</li>
+            </ul>
+            
+            <h4>4.2.9 月卡服务</h4>
+            <ul>
+                <li>月卡申请：个人或企业申请停车月卡</li>
+                <li>月卡续费：延长已有月卡的有效期</li>
+                <li>月卡变更：变更月卡绑定的车辆或其他信息</li>
+                <li>月卡转让：申请将月卡转让给其他用户</li>
+            </ul>
+            
+            <h4>4.2.10 企业服务</h4>
+            <ul>
+                <li>企业车辆管理：管理企业内部的车辆信息</li>
+                <li>访客停车管理：生成访客停车二维码，管理访客车辆</li>
+                <li>企业账单查询：查看企业的停车费用账单</li>
+                <li>预存款管理：管理企业的停车费用预存款</li>
+            </ul>
+            
+            <h4>4.2.11 个人中心</h4>
+            <ul>
+                <li>车辆管理：管理个人车辆信息</li>
+                <li>停车记录查询：查询历史停车记录</li>
+                <li>发票管理：查询和下载已开具的发票</li>
+                <li>个人设置：设置个人信息和偏好</li>
+            </ul>
+        </div>
+        
+        <h3>4.3 功能详细说明</h3>
+        
+        <div class="feature-card">
+            <div class="feature-title">停车场基础设施管理</div>
+            <p><strong>功能描述：</strong>对园区内的停车场基础设施进行全面管理，包括停车场信息、车道口、设备等。</p>
+            <p><strong>主要功能点：</strong></p>
+            <ul>
+                <li><strong>停车场管理</strong>
+                    <ul>
+                        <li>添加、编辑、删除停车场基本信息（名称、位置、容量等）</li>
+                        <li>设置停车场区域划分（如访客区、员工区、VIP区等）</li>
+                        <li>配置区域权限（如仅限月卡用户、仅限特定企业等）</li>
+                        <li>监控停车场实时状态（使用率、剩余车位等）</li>
+                        <li>车位使用统计（按日/周/月统计使用情况）</li>
+                    </ul>
+                </li>
+                <li><strong>车道口管理</strong>
+                    <ul>
+                        <li>管理车道基本信息（编号、类型、所属停车场等）</li>
+                        <li>关联车道设备（摄像头、道闸、显示屏等）</li>
+                        <li>设置车道运行模式（常规模式、高峰期模式、应急模式）</li>
+                        <li>处理异常情况（设备故障报警、手动开闸等）</li>
+                        <li>查询车道通行记录</li>
+                    </ul>
+                </li>
+                <li><strong>设备管理</strong>
+                    <ul>
+                        <li>添加、编辑、删除设备信息</li>
+                        <li>监控设备运行状态</li>
+                        <li>远程控制设备（如重启、开闸等）</li>
+                        <li>设备故障报警和处理</li>
+                        <li>设备维护记录管理</li>
+                    </ul>
+                </li>
+            </ul>
+            <p><strong>用户价值：</strong>通过集中管理停车场基础设施，提高管理效率，减少人工干预，实时掌握停车场运行状态，及时处理异常情况。</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-title">临时停车缴费</div>
+            <p><strong>功能描述：</strong>为临时到访园区的用户提供便捷的停车费用查询和支付服务。</p>
+            <p><strong>主要功能点：</strong></p>
+            <ul>
+                <li><strong>费用查询</strong>
+                    <ul>
+                        <li>通过车牌号查询当前的停车费用</li>
+                        <li>显示入场时间、停车时长和应缴费用</li>
+                        <li>展示费用计算明细</li>
+                    </ul>
+                </li>
+                <li><strong>在线支付</strong>
+                    <ul>
+                        <li>支持多种支付方式（微信支付、支付宝、银联等）</li>
+                        <li>支付结果实时反馈</li>
+                        <li>支付凭证查看和下载</li>
+                    </ul>
+                </li>
+                <li><strong>发票申请</strong>
+                    <ul>
+                        <li>支付完成后申请电子发票</li>
+                        <li>填写发票信息（抬头、税号等）</li>
+                        <li>发票状态查询</li>
+                    </ul>
+                </li>
+                <li><strong>历史记录</strong>
+                    <ul>
+                        <li>查询历史停车记录</li>
+                        <li>查看历史缴费记录</li>
+                        <li>导出停车记录</li>
+                    </ul>
+                </li>
+            </ul>
+            <p><strong>用户价值：</strong>简化临时停车缴费流程，提供多种支付方式选择，减少用户等待时间，提升停车体验。</p>
+        </div>
+        
+        <h3>4.4 功能优先级排序</h3>
+        <div class="feature-card">
+            <div class="feature-title">高优先级功能（必须实现）</div>
+            <ul class="priority-high">
+                <li>停车场基础信息管理</li>
+                <li>临时停车收费规则设置</li>
+                <li>车辆出入基本流程</li>
+                <li>临时停车费在线支付</li>
+                <li>停车账单基本管理</li>
+                <li>企业访客停车二维码</li>
+            </ul>
+            
+            <div class="feature-title">中优先级功能（应当实现）</div>
+            <ul class="priority-medium">
+                <li>月卡收费方案管理</li>
+                <li>月卡申请和审批流程</li>
+                <li>企业车辆管理</li>
+                <li>停车费预付款管理</li>
+                <li>停车统计分析基本功能</li>
+            </ul>
+            
+            <div class="feature-title">低优先级功能（可选实现）</div>
+            <ul class="priority-low">
+                <li>黑名单管理</li>
+                <li>月卡转让功能</li>
+                <li>高级统计分析</li>
+                <li>停车场设备远程管理</li>
+                <li>特殊车辆（如新能源车）优惠策略</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

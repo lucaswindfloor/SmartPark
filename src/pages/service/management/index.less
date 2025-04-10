@@ -1,0 +1,88 @@
+.service-management {
+  padding: 0 0 24px 0;
+
+  .filter-card {
+    margin-bottom: 24px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+
+  .table-card {
+    margin-bottom: 24px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+
+  .info-card {
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+
+  .ant-table-thead > tr > th {
+    background-color: #f5f7fa;
+    font-weight: 600;
+  }
+
+  .ant-table-row:hover {
+    cursor: pointer;
+  }
+
+  .ant-pagination {
+    margin-top: 16px;
+    margin-bottom: 0;
+  }
+
+  .anticon {
+    vertical-align: middle;
+  }
+
+  // 表格内tag样式优化
+  .ant-tag {
+    margin-right: 0;
+    font-weight: 500;
+  }
+
+  // 操作按钮间距
+  .ant-space-item {
+    margin-right: 0;
+  }
+
+  // 功能说明区域
+  .ant-alert {
+    border-radius: 4px;
+
+    p {
+      margin-bottom: 8px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  // 表格行交替颜色
+  .ant-table-striped {
+    .ant-table-tbody > tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+  }
+
+  // 开关样式优化
+  .ant-switch {
+    min-width: 50px;
+  }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .service-management {
+    .ant-table {
+      overflow-x: auto;
+    }
+    
+    .ant-space {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+} 

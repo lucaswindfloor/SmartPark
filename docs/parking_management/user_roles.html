@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区 - 停车管理系统用户角色与权限</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #1890ff;
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 20px;
+        }
+        h4 {
+            font-size: 18px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .role-card {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+        .role-title {
+            background-color: #f0f5ff;
+            color: #1890ff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .permission {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        .full {
+            background-color: #52c41a;
+            color: white;
+        }
+        .read {
+            background-color: #1890ff;
+            color: white;
+        }
+        .none {
+            background-color: #f5f5f5;
+            color: #999;
+        }
+        .limited {
+            background-color: #faad14;
+            color: white;
+        }
+        .highlight {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #1890ff;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区 - 停车管理系统用户角色与权限</h1>
+    
+    <h2>3. 用户角色与权限</h2>
+    
+    <h3>3.1 角色职责定义</h3>
+    
+    <div class="highlight">
+        <p>停车管理系统涉及多个用户角色，各角色在系统中承担不同职责，拥有与其业务需求相匹配的操作权限。系统需确保权限分配合理，既保证业务流转顺畅，又确保数据安全和操作合规。</p>
+    </div>
+    
+    <!-- 园区运营管理员 -->
+    <div class="role-card">
+        <div class="role-title">园区运营管理员</div>
+        <h4>角色描述</h4>
+        <p>园区运营管理员是负责园区停车场日常运营管理的角色，主要负责停车场配置、月卡管理、临时停车监控等工作。通常由物业管理部门人员担任。</p>
+        
+        <h4>主要职责</h4>
+        <ul>
+            <li>负责停车场基础信息配置和车位管理</li>
+            <li>设置停车场总车位数量，监控并显示实时剩余车位数</li>
+            <li>审批和管理停车月卡申请</li>
+            <li>监控停车场实时运营状态</li>
+            <li>处理停车过程中的异常情况</li>
+            <li>分析停车场使用数据，优化车位资源配置</li>
+            <li>管理和维护停车场设备</li>
+            <li>管理出入口及对应二维码</li>
+            <li>设置、修改和管理出入口信息，生成并下载出入口缴费二维码</li>
+            <li>车辆白名单、黑名单及免费车辆管理</li>
+            <li>查看车辆出入记录</li>
+            <li>管理企业停车二维码使用情况</li>
+            <li>处理用户发布的停车需求申请</li>
+            <li>监控车辆进出状态，处理异常情况</li>
+        </ul>
+        
+        <h4>关键权限</h4>
+        <table>
+            <tr>
+                <th width="30%">功能模块</th>
+                <th width="50%">权限说明</th>
+                <th width="20%">权限级别</th>
+            </tr>
+            <tr>
+                <td>停车场配置</td>
+                <td>设置停车场基础信息、车位类型和数量、分区管理等</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>停车场车位管理</td>
+                <td>设置并监控停车场总车位数量，实时显示剩余车位情况</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡申请审批</td>
+                <td>查看、审批月卡申请，管理月卡权限</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>临时停车管理</td>
+                <td>监控临时停车情况，处理异常情况</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>设备管理</td>
+                <td>监控和管理停车场设备状态</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>数据统计分析</td>
+                <td>访问和导出停车场使用数据报表</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>出入口管理</td>
+                <td>设置出入口信息，下载和打印二维码</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>车辆白黑名单管理</td>
+                <td>新增、删除、查询、修改白名单和黑名单车辆信息</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>免费车辆管理</td>
+                <td>设置特种车辆为免费车辆，管理免费时段</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>车辆出入记录</td>
+                <td>查看、检索和追踪车辆出入信息</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡购买记录</td>
+                <td>查询月卡购买历史，协助月卡充值</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>场内车辆管理</td>
+                <td>监控园区内已进未出的车辆状态和分布</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>停车需求管理</td>
+                <td>接收、审核和处理用户发布的停车需求申请</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>收费标准设置</td>
+                <td>查看收费标准，无修改权限</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>账单管理</td>
+                <td>查看停车收费账单，无操作权限</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>企业停车二维码查看</td>
+                <td>查看企业停车二维码使用情况</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 园区财务管理员 -->
+    <div class="role-card">
+        <div class="role-title">园区财务管理员</div>
+        <h4>角色描述</h4>
+        <p>园区财务管理员是负责园区停车收费管理的角色，主要负责收费标准设置、账单管理、收入统计等工作。通常由财务部门人员担任。</p>
+        
+        <h4>主要职责</h4>
+        <ul>
+            <li>设置和管理停车收费标准</li>
+            <li>设置临停收费模式（按时长/按区间/节假日区分）</li>
+            <li>设置不同企业类型的月卡优惠政策</li>
+            <li>管理停车费用账单的生成和发送</li>
+            <li>管理停车月卡一人多车的规则设置</li>
+            <li>统计和分析停车收入数据</li>
+            <li>管理停车费用发票申请和开具</li>
+            <li>确保租金与其他费项（包括停车费）严格分开开具发票</li>
+            <li>处理退款和欠费追缴事宜</li>
+            <li>管理企业访客停车费用结算</li>
+            <li>处理企业预收费收款和管理</li>
+            <li>生成和管理退园结算单，核算停车相关费用</li>
+            <li>管理在线收款记录和流水</li>
+            <li>设置不同企业类型的月卡优惠政策</li>
+            <li>配置临停收费模式(按时长/按区间/节假日区分)</li>
+            <li>生成停车相关费用的发票压缩包，确保与租金费用分开</li>
+        </ul>
+        
+        <h4>关键权限</h4>
+        <table>
+            <tr>
+                <th width="30%">功能模块</th>
+                <th width="50%">权限说明</th>
+                <th width="20%">权限级别</th>
+            </tr>
+            <tr>
+                <td>收费标准设置</td>
+                <td>设置不同类型停车的收费标准和优惠政策</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>临停收费模式设置</td>
+                <td>配置按时长/按区间/节假日区分的收费模式</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡优惠策略设置</td>
+                <td>配置不同企业类型的月卡优惠（赠送时长、阶梯式价格）</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡规则设置</td>
+                <td>设置月卡一人多车最大数量及先出场车辆享受月卡规则</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>账单管理</td>
+                <td>生成、审核、发送、收回、撤销停车费用账单</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>收款管理</td>
+                <td>处理账单收款、企业预收费收款，管理在线收款记录</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>预收费管理</td>
+                <td>处理企业停车费用预收款，管理预收余额</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>结算单管理</td>
+                <td>生成退园结算单，核算各项费用，管理结算流程</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>停车费用结算</td>
+                <td>计算退园时停车月卡退款、预付款退款和欠费缴纳</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>收入统计</td>
+                <td>统计和分析停车收入数据</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>发票管理</td>
+                <td>处理已付和未付开票申请，管理发票信息，生成发票压缩包</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>未付开票管理</td>
+                <td>查看、审核企业用户未付款时申请的开票记录，确保符合规定</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>已开票管理</td>
+                <td>查看已开票记录，生成并下载发票压缩包（租金与其他费项严格分开开具）</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>退款管理</td>
+                <td>处理用户退款申请</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>停车场配置</td>
+                <td>查看停车场信息，无修改权限</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡申请审批</td>
+                <td>查看月卡申请情况，无审批权限</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>车辆出入记录</td>
+                <td>查看车辆出入记录，用于费用核对</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>企业停车二维码</td>
+                <td>查看企业停车二维码使用情况和产生的费用</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 企业管理员 -->
+    <div class="role-card">
+        <div class="role-title">企业管理员</div>
+        <h4>角色描述</h4>
+        <p>企业管理员是负责企业内部停车相关事务管理的角色，主要负责月卡申请、访客车辆管理等工作。通常由企业行政或人事部门人员担任。</p>
+        
+        <h4>主要职责</h4>
+        <ul>
+            <li>管理企业员工停车月卡申请</li>
+            <li>管理企业员工车辆信息</li>
+            <li>处理停车月卡转让申请</li>
+            <li>生成、管理和分享企业访客停车二维码</li>
+            <li>确认企业访客停车费用</li>
+            <li>预存停车相关费用并管理预付款使用优先级</li>
+            <li>查看和支付停车费用账单</li>
+            <li>申请停车费用发票</li>
+            <li>发布企业停车相关需求</li>
+            <li>代企业员工或访客支付临时停车费用</li>
+            <li>使用U盘密钥验证进行安全支付</li>
+            <li>管理企业预付款用于各类停车费用支付</li>
+        </ul>
+        
+        <h4>关键权限</h4>
+        <table>
+            <tr>
+                <th width="30%">功能模块</th>
+                <th width="50%">权限说明</th>
+                <th width="20%">权限级别</th>
+            </tr>
+            <tr>
+                <td>企业月卡管理</td>
+                <td>申请企业员工停车月卡，查看月卡记录</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>员工车辆管理</td>
+                <td>添加、修改、删除企业员工车辆信息</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡转让管理</td>
+                <td>审批员工间月卡转让申请，跟踪转让记录</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>企业访客停车管理</td>
+                <td>管理访客停车，确认访客停车费用结算</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>企业停车二维码</td>
+                <td>生成、管理企业访客停车二维码，设置使用限额和权限</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>临停代缴</td>
+                <td>查询车牌代为缴纳临时停车费</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>账单管理</td>
+                <td>查看、支付企业停车相关账单</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>开票申请</td>
+                <td>申请停车费用发票，选择开票信息</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>预付款管理</td>
+                <td>预存停车费用，查看预付款余额，设置费用使用优先级</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>预付款使用</td>
+                <td>选择使用预付款支付月卡、临停及访客停车费用</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>安全支付验证</td>
+                <td>使用U盘密钥进行支付安全验证</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>停车需求发布</td>
+                <td>发布企业停车相关需求，如增加车位配额申请</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>停车收费标准</td>
+                <td>查看停车收费标准，无修改权限</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>车辆出入记录</td>
+                <td>查看企业员工车辆出入记录</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 企业员工 -->
+    <div class="role-card">
+        <div class="role-title">企业员工</div>
+        <h4>角色描述</h4>
+        <p>企业员工是园区内企业的普通职员，主要使用停车服务的个人用户。是系统的主要终端用户群体之一。</p>
+        
+        <h4>主要职责</h4>
+        <ul>
+            <li>申请个人停车月卡</li>
+            <li>支付临时停车费用</li>
+            <li>管理个人车辆信息</li>
+            <li>查询停车记录和费用</li>
+            <li>申请停车月卡转让</li>
+            <li>申请停车月卡续费</li>
+            <li>申请停车费用发票</li>
+        </ul>
+        
+        <h4>关键权限</h4>
+        <table>
+            <tr>
+                <th width="30%">功能模块</th>
+                <th width="50%">权限说明</th>
+                <th width="20%">权限级别</th>
+            </tr>
+            <tr>
+                <td>月卡申请</td>
+                <td>申请个人停车月卡</td>
+                <td><span class="permission limited">有限权限</span></td>
+            </tr>
+            <tr>
+                <td>临时停车缴费</td>
+                <td>查询和支付临时停车费用</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>个人车辆管理</td>
+                <td>添加、修改、删除个人车辆信息</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡转让</td>
+                <td>申请将个人月卡转让给他人，提供接收人信息，查看转让进度</td>
+                <td><span class="permission limited">有限权限</span></td>
+            </tr>
+            <tr>
+                <td>月卡续费</td>
+                <td>接收到期提醒，选择续费时长，完成续费支付</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>开票申请</td>
+                <td>申请个人停车费用的发票</td>
+                <td><span class="permission limited">有限权限</span></td>
+            </tr>
+            <tr>
+                <td>停车记录查询</td>
+                <td>查询个人停车记录和费用</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>收费标准</td>
+                <td>查看停车收费标准</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>停车场信息</td>
+                <td>查看停车场基本信息</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 访客用户 -->
+    <div class="role-card">
+        <div class="role-title">访客用户</div>
+        <h4>角色描述</h4>
+        <p>访客用户是临时来访园区的外部人员，主要使用临时停车服务。是系统的重要终端用户群体之一。</p>
+        
+        <h4>主要职责</h4>
+        <ul>
+            <li>扫描企业访客停车二维码</li>
+            <li>支付临时停车费用</li>
+            <li>查询临时停车信息</li>
+            <li>申请临时停车费用发票</li>
+        </ul>
+        
+        <h4>关键权限</h4>
+        <table>
+            <tr>
+                <th width="30%">功能模块</th>
+                <th width="50%">权限说明</th>
+                <th width="20%">权限级别</th>
+            </tr>
+            <tr>
+                <td>访客停车</td>
+                <td>扫描企业访客停车二维码，登记车辆信息</td>
+                <td><span class="permission limited">有限权限</span></td>
+            </tr>
+            <tr>
+                <td>临时停车缴费</td>
+                <td>查询和支付临时停车费用</td>
+                <td><span class="permission full">完全权限</span></td>
+            </tr>
+            <tr>
+                <td>开票申请</td>
+                <td>申请临时停车费用的发票，仅限个人支付的情况</td>
+                <td><span class="permission limited">有限权限</span></td>
+            </tr>
+            <tr>
+                <td>停车记录查询</td>
+                <td>查询当次停车记录和费用</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>收费标准</td>
+                <td>查看临时停车收费标准</td>
+                <td><span class="permission read">只读权限</span></td>
+            </tr>
+            <tr>
+                <td>其他功能</td>
+                <td>月卡申请、车辆管理等功能</td>
+                <td><span class="permission none">无权限</span></td>
+            </tr>
+        </table>
+    </div>
+    
+    <h3>3.2 权限矩阵</h3>
+    
+    <table>
+        <tr>
+            <th>功能模块</th>
+            <th>园区运营管理员</th>
+            <th>园区财务管理员</th>
+            <th>企业管理员</th>
+            <th>企业员工</th>
+            <th>访客用户</th>
+        </tr>
+        <tr>
+            <td>停车场基础配置</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+        </tr>
+        <tr>
+            <td>车位管理</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>设备管理</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>月卡申请</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>月卡审批</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>月卡转让</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>月卡续费</td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>车辆管理</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>临时停车监控</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>临时停车缴费</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+        </tr>
+        <tr>
+            <td>访客停车管理</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+        </tr>
+        <tr>
+            <td>收费标准设置</td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>账单管理</td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>收款管理</td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>结算单管理</td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>开票申请</td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+        </tr>
+        <tr>
+            <td>开票变更</td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>需求发布</td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>未付开票管理</td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+        <tr>
+            <td>已开票管理</td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+            <td><span class="permission read">只读权限</span></td>
+        </tr>
+        <tr>
+            <td>发票管理</td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+        </tr>
+        <tr>
+            <td>数据统计与分析</td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission full">完全权限</span></td>
+            <td><span class="permission limited">有限权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+            <td><span class="permission none">无权限</span></td>
+        </tr>
+    </table>
+    
+    <h3>3.3 角色关系图</h3>
+    
+    <div class="highlight">
+        <p>停车管理系统中各角色的关系及权限层级如下：</p>
+        <ul>
+            <li><strong>园区管理方</strong>（运营管理员、财务管理员）：系统管理者，拥有最高权限，负责系统配置和业务审批</li>
+            <li><strong>企业管理员</strong>：二级管理者，负责企业内部停车资源管理，向园区管理方提交申请</li>
+            <li><strong>企业员工</strong>：基础用户，使用停车服务，可向企业管理员或园区管理方提交申请</li>
+            <li><strong>访客用户</strong>：临时用户，仅能使用临时停车服务，权限最低</li>
+        </ul>
+    </div>
+    
+</body>
+</html> 

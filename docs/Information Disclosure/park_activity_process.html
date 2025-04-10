@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>园区活动业务流程</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1, h2, h3, h4 { color: #1890ff; }
+        h1 { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #1890ff; }
+        .section { margin-bottom: 30px; background: #f8f9fa; border-radius: 8px; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        .process-diagram { width: 100%; padding: 20px; background: #fff; border-radius: 5px; margin: 15px 0; text-align: center; }
+        .highlight { background-color: #fff3e0; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .navigation { display: flex; justify-content: space-between; margin: 20px 0; padding: 10px; background-color: #f0f0f0; border-radius: 4px; }
+        .navigation a { text-decoration: none; color: #1890ff; font-weight: bold; padding: 5px 10px; }
+        .navigation a:hover { background-color: #e6f7ff; border-radius: 4px; }
+        
+        /* 泳道图样式 */
+        .swimlane-container {
+            position: relative;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            width: 100%;
+            min-width: 1000px;
+        }
+        .swimlane-header {
+            display: flex;
+            height: 40px;
+        }
+        .swimlane-title {
+            flex: 1;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+        }
+        .swimlane {
+            position: relative;
+            width: 100%;
+            height: 1200px;
+            font-size: 14px;
+        }
+        .swimlane-body {
+            display: flex;
+            height: calc(100% - 40px);
+        }
+        .lane {
+            flex: 1;
+            position: relative;
+            height: 100%;
+            border-right: 1px dashed #ccc;
+            padding: 10px;
+            min-width: 250px;
+        }
+        .lane:last-child {
+            border-right: none;
+        }
+        .node {
+            position: absolute;
+            width: 160px;
+            height: 50px;
+            left: 20px;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .decision-node {
+            position: absolute;
+            left: 45px;
+            width: 70px;
+            height: 70px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 14px;
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+        .decision-text {
+            transform: rotate(-45deg);
+            position: absolute;
+            width: 120px;
+            left: -25px;
+            top: 25px;
+        }
+        #admin-lane .node {
+            background-color: #e6f7ff;
+            border-color: #1890ff;
+            box-shadow: 0 2px 4px rgba(24, 144, 255, 0.2);
+        }
+        #auditor-lane .node, #auditor-lane .decision-node {
+            background-color: #fff7e6;
+            border-color: #fa8c16;
+            box-shadow: 0 2px 4px rgba(250, 140, 22, 0.2);
+        }
+        #system-lane .node {
+            background-color: #f5f5f5;
+            border-color: #bfbfbf;
+            box-shadow: 0 2px 4px rgba(191, 191, 191, 0.2);
+        }
+        #user-lane .node, #user-lane .decision-node {
+            background-color: #f6ffed;
+            border-color: #52c41a;
+            box-shadow: 0 2px 4px rgba(82, 196, 26, 0.2);
+        }
+        
+        /* 用于连接线的样式 */
+        .jtk-connector {
+            z-index: 4;
+        }
+        .jtk-endpoint {
+            z-index: 5;
+        }
+        .jtk-overlay {
+            z-index: 6;
+        }
+        ._jsPlumb_connector {
+            z-index: 4;
+        }
+        ._jsPlumb_endpoint {
+            z-index: 5;
+        }
+        ._jsPlumb_overlay {
+            z-index: 6;
+        }
+        .connection-label {
+            background-color: white;
+            padding: 2px 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        /* 添加分隔线样式 */
+        .horizontal-divider {
+            position: absolute;
+            height: 1px;
+            width: 90%;
+            background-color: #eee;
+            left: 5%;
+            z-index: 5;
+        }
+
+        /* 添加背景交替色 */
+        .alt-bg {
+            position: absolute;
+            height: 80px;
+            width: 100%;
+            background-color: #fafafa;
+            left: 0;
+            z-index: 1;
+        }
+    </style>
+    <script src="jsplumb.min.js"></script>
+</head>
+<body>
+    <h1>信息公开模块 - 园区活动业务流程</h1>
+
+    <div class="navigation">
+        <a href="policy_document_process.html">← 上一个：政策文件</a>
+        <div>
+            <a href="notification_announcement_process.html">通知公告</a> |
+            <a href="policy_document_process.html">政策文件</a> |
+            <a href="park_activity_process.html">园区活动</a> |
+            <a href="survey_process.html">调查问卷</a> |
+            <a href="demand_publishing_process.html">需求发布</a>
+        </div>
+        <a href="survey_process.html">下一个：调查问卷 →</a>
+    </div>
+
+    <div class="section">
+        <h2>园区活动业务流程</h2>
+        <div class="highlight">
+            <p><strong>场景</strong>: 园区计划举办一场企业交流活动，需要企业在线报名参加，并支持签到和统计。</p>
+            <p><strong>平台说明</strong>: 本业务流程涉及两个平台：</p>
+            <ul>
+                <li><strong>智慧园区综合管理平台</strong>：园区管理方和审核员使用，用于活动创建、审核和管理</li>
+                <li><strong>公共服务平台</strong>：园区企业及员工、公众使用，用于查看活动信息、报名参加活动</li>
+            </ul>
+        </div>
+
+        <h3>核心业务流程泳道图</h3>
+        <div class="process-diagram">
+            <div id="activity-process-diagram" class="swimlane-container">
+                <div class="swimlane-header">
+                    <div class="swimlane-title" style="background-color: #e6f7ff; border: 1px solid #1890ff; color: #1890ff;">园区管理员</div>
+                    <div class="swimlane-title" style="background-color: #fff7e6; border: 1px solid #fa8c16; color: #fa8c16;">审核员</div>
+                    <div class="swimlane-title" style="background-color: #f5f5f5; border: 1px solid #bfbfbf; color: #bfbfbf;">系统</div>
+                    <div class="swimlane-title" style="background-color: #f6ffed; border: 1px solid #52c41a; color: #52c41a;">企业用户</div>
+                </div>
+                
+                <div class="swimlane" id="activity-swimlane">
+                    <!-- 泳道内容 -->
+                    <div class="swimlane-body">
+                        <!-- 为泳道添加辅助背景和分隔线 -->
+                        <div class="alt-bg" style="top: 120px;"></div>
+                        <div class="alt-bg" style="top: 280px;"></div>
+                        <div class="alt-bg" style="top: 440px;"></div>
+                        <div class="alt-bg" style="top: 600px;"></div>
+                        <div class="alt-bg" style="top: 760px;"></div>
+                        <div class="alt-bg" style="top: 920px;"></div>
+                        <div class="alt-bg" style="top: 1080px;"></div>
+                        
+                        <div class="horizontal-divider" style="top: 200px;"></div>
+                        <div class="horizontal-divider" style="top: 360px;"></div>
+                        <div class="horizontal-divider" style="top: 520px;"></div>
+                        <div class="horizontal-divider" style="top: 680px;"></div>
+                        <div class="horizontal-divider" style="top: 840px;"></div>
+                        <div class="horizontal-divider" style="top: 1000px;"></div>
+                        
+                        <!-- 园区管理员泳道 -->
+                        <div class="lane" id="admin-lane">
+                            <div class="node" id="a1" style="top: 80px; left: 40px;">创建活动</div>
+                            <div class="node" id="a2" style="top: 230px; left: 40px;">设置活动内容与范围</div>
+                            <div class="node" id="a3" style="top: 380px; left: 40px;">设置活动报名时间</div>
+                            <div class="node" id="a4" style="top: 530px; left: 40px;">提交审核</div>
+                            <div class="node" id="a5" style="top: 850px; left: 40px;">查看统计数据</div>
+                            <div class="node" id="a6" style="top: 1000px; left: 40px;">导出报名名单</div>
+                        </div>
+                        
+                        <!-- 审核员泳道 -->
+                        <div class="lane" id="auditor-lane">
+                            <div class="node" id="b1" style="top: 530px; left: 40px;">审核活动</div>
+                            <div class="decision-node" id="b2" style="top: 680px; left: 75px;"><span class="decision-text">是否通过</span></div>
+                            <div class="node" id="b3" style="top: 650px; left: 180px;">发布活动</div>
+                        </div>
+                        
+                        <!-- 系统泳道 -->
+                        <div class="lane" id="system-lane">
+                            <div class="node" id="c1" style="top: 530px; left: 40px;">接收审核结果</div>
+                            <div class="node" id="c2" style="top: 680px; left: 40px;">发布到公共服务平台</div>
+                            <div class="node" id="c3" style="top: 800px; left: 40px;">统计查看/报名数量</div>
+                            <div class="node" id="c4" style="top: 920px; left: 40px;">管理活动状态</div>
+                        </div>
+                        
+                        <!-- 企业用户泳道 -->
+                        <div class="lane" id="user-lane">
+                            <div class="node" id="d1" style="top: 680px; left: 40px;">查看活动列表</div>
+                            <div class="node" id="d2" style="top: 800px; left: 40px;">查看活动详情</div>
+                            <div class="node" id="d3" style="top: 920px; left: 40px;">报名参加活动</div>
+                            <div class="node" id="d4" style="top: 1040px; left: 40px;">活动现场签到</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p style="font-style: italic; color: #666; margin-top: 10px;">图1: 园区活动业务流程泳道图</p>
+        </div>
+
+        <h3>核心流程说明</h3>
+        <table>
+            <tr>
+                <th width="15%">角色</th>
+                <th width="15%">所用平台</th>
+                <th width="25%">操作步骤</th>
+                <th width="45%">说明</th>
+            </tr>
+            <tr>
+                <td rowspan="6">园区管理员</td>
+                <td rowspan="6">智慧园区综合管理平台</td>
+                <td>创建活动</td>
+                <td>登录综合管理平台，在信息公开模块中选择"园区活动"，点击新建活动</td>
+            </tr>
+            <tr>
+                <td>设置活动内容与范围</td>
+                <td>输入活动标题、正文内容、活动地点等基本信息，选择活动面向的用户群体（全部/入驻企业/特定企业）</td>
+            </tr>
+            <tr>
+                <td>设置活动报名时间</td>
+                <td>设置活动开始和结束时间，以及报名开始和截止时间</td>
+            </tr>
+            <tr>
+                <td>提交审核</td>
+                <td>确认活动信息无误后提交审核</td>
+            </tr>
+            <tr>
+                <td>查看统计数据</td>
+                <td>在综合统计功能中查看活动浏览量、报名人数、签到情况等统计数据</td>
+            </tr>
+            <tr>
+                <td>导出报名名单</td>
+                <td>导出Excel格式的报名人员名单，包含姓名、企业、联系方式等信息</td>
+            </tr>
+            <tr>
+                <td rowspan="3">审核员</td>
+                <td rowspan="3">智慧园区综合管理平台</td>
+                <td>审核活动</td>
+                <td>在审核待办列表中查看新的活动，检查活动内容的合规性、完整性和必要性</td>
+            </tr>
+            <tr>
+                <td>是否通过</td>
+                <td>判断活动是否满足发布条件</td>
+            </tr>
+            <tr>
+                <td>发布活动</td>
+                <td>决定批准活动发布，拒绝时需提供拒绝理由</td>
+            </tr>
+            <tr>
+                <td rowspan="4">系统</td>
+                <td rowspan="4">两个平台间数据同步</td>
+                <td>接收审核结果</td>
+                <td>接收审核员的审核结果，准备后续处理</td>
+            </tr>
+            <tr>
+                <td>发布到公共服务平台</td>
+                <td>审核通过后将活动信息从综合管理平台同步至公共服务平台，在首页轮播和信息公开模块显示</td>
+            </tr>
+            <tr>
+                <td>统计查看/报名数量</td>
+                <td>实时统计活动的浏览量、报名人数、签到率等数据，同步至综合管理平台供管理员查看</td>
+            </tr>
+            <tr>
+                <td>管理活动状态</td>
+                <td>根据时间自动更新活动状态：报名中→报名截止→进行中→已结束，两个平台同步更新状态</td>
+            </tr>
+            <tr>
+                <td rowspan="4">企业用户</td>
+                <td rowspan="4">公共服务平台</td>
+                <td>查看活动列表</td>
+                <td>登录公共服务平台，在首页轮播或信息公开模块浏览活动列表</td>
+            </tr>
+            <tr>
+                <td>查看活动详情</td>
+                <td>点击活动查看详细信息，包括活动内容、时间、地点等</td>
+            </tr>
+            <tr>
+                <td>报名参加活动</td>
+                <td>在活动报名时间内点击"我要报名"并填写必要信息</td>
+            </tr>
+            <tr>
+                <td>活动现场签到</td>
+                <td>在活动现场通过公共服务平台的扫码功能等方式完成签到</td>
+            </tr>
+        </table>
+
+        <h3>管理操作说明</h3>
+        <p>除了核心发布流程外，园区活动还支持以下管理操作：</p>
+        <table>
+            <tr>
+                <th width="25%">管理操作</th>
+                <th width="75%">功能说明</th>
+            </tr>
+            <tr>
+                <td>查询活动</td>
+                <td>园区管理员可以在活动列表中查询和筛选活动，按标题、时间、状态等多种条件过滤。</td>
+            </tr>
+            <tr>
+                <td>修改活动</td>
+                <td>对于未发布或被拒绝的活动，管理员可以修改内容后重新提交审核。</td>
+            </tr>
+            <tr>
+                <td>删除活动</td>
+                <td>对于过期或不再需要的活动，管理员可以删除，从系统中永久移除。</td>
+            </tr>
+            <tr>
+                <td>置顶活动</td>
+                <td>管理员可对重要活动设置置顶，使其在公共服务平台首页轮播展示，提高信息可见性。</td>
+            </tr>
+            <tr>
+                <td>活动签到管理</td>
+                <td>活动现场可通过系统提供的扫码签到、人工签到等方式管理参与者签到。</td>
+            </tr>
+            <tr>
+                <td>报名人数限制</td>
+                <td>可设置活动最大报名人数，达到上限后自动停止接受新报名。</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>状态转换</h2>
+        <table>
+            <tr>
+                <th>状态</th>
+                <th>描述</th>
+                <th>转换条件</th>
+                <th>下一状态</th>
+            </tr>
+            <tr>
+                <td>草稿</td>
+                <td>活动创建后但尚未提交</td>
+                <td>管理员点击"保存并提交审核"</td>
+                <td>待审核</td>
+            </tr>
+            <tr>
+                <td>待审核</td>
+                <td>已提交等待审核</td>
+                <td>审核员审核通过</td>
+                <td>已发布</td>
+            </tr>
+            <tr>
+                <td>待审核</td>
+                <td>已提交等待审核</td>
+                <td>审核员审核拒绝</td>
+                <td>已拒绝</td>
+            </tr>
+            <tr>
+                <td>已拒绝</td>
+                <td>审核未通过</td>
+                <td>管理员修改后重新提交</td>
+                <td>待审核</td>
+            </tr>
+            <tr>
+                <td>已发布</td>
+                <td>活动已发布，等待报名</td>
+                <td>达到报名开始时间</td>
+                <td>报名中</td>
+            </tr>
+            <tr>
+                <td>已发布</td>
+                <td>活动已发布</td>
+                <td>管理员设置置顶</td>
+                <td>已置顶</td>
+            </tr>
+            <tr>
+                <td>报名中</td>
+                <td>活动可以报名</td>
+                <td>达到报名截止时间</td>
+                <td>报名截止</td>
+            </tr>
+            <tr>
+                <td>报名截止</td>
+                <td>活动报名已结束</td>
+                <td>达到活动开始时间</td>
+                <td>进行中</td>
+            </tr>
+            <tr>
+                <td>进行中</td>
+                <td>活动正在进行</td>
+                <td>达到活动结束时间</td>
+                <td>已结束</td>
+            </tr>
+            <tr>
+                <td>已发布/报名中</td>
+                <td>活动正常发布或报名中</td>
+                <td>管理员点击"取消活动"</td>
+                <td>已取消</td>
+            </tr>
+        </table>
+
+        <h3>数据流说明</h3>
+        <p>园区活动业务流程涉及的主要数据流如下：</p>
+        <ol>
+            <li><strong>活动创建数据流</strong>：园区管理员在综合管理平台创建活动→设置标题、内容、公开范围→设置报名时间、活动时间→提交审核→系统记录</li>
+            <li><strong>审核流程数据流</strong>：审核员在综合管理平台获取待审核活动→进行审核→提交审核结果→系统记录</li>
+            <li><strong>平台间同步数据流</strong>：系统接收审核通过结果→更新活动状态为"已发布"→从综合管理平台同步至公共服务平台→系统自动根据时间更新两平台上的活动状态</li>
+            <li><strong>用户报名数据流</strong>：企业用户登录公共服务平台→查看活动列表→打开活动详情（系统记录已查看状态）→填写并提交报名信息→系统记录报名状态→同步至综合管理平台</li>
+            <li><strong>活动签到数据流</strong>：企业用户通过公共服务平台到场参加活动→扫码签到→系统记录签到状态→更新签到统计数据→同步至综合管理平台</li>
+            <li><strong>管理操作数据流</strong>：园区管理员在综合管理平台查询活动→查看统计数据→导出报名名单→管理活动（修改/删除/置顶）→系统更新活动状态→同步至公共服务平台</li>
+        </ol>
+
+        <h3>异常处理</h3>
+        <p>在园区活动业务流程中可能出现的异常情况及处理方式：</p>
+        <table>
+            <tr>
+                <th width="30%">异常情况</th>
+                <th width="30%">影响</th>
+                <th width="40%">处理方式</th>
+            </tr>
+            <tr>
+                <td>审核超时</td>
+                <td>活动长时间处于待审核状态</td>
+                <td>系统自动提醒审核员；园区管理员可查看审核状态并催办</td>
+            </tr>
+            <tr>
+                <td>活动信息有误</td>
+                <td>已发布的活动包含错误信息</td>
+                <td>园区管理员可修改内容后重新提交审核；重要错误可先取消活动</td>
+            </tr>
+            <tr>
+                <td>报名人数超出预期</td>
+                <td>活动场地容量不足</td>
+                <td>系统自动限制报名人数；管理员可通过后台调整最大报名人数上限</td>
+            </tr>
+            <tr>
+                <td>活动需要取消</td>
+                <td>已有用户报名的活动无法进行</td>
+                <td>管理员取消活动后系统自动通知已报名用户；可选择重新安排活动时间</td>
+            </tr>
+            <tr>
+                <td>公共服务平台同步失败</td>
+                <td>用户无法在公共服务平台看到已发布活动</td>
+                <td>系统自动重试同步；管理员可手动触发同步操作</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>功能关键点说明</h2>
+        <table>
+            <tr>
+                <th width="25%">功能点</th>
+                <th width="15%">相关平台</th>
+                <th width="60%">说明</th>
+            </tr>
+            <tr>
+                <td>置顶功能</td>
+                <td>两个平台</td>
+                <td>管理员在综合管理平台设置活动置顶，使其在公共服务平台首页轮播展示，提高信息可见性。置顶状态的活动会优先显示，提高曝光率。</td>
+            </tr>
+            <tr>
+                <td>报名统计功能</td>
+                <td>综合管理平台</td>
+                <td>系统自动统计活动的查看数量和报名数量，在综合管理平台提供图表可视化展示，便于管理员评估活动关注度。支持按企业、部门等维度统计分析。</td>
+            </tr>
+            <tr>
+                <td>已查看与已报名关系</td>
+                <td>公共服务平台→综合管理平台</td>
+                <td>系统记录用户在公共服务平台查看活动详情的行为作为"已查看"状态；用户提交报名表单后被记录为"已报名"状态。数据同步至综合管理平台，帮助评估活动吸引力和转化率。</td>
+            </tr>
+            <tr>
+                <td>报名人员信息导出</td>
+                <td>综合管理平台</td>
+                <td>园区管理员可在综合管理平台将报名人员信息以Excel格式导出，包含姓名、企业、部门、联系方式等信息，便于活动组织者进行后续联系和活动准备。</td>
+            </tr>
+            <tr>
+                <td>签到管理功能</td>
+                <td>公共服务平台→综合管理平台</td>
+                <td>活动现场支持多种签到方式，用户通过公共服务平台进行扫码签到，数据同步至综合管理平台，管理员可实时查看签到情况，系统计算出席率，作为活动效果评估的重要指标。</td>
+            </tr>
+            <tr>
+                <td>活动状态自动转换</td>
+                <td>两个平台</td>
+                <td>系统根据设定的时间自动更新活动状态，从"报名中"→"报名截止"→"进行中"→"已结束"，无需人工干预，确保两个平台上的活动状态实时准确同步。</td>
+            </tr>
+            <tr>
+                <td>首页轮播展示</td>
+                <td>公共服务平台</td>
+                <td>置顶的未结束活动会在公共服务平台首页轮播展示，点击活动能直接进入对应的活动详情页面，提高活动曝光度和参与度。</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>需求对照</h2>
+        <table>
+            <tr>
+                <th width="30%">需求项</th>
+                <th width="20%">是否支持</th>
+                <th width="50%">实现方式</th>
+            </tr>
+            <tr>
+                <td>新增、删除、查询、修改功能</td>
+                <td>✓ 支持</td>
+                <td>通过管理界面提供完整的活动CRUD操作，支持按标题、时间、状态等条件查询筛选</td>
+            </tr>
+            <tr>
+                <td>审核、发布功能</td>
+                <td>✓ 支持</td>
+                <td>设置完整的审核流程，确保活动内容准确合规后才发布至公共服务平台</td>
+            </tr>
+            <tr>
+                <td>报名功能</td>
+                <td>✓ 支持</td>
+                <td>在活动报名时间内，用户可在公共服务平台提交报名信息，系统记录报名状态</td>
+            </tr>
+            <tr>
+                <td>统计功能</td>
+                <td>✓ 支持</td>
+                <td>系统自动统计活动的查看数量、报名数量、签到数量等数据，提供统计报表</td>
+            </tr>
+            <tr>
+                <td>置顶功能</td>
+                <td>✓ 支持</td>
+                <td>可设置活动置顶，置顶活动在公共服务平台首页轮播展示</td>
+            </tr>
+            <tr>
+                <td>设置标题、正文、公开范围</td>
+                <td>✓ 支持</td>
+                <td>活动创建界面提供完整的内容编辑和范围设置功能</td>
+            </tr>
+            <tr>
+                <td>设置活动报名时间</td>
+                <td>✓ 支持</td>
+                <td>可设置活动报名开始时间和截止时间，控制报名周期</td>
+            </tr>
+            <tr>
+                <td>设置活动开始时间</td>
+                <td>✓ 支持</td>
+                <td>可设置活动开始时间和结束时间，系统根据时间自动更新活动状态</td>
+            </tr>
+            <tr>
+                <td>统计用户已查看数量</td>
+                <td>✓ 支持</td>
+                <td>系统自动记录用户查看活动详情的行为，并提供统计数据</td>
+            </tr>
+            <tr>
+                <td>统计已报名数量</td>
+                <td>✓ 支持</td>
+                <td>系统实时统计报名人数，支持多维度分析报名情况</td>
+            </tr>
+            <tr>
+                <td>导出已报名人员信息</td>
+                <td>✓ 支持</td>
+                <td>提供Excel格式导出功能，包含报名人员的详细信息</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="navigation">
+        <a href="policy_document_process.html">← 上一个：政策文件</a>
+        <div>
+            <a href="notification_announcement_process.html">通知公告</a> |
+            <a href="policy_document_process.html">政策文件</a> |
+            <a href="park_activity_process.html">园区活动</a> |
+            <a href="survey_process.html">调查问卷</a> |
+            <a href="demand_publishing_process.html">需求发布</a>
+        </div>
+        <a href="survey_process.html">下一个：调查问卷 →</a>
+    </div>
+
+    <script>
+        // 确保DOM完全加载后再执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM已加载，准备初始化jsPlumb');
+            
+            // 检查jsPlumb是否正确加载
+            if (typeof jsPlumb === 'undefined') {
+                console.error('错误：jsPlumb库未加载！');
+                var errorDiv = document.createElement('div');
+                errorDiv.style.color = 'red';
+                errorDiv.style.padding = '20px';
+                errorDiv.style.backgroundColor = '#ffeeee';
+                errorDiv.style.border = '1px solid red';
+                errorDiv.style.margin = '10px';
+                errorDiv.innerHTML = '<strong>错误：jsPlumb库未能加载</strong><p>请检查：</p><ol>' +
+                    '<li>jsplumb.min.js文件是否位于正确位置</li>' +
+                    '<li>文件是否有正确的读取权限</li>' +
+                    '<li>是否有JavaScript控制台错误</li></ol>';
+                document.getElementById('activity-swimlane').appendChild(errorDiv);
+                return;
+            }
+            
+            try {
+                console.log('jsPlumb已加载，版本：', jsPlumb.version);
+                
+                var instance = jsPlumb.getInstance({
+                    Connector: ["Flowchart", { cornerRadius: 5 }],
+                    Endpoint: ["Dot", { radius: 4 }],
+                    EndpointStyle: { fill: "#2196f3" },
+                    PaintStyle: { stroke: "#2196f3", strokeWidth: 2 },
+                    HoverPaintStyle: { stroke: "#1565c0", strokeWidth: 3 },
+                    ConnectionOverlays: [
+                        ["Arrow", { location: 1, width: 10, length: 10, foldback: 0.8 }],
+                        ["Label", { 
+                            cssClass: "connection-label",
+                            label: "",
+                            location: 0.5
+                        }]
+                    ],
+                    Container: "activity-swimlane"
+                });
+                
+                console.log('jsPlumb实例已创建');
+                
+                // 添加连接来构建流程图
+                setTimeout(function() {
+                    console.log('正在创建连接...');
+                    try {
+                        // 园区管理员流程连接
+                        instance.connect({ 
+                            source: "a1", 
+                            target: "a2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "创建新活动", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "a2", 
+                            target: "a3", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "设置基本信息", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "a3", 
+                            target: "a4", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "设置时间信息", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 从管理员到审核员
+                        instance.connect({ 
+                            source: "a4", 
+                            target: "b1", 
+                            anchors: ["Right", "Left"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "提交审核", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 审核员内部
+                        instance.connect({ 
+                            source: "b1", 
+                            target: "b2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "审核活动内容", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "b2", 
+                            target: "b3", 
+                            anchors: ["Right", "Left"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "审核通过", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 审核员到系统
+                        instance.connect({ 
+                            source: "b3", 
+                            target: "c1", 
+                            anchors: ["Right", "Right"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "发送审核结果", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 系统内部
+                        instance.connect({ 
+                            source: "c1", 
+                            target: "c2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "处理审核通过", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "c2", 
+                            target: "c3", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "收集统计数据", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "c3", 
+                            target: "c4", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "更新活动状态", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 系统到管理员
+                        instance.connect({ 
+                            source: "c3", 
+                            target: "a5", 
+                            anchors: ["Left", "Bottom"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "提供统计结果", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "a5", 
+                            target: "a6", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "查看报名情况", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 系统到用户
+                        instance.connect({ 
+                            source: "c2", 
+                            target: "d1", 
+                            anchors: ["Right", "Left"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "同步到公共平台", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 用户内部
+                        instance.connect({ 
+                            source: "d1", 
+                            target: "d2", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "浏览活动", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "d2", 
+                            target: "d3", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "查看详情", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        instance.connect({ 
+                            source: "d3", 
+                            target: "d4", 
+                            anchors: ["Bottom", "Top"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "提交报名", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        // 用户报名到系统
+                        instance.connect({ 
+                            source: "d3", 
+                            target: "c3", 
+                            anchors: ["Left", "Left"],
+                            overlays: [
+                                ["Label", { 
+                                    label: "记录报名信息", 
+                                    location: 0.5, 
+                                    cssClass: "connection-label" 
+                                }]
+                            ]
+                        });
+                        
+                        console.log('所有连接已创建');
+                        
+                        // 添加按钮让用户强制重绘
+                        var buttonDiv = document.createElement('div');
+                        buttonDiv.style.margin = '10px 0';
+                        buttonDiv.innerHTML = '<button id="repaintBtn" style="padding: 5px 10px; background-color: #1890ff; color: white; border: none; border-radius: 4px; cursor: pointer;">强制重绘连接线</button>';
+                        document.querySelector('.process-diagram').appendChild(buttonDiv);
+                        
+                        document.getElementById('repaintBtn').addEventListener('click', function() {
+                            console.log('手动重绘所有连接');
+                            instance.repaintEverything();
+                        });
+                        
+                    } catch (e) {
+                        console.error('创建连接失败：', e);
+                    }
+                }, 800);
+                
+                // 窗口大小改变时自动调整
+                window.addEventListener('resize', function() {
+                    console.log('窗口大小改变，重绘连接');
+                    instance.repaintEverything();
+                });
+                
+            } catch (error) {
+                console.error('jsPlumb初始化错误:', error);
+                var errorMsg = document.createElement('div');
+                errorMsg.style.color = 'red';
+                errorMsg.style.padding = '20px';
+                errorMsg.style.backgroundColor = '#ffeeee';
+                errorMsg.style.border = '1px solid red';
+                errorMsg.style.margin = '10px';
+                errorMsg.innerHTML = '<strong>jsPlumb初始化错误:</strong> ' + error.message;
+                document.getElementById('activity-swimlane').appendChild(errorMsg);
+            }
+        });
+    </script>
+</body>
+</html> 

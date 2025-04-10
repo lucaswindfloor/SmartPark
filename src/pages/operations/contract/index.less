@@ -1,0 +1,81 @@
+.contract-list {
+  padding: 0 0 24px 0;
+
+  .filter-card {
+    margin-bottom: 24px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+
+  .table-card {
+    margin-bottom: 24px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .contract-table {
+    .ant-table-thead > tr > th {
+      background-color: #f5f7fa;
+      font-weight: 600;
+    }
+
+    .ant-table-row:hover {
+      cursor: pointer;
+    }
+  }
+
+  .table-row-alternate {
+    background-color: #fafafa;
+  }
+
+  .ant-pagination {
+    margin-top: 16px;
+    margin-bottom: 0;
+  }
+
+  .ant-tag {
+    min-width: 60px;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .ant-table-cell-ellipsis {
+    max-width: 150px;
+  }
+
+  // 操作栏样式
+  .ant-space-item {
+    margin-right: 0;
+  }
+
+  // 表格滚动条优化
+  .ant-table-body {
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #d9d9d9;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f0f2f5;
+      border-radius: 3px;
+    }
+  }
+
+  // 响应式优化
+  @media (max-width: 768px) {
+    .ant-table {
+      overflow-x: auto;
+    }
+    
+    .ant-space {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+} 

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区停车管理系统产品需求设计文档</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1890ff;
+            border-bottom: 2px solid #1890ff;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #096dd9;
+            margin-top: 30px;
+        }
+        .toc-card {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            background-color: #f9f9f9;
+        }
+        .doc-link {
+            display: block;
+            padding: 12px 15px;
+            margin: 10px 0;
+            background-color: #f0f5ff;
+            border-left: 4px solid #1890ff;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #1890ff;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .doc-link:hover {
+            background-color: #e6f7ff;
+            transform: translateX(5px);
+        }
+        .doc-description {
+            margin-top: 5px;
+            color: #666;
+            font-size: 14px;
+        }
+        .section-list {
+            margin-left: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+        .note {
+            background-color: #fffbe6;
+            border-left: 4px solid #faad14;
+            padding: 10px 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区停车管理系统产品需求设计文档</h1>
+    
+    <div class="note">
+        <p>本文档为智慧园区停车管理系统的产品需求设计文档，详细描述了停车管理功能的设计方案，包括综合管理平台和公共服务平台两部分。文档按照标准PRD框架编写，提供了全面、详细的系统设计与实施建议。</p>
+    </div>
+    
+    <div class="toc-card">
+        <h2>文档目录</h2>
+        
+        <a href="document-overview.html" class="doc-link">
+            第一部分：文档概述
+            <div class="doc-description">包含项目背景与目标、产品愿景、目标用户群体分析和文档版本控制等内容。</div>
+            <div class="section-list">
+                <ul>
+                    <li>1.1 项目背景与目标</li>
+                    <li>1.2 产品愿景</li>
+                    <li>1.3 目标用户群体</li>
+                    <li>1.4 文档版本控制</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="user-research.html" class="doc-link">
+            第二部分：用户研究与场景分析
+            <div class="doc-description">详细分析用户角色、痛点与需求，并定义核心用户场景和用户旅程。</div>
+            <div class="section-list">
+                <ul>
+                    <li>2.1 用户角色定义</li>
+                    <li>2.2 用户痛点与需求分析</li>
+                    <li>2.3 核心用户场景</li>
+                    <li>2.4 用户旅程图</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="roles-permissions.html" class="doc-link">
+            第三部分：用户角色与权限
+            <div class="doc-description">定义系统角色职责和权限分配，明确各角色间关系。</div>
+            <div class="section-list">
+                <ul>
+                    <li>3.1 角色职责定义</li>
+                    <li>3.2 权限矩阵</li>
+                    <li>3.3 角色关系图</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="feature-structure.html" class="doc-link">
+            第四部分：功能结构设计
+            <div class="doc-description">详细规划停车管理功能结构，包括综合管理平台和公共服务平台的功能设计。</div>
+            <div class="section-list">
+                <ul>
+                    <li>4.1 功能结构图</li>
+                    <li>4.2 功能模块划分</li>
+                    <li>4.3 功能详细说明</li>
+                    <li>4.4 功能优先级排序</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="business-process.html" class="doc-link">
+            第五部分：业务流程设计
+            <div class="doc-description">定义核心业务流程和状态转换，并说明各角色的参与情况。</div>
+            <div class="section-list">
+                <ul>
+                    <li>5.1 核心业务流程</li>
+                    <li>5.2 子业务流程</li>
+                    <li>5.3 状态转换说明</li>
+                    <li>5.4 异常流程处理</li>
+                    <li>5.5 参与角色与权限</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="data-model.html" class="doc-link">
+            第六部分：数据模型设计
+            <div class="doc-description">设计停车管理相关数据结构和关系，包含数据流动设计。</div>
+            <div class="section-list">
+                <ul>
+                    <li>6.1 实体关系概览</li>
+                    <li>6.2 核心实体定义</li>
+                    <li>6.3 数据字典</li>
+                    <li>6.4 数据流动图</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="ui-design.html" class="doc-link">
+            第七部分：界面与交互设计
+            <div class="doc-description">提供详细的界面设计和交互流程指导。</div>
+            <div class="section-list">
+                <ul>
+                    <li>7.1 信息架构</li>
+                    <li>7.2 页面流程图</li>
+                    <li>7.3 原型设计</li>
+                    <li>7.4 UI设计规范</li>
+                    <li>7.5 关键交互流程</li>
+                    <li>7.6 异常处理交互</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="system-architecture.html" class="doc-link">
+            第八部分：系统架构设计
+            <div class="doc-description">描述技术架构、系统组件和集成需求。</div>
+            <div class="section-list">
+                <ul>
+                    <li>8.1 技术架构</li>
+                    <li>8.2 系统组件图</li>
+                    <li>8.3 接口设计</li>
+                    <li>8.4 集成需求</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="non-functional.html" class="doc-link">
+            第九部分：非功能性需求
+            <div class="doc-description">明确性能、安全、兼容性等非功能性需求指标。</div>
+            <div class="section-list">
+                <ul>
+                    <li>9.1 性能要求</li>
+                    <li>9.2 安全要求</li>
+                    <li>9.3 兼容性要求</li>
+                    <li>9.4 可用性要求</li>
+                    <li>9.5 可扩展性要求</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="implementation-plan.html" class="doc-link">
+            第十部分：实施计划
+            <div class="doc-description">提供分阶段实施策略和测试计划。</div>
+            <div class="section-list">
+                <ul>
+                    <li>10.1 开发阶段划分</li>
+                    <li>10.2 测试策略与计划</li>
+                    <li>10.3 发布策略</li>
+                    <li>10.4 数据迁移方案</li>
+                    <li>10.5 回滚方案</li>
+                </ul>
+            </div>
+        </a>
+        
+        <a href="appendix.html" class="doc-link">
+            第十一部分：附录
+            <div class="doc-description">提供术语表、参考文档和变更记录等辅助信息。</div>
+            <div class="section-list">
+                <ul>
+                    <li>11.1 术语表</li>
+                    <li>11.2 参考文档</li>
+                    <li>11.3 变更记录</li>
+                </ul>
+            </div>
+        </a>
+    </div>
+    
+    <div class="note">
+        <p><strong>文档使用说明：</strong> 本文档已按照功能模块和设计层次进行了合理划分，您可以根据自己的关注点选择性地查看相关章节。建议先阅读第一、二部分了解整体设计思路，再根据需要深入了解具体功能模块的详细设计。</p>
+    </div>
+</body>
+</html> 

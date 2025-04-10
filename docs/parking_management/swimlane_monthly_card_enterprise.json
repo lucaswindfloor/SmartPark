@@ -1,0 +1,316 @@
+{
+  "lanes": [
+    {
+      "name": "企业用户",
+      "steps": [
+        {
+          "id": "e1-1",
+          "text": "登录企业管理平台",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-2",
+          "text": "进入员工月卡管理",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-3",
+          "text": "批量导入员工车辆信息",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-4",
+          "text": "提交月卡申请",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-5",
+          "text": "查看申请状态",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-6",
+          "text": "接收拒绝通知",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-7",
+          "text": "接收批准通知",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-8",
+          "text": "选择支付方式",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-8-detail",
+          "text": "● 预付款支付(指定费项)\n                    ● 预付款支付(全部费项)\n                    ● 微信支付\n                    ● 银行B2B/B2C支付",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-9",
+          "text": "插入U盘密钥验证",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-10",
+          "text": "完成企业账单支付",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-11",
+          "text": "管理企业月卡列表",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-12",
+          "text": "选择/设置开票信息",
+          "type": "enterprise"
+        },
+        {
+          "id": "e1-13",
+          "text": "申请开票",
+          "type": "enterprise"
+        }
+      ]
+    },
+    {
+      "name": "园区管理员",
+      "steps": [
+        {
+          "id": "a1-1",
+          "text": "接收月卡申请",
+          "type": "admin"
+        },
+        {
+          "id": "a1-2",
+          "text": "核实申请信息",
+          "type": "admin"
+        },
+        {
+          "id": "a1-3",
+          "text": "审批月卡申请",
+          "type": "admin"
+        }
+      ]
+    },
+    {
+      "name": "园区财务管理员",
+      "steps": [
+        {
+          "id": "f1-1",
+          "text": "复核月卡账单",
+          "type": "finance"
+        },
+        {
+          "id": "f1-2",
+          "text": "推送账单通知",
+          "type": "finance"
+        },
+        {
+          "id": "f1-3",
+          "text": "收款管理",
+          "type": "finance"
+        },
+        {
+          "id": "f1-4",
+          "text": "审核开票申请",
+          "type": "finance"
+        },
+        {
+          "id": "f1-4-detail",
+          "text": "● 确保租金与停车费分开开票\n                    ● 验证开票信息准确性",
+          "type": "finance"
+        },
+        {
+          "id": "f1-5",
+          "text": "生成电子发票",
+          "type": "finance"
+        }
+      ]
+    },
+    {
+      "name": "系统",
+      "steps": [
+        {
+          "id": "s1-1",
+          "text": "创建月卡申请记录",
+          "type": "system"
+        },
+        {
+          "id": "s1-2",
+          "text": "通知管理员审核",
+          "type": "system"
+        },
+        {
+          "id": "s1-3",
+          "text": "计算月卡费用",
+          "type": "system"
+        },
+        {
+          "id": "s1-4",
+          "text": "应用企业优惠政策",
+          "type": "system"
+        },
+        {
+          "id": "s1-4-detail",
+          "text": "● A类企业优惠20%\n                    ● B类企业优惠15%\n                    ● C类企业优惠10%",
+          "type": "system"
+        },
+        {
+          "id": "s1-5",
+          "text": "生成月卡账单",
+          "type": "system"
+        },
+        {
+          "id": "s1-6",
+          "text": "发送批准通知",
+          "type": "system"
+        },
+        {
+          "id": "s1-7",
+          "text": "发送拒绝通知",
+          "type": "system"
+        },
+        {
+          "id": "s1-8",
+          "text": "处理支付",
+          "type": "system"
+        },
+        {
+          "id": "s1-9",
+          "text": "更新月卡权限",
+          "type": "system"
+        },
+        {
+          "id": "s1-10",
+          "text": "同步车牌识别系统",
+          "type": "system"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "source": "e1-1",
+      "target": "e1-2"
+    },
+    {
+      "source": "e1-2",
+      "target": "e1-3"
+    },
+    {
+      "source": "e1-3",
+      "target": "e1-4"
+    },
+    {
+      "source": "e1-7",
+      "target": "e1-8"
+    },
+    {
+      "source": "e1-8",
+      "target": "e1-9"
+    },
+    {
+      "source": "e1-9",
+      "target": "e1-10"
+    },
+    {
+      "source": "e1-10",
+      "target": "e1-11"
+    },
+    {
+      "source": "e1-11",
+      "target": "e1-12"
+    },
+    {
+      "source": "e1-12",
+      "target": "e1-13"
+    },
+    {
+      "source": "a1-1",
+      "target": "a1-2"
+    },
+    {
+      "source": "a1-2",
+      "target": "a1-3"
+    },
+    {
+      "source": "f1-1",
+      "target": "f1-2"
+    },
+    {
+      "source": "f1-3",
+      "target": "f1-4"
+    },
+    {
+      "source": "s1-1",
+      "target": "s1-2"
+    },
+    {
+      "source": "s1-3",
+      "target": "s1-4"
+    },
+    {
+      "source": "s1-4",
+      "target": "s1-5"
+    },
+    {
+      "source": "s1-5",
+      "target": "s1-6"
+    },
+    {
+      "source": "s1-8",
+      "target": "s1-9"
+    },
+    {
+      "source": "s1-9",
+      "target": "s1-10"
+    },
+    {
+      "source": "e1-4",
+      "target": "s1-1"
+    },
+    {
+      "source": "s1-2",
+      "target": "a1-1"
+    },
+    {
+      "source": "a1-3",
+      "target": "s1-3"
+    },
+    {
+      "source": "a1-3",
+      "target": "s1-7"
+    },
+    {
+      "source": "s1-5",
+      "target": "f1-1"
+    },
+    {
+      "source": "f1-2",
+      "target": "s1-6"
+    },
+    {
+      "source": "s1-6",
+      "target": "e1-7"
+    },
+    {
+      "source": "s1-7",
+      "target": "e1-6"
+    },
+    {
+      "source": "e1-10",
+      "target": "s1-8"
+    },
+    {
+      "source": "s1-8",
+      "target": "f1-3"
+    },
+    {
+      "source": "e1-13",
+      "target": "f1-4"
+    }
+  ]
+}

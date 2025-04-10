@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区 - 停车管理系统功能结构设计</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #1890ff;
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 20px;
+        }
+        h4 {
+            font-size: 18px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .highlight {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #1890ff;
+        }
+        .platform {
+            background-color: #e6f7ff;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .priority {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        .p0 {
+            background-color: #ff4d4f;
+            color: white;
+        }
+        .p1 {
+            background-color: #faad14;
+            color: white;
+        }
+        .p2 {
+            background-color: #52c41a;
+            color: white;
+        }
+        .function-card {
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            padding: 15px;
+        }
+        .function-card h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .tree-view {
+            margin-left: 20px;
+        }
+        .tree-item {
+            margin-bottom: 10px;
+        }
+        .tree-item::before {
+            content: "• ";
+            color: #1890ff;
+        }
+        .tree-item-children {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区 - 停车管理系统功能结构设计</h1>
+    
+    <h2>4. 功能结构设计</h2>
+    
+    <h3>4.1 功能结构图</h3>
+    <div class="highlight">
+        <p>停车管理系统的功能分布在两个主要平台中：</p>
+        <ol>
+            <li><strong>智慧园区综合管理平台</strong>：面向园区管理方（运营、财务人员），提供停车场管理、月卡管理、收费管理等后台功能。</li>
+            <li><strong>公共服务平台</strong>：面向企业用户及个人用户，提供停车月卡申请、临时停车缴费等服务功能。</li>
+        </ol>
+    </div>
+    
+    <h3>4.2 功能模块划分</h3>
+    
+    <!-- 综合管理平台功能模块 -->
+    <div class="platform">
+        <h4>一、智慧园区综合管理平台</h4>
+        
+        <!-- 停车场管理模块 -->
+        <div class="function-card">
+            <h4>1. 停车场管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>停车场配置</strong>
+                    <div class="tree-item-children">
+                        <p>提供园区内停车场基础信息配置功能，包括停车场名称、位置、总车位数、车位类型（固定车位、访客车位、临时车位等）的设置。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>车位状态显示</strong>
+                    <div class="tree-item-children">
+                        <p>根据停车场内已进场未出场的车辆数量，动态计算展示当前园区剩余的车位数量（车位总数-已进场未出场），并将信息展示在停车场入口电子屏和公共服务平台上。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>出入口管理</strong>
+                    <div class="tree-item-children">
+                        <p>支持对停车场的出入口进行管理，包括新增、编辑和删除出入口配置；提供出入口二维码的下载和打印功能，该二维码支持移动端、微信扫码后，用户可以直接查询当前出入口未缴费车牌的账单支付页面，从而实现快速缴费。系统支持针对不同出入口生成对应的收费二维码，确保用户扫码后能获取与当前位置相关的账单信息。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>车位管理</strong>
+                    <div class="tree-item-children">
+                        <p>提供车位的增加、删除、修改功能，可对车位进行分区管理，设定车位编号、类型（普通、无障碍、充电桩等）、状态等信息。支持车位批量导入。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>车辆出入管理</strong>
+                    <div class="tree-item-children">
+                        <p>记录并管理车辆进出停车场的信息，包括车牌号、进出时间、停车位置等。支持异常情况（如车牌识别失败、黑名单车辆等）的处理。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>设备管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理停车场相关设备，如道闸、车牌识别、监控摄像头等设备的状态监控、故障报警和维护记录。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 停车月卡管理模块 -->
+        <div class="function-card">
+            <h4>2. 停车月卡管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>月卡定价设置</strong>
+                    <div class="tree-item-children">
+                        <p>设置不同类型月卡的基础价格，为后续优惠策略应用提供基础定价。根据需求调整，月卡优惠策略功能已调整至"运营管理-优惠券管理"模块，可在那里对不同企业类型设置月卡优惠，包括赠送时长（多少个月）、赠送价格（阶梯式优惠：如3-6个月9折，6-12个月8.5折，12个月以上8折）等差异化优惠策略。系统会根据企业类型自动应用相应的优惠规则。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>一人多车规则设置</strong>
+                    <div class="tree-item-children">
+                        <p>配置月卡一人多车规则，包括设置一个月卡最多可绑定的车牌数量，以及多车共享月卡的使用规则（如"先出场的车辆享受月卡"）。系统会根据设置自动管理多车共享月卡的使用情况。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡购买记录</strong>
+                    <div class="tree-item-children">
+                        <p>提供月卡购买记录查询功能，支持按企业、个人、时间范围等多种条件筛选，方便管理员进行数据统计和分析。记录包含购买日期、金额、支付方式、有效期等详细信息。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡充值协助</strong>
+                    <div class="tree-item-children">
+                        <p>提供管理人员帮助企业进行月卡充值的功能，支持为企业员工批量办理月卡充值，自动计算费用并应用相应的企业优惠策略。支持多种支付方式，包括企业预付款、银联支付和微信支付等。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡申请审批</strong>
+                    <div class="tree-item-children">
+                        <p>管理和审批来自企业或个人用户的停车月卡申请，设置审批流程和规则，支持批量审批功能。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡发放管理</strong>
+                    <div class="tree-item-children">
+                        <p>审批通过后，系统自动为车牌生成月卡权限，支持批量发放，支持月卡信息修改（如有效期调整、车牌更换等）。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡权限管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理月卡持有者的权限，包括进出时间限制、可使用停车区域等，支持权限的批量设置和调整。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡续费管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理月卡的续费情况，自动提醒即将到期的月卡，支持自动续费和手动续费功能。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡转让审批</strong>
+                    <div class="tree-item-children">
+                        <p>审核和管理月卡转让申请，确保转让符合园区规定，支持转让信息的记录和查询。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 临时停车管理模块 -->
+        <div class="function-card">
+            <h4>3. 临时停车管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>临时车辆管理</strong>
+                    <div class="tree-item-children">
+                        <p>记录和管理临时进入园区的车辆信息，包括访客车辆和临时停车的员工车辆，支持按车牌号、企业、时间等多维度查询。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>访客车辆管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理访客车辆的进出信息，支持与访客管理系统对接，可查看访客身份、访问目的等信息。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>异常情况处理</strong>
+                    <div class="tree-item-children">
+                        <p>处理临时停车过程中的异常情况，如车辆滞留、车牌识别错误、无法正常缴费等，支持人工干预和问题记录。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 收费管理模块 -->
+        <div class="function-card">
+            <h4>4. 收费管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>收费标准设置</strong>
+                    <div class="tree-item-children">
+                        <p>配置不同类型停车的收费标准，包括月卡费用、临时停车费用等，支持按时间段、车辆类型、企业类型等多维度设置差异化收费策略。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>优惠政策管理</strong>
+                    <div class="tree-item-children">
+                        <p>设置和管理停车优惠政策，如企业类型折扣、节假日优惠等，支持优惠券/优惠码的生成和管理。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>账单管理</strong>
+                    <div class="tree-item-children">
+                        <p>集中管理企业的各类费用账单，包含账单生成、账单复核、账单推送、账单收回、账单撤销、账单废弃与重新生成等功能：</p>
+                        <ul>
+                            <li>账单生成：支持按月+按不同维度（园区、区域、楼栋、楼层、企业）生成账单，支持手动生成和自动生成</li>
+                            <li>账单复核：对生成的账单进行核对，支持批量复核和金额修改，确保账单准确性</li>
+                            <li>账单推送：将复核通过的账单发送至对应企业，支持自动推送和手动推送</li>
+                            <li>账单收回：针对推送后企业未查看的账单，支持批量收回操作。收回后企业将无法查看和支付这些账单，直到重新推送。收回操作需填写收回原因，系统会自动通知企业管理员并记录完整的操作记录，包括收回时间、操作人和原因。账单收回后状态自动更改为"已收回"并回到"未推送"列表。</li>
+                            <li>账单撤销：针对企业已查看但未付款的账单，可执行撤销操作，撤销后账单恢复为未复核状态，方便后续修改</li>
+                            <li>账单废弃：对于发现错误的账单，执行废弃操作，需填写废弃原因，废弃后再通过"临时款项"功能调整数据，然后重新生成账单</li>
+                            <li>账单台账：集中展示所有账单信息，包括状态、金额、费项、企业等信息，支持多维度筛选查询</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>收款管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理账单收款和企业预收费：</p>
+                        <ul>
+                            <li>账单收款：选择具体账单进行收款，输入实际收款金额，支持多种支付方式（企业预付款支付、微信支付、银联支付、银行B2B/B2C支付等），支持插入U盘密钥验证操作，系统自动更新账单状态和相关财务数据</li>
+                            <li>预存收款：为企业新增预存费用，支持两种类型：
+                                <ul>
+                                    <li>指定费项预存：企业为特定费项（如停车费）预存一定金额，只能用于该费项的支付</li>
+                                    <li>全部费项预存：企业一次性预存一笔费用，可用于后续各项费用（包括停车费）的支付</li>
+                                </ul>
+                            </li>
+                            <li>在线收款记录：查看企业用户通过在线缴费支付的所有已收款记录以及手动登记的收款记录，记录内容包括缴费企业名称、缴费金额、缴费时间、流水号、支付方式、操作人员等详细信息</li>
+                            <li>收款统计：按时间段、企业、费用类型等维度统计收款情况，生成收款报表，支持数据导出</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>结算单管理</strong>
+                    <div class="tree-item-children">
+                        <p>企业退园结算相关功能：</p>
+                        <ul>
+                            <li>结算单生成：企业发起退园申请后，自动触发退园结算流程，生成包含停车费在内的所有费项详细核算的结算单</li>
+                            <li>结算单核算：根据企业退租的合同信息，全面核算包括押金、租金、物业费、水费、电费、服务费、临时费、预收费、配套物资损耗费、历史欠费等所有费项，针对停车费会根据截止到实际退园当天的停车月卡使用情况、临时停车记录及预付款余额等，计算退款或补缴金额</li>
+                            <li>结算单下载：支持以Word格式下载结算单，便于保存和打印，用于后续的财务核对和存档工作</li>
+                            <li>结算单审核：管理员对结算单进行审核，确认金额无误后提交给企业确认</li>
+                            <li>结算单确认：企业确认结算单后，系统自动更新相关财务数据，完成最终结算</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>开票管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理停车费用相关的发票申请和开具：</p>
+                        <ul>
+                            <li>未付开票管理：管理企业在付款前申请的开票记录。系统支持企业在支付账单前提前申请开票的流程，园区财务管理员可以查看企业的未付款开票申请，根据企业信用状况和历史缴费记录进行审核。审核通过后，系统自动生成电子发票并发送给企业，同时在"未付开票管理"模块中更新记录状态为"已开票未付款"，并设置付款期限（默认30天）。系统自动跟踪付款状态，对于超过期限未付款的记录，会自动提醒财务管理员跟进处理。企业完成支付后，系统自动将记录状态更新为"已付款"，并在"已开票管理"模块中生成对应记录。此功能为特殊企业报销流程提供了灵活支持，同时通过审批机制控制财务风险。</li>
+                            <li>已开票管理：查看企业用户在完成在线缴费后申请的开票记录，支持按企业名称、开票时间范围、费项类型、发票状态等多维度筛选和查询</li>
+                            <li>发票压缩包生成：支持按月将已开具的发票按费项类型分类打包，生成租金和其他费项（包括停车费）的分离压缩包，方便财务管理和税务申报。系统严格遵循租金与其他费项严格分开开票的财务合规要求，在生成压缩包时提供"按费项类型分类"选项，将租金发票与其他费项（包括停车费）发票分别打包成独立的压缩文件。每张发票以企业名称+费项类型+金额+日期命名，便于后续查找和核对。系统还会生成月度开票汇总报表，详细记录每张发票的关键信息，包括企业名称、费项类型、开票金额、开票日期和发票号码等，为园区和企业的财务工作提供有力支持。</li>
+                            <li>租金与其他费项分开开票：系统强制要求租金不能与其他费项（包括停车费）合并开票，确保会计核算的准确性，符合财务规范</li>
+                            <li>开票审核流程：管理员对企业的开票申请进行审核，确认信息无误后生成电子发票，支持批量审核功能</li>
+                            <li>开票状态追踪：企业和管理员可查看开票申请的处理状态，包括申请时间、审核状态、开票时间等</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>收费记录查询</strong>
+                    <div class="tree-item-children">
+                        <p>查询和统计停车收费记录，支持按时间、车牌号、企业等多维度筛选和导出。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>企业访客停车结算</strong>
+                    <div class="tree-item-children">
+                        <p>管理企业访客停车的费用结算，支持将访客停车费用归入企业账单，按月或按季度结算。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 数据统计分析模块 -->
+        <div class="function-card">
+            <h4>5. 数据统计分析 <span class="priority p1">P1</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>停车场使用率分析</strong>
+                    <div class="tree-item-children">
+                        <p>分析停车场的使用情况，包括使用率、高峰期、空闲期等数据，支持数据可视化展示和导出。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>收入统计分析</strong>
+                    <div class="tree-item-children">
+                        <p>统计和分析停车收入数据，包括月卡收入、临时停车收入等，支持按时间段、停车类型等维度分析。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>企业用车分析</strong>
+                    <div class="tree-item-children">
+                        <p>分析园区内各企业的用车情况，包括固定车位使用、临时停车频率等，为车位资源优化提供依据。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>异常情况统计</strong>
+                    <div class="tree-item-children">
+                        <p>统计和分析停车过程中的异常情况，如长时间滞留、频繁出入等，为停车场安全管理提供数据支持。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 公共服务平台功能模块 -->
+    <div class="platform">
+        <h4>二、公共服务平台</h4>
+        
+        <div class="highlight">
+            <p>公共服务平台功能结构设计参照"三级功能路径"原则，即用户通过"服务大厅"入口，选择具体服务分类，再进入具体服务功能。平台的整体功能路径结构为：一级功能（服务大厅）> 二级功能（服务分类，如"配套服务"）> 三级功能（具体服务，如"临停缴费"）。</p>
+        </div>
+        
+        <!-- 配套服务模块 -->
+        <div class="function-card">
+            <h4>1. 配套服务 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>临停缴费</strong>
+                    <div class="tree-item-children">
+                        <p>根据车牌号查询园区内该车牌的停车费用，并支持多种支付方式完成缴费：</p>
+                        <ul>
+                            <li>所属企业预付款支付：经授权的员工可使用企业预付款支付临时停车费用</li>
+                            <li>微信支付：直接通过微信扫码或小程序内支付</li>
+                            <li>银联支付：使用银联卡完成支付</li>
+                            <li>企业访客模式：访客通过扫描企业提供的停车二维码，形成企业账单后出场，由企业统一支付费用</li>
+                        </ul>
+                        <p>系统会保存历史车牌记录，方便常用车辆快速查询。支付成功后，用户可在支付完成页面申请电子发票。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>停车月卡</strong>
+                    <div class="tree-item-children">
+                        <p>提供停车月卡在线购买功能，系统根据用户所属企业类型自动计算优惠价格。支持多种支付方式：</p>
+                        <ul>
+                            <li>企业预付款支付：企业可授权员工使用预付款购买月卡</li>
+                            <li>微信支付：最常用的在线支付方式</li>
+                            <li>银行B2C支付：通过个人网银支付大额月卡费用</li>
+                        </ul>
+                        <p>购买成功后，系统自动更新月卡权限，并提供电子收据下载。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>企业账单</strong>
+                    <div class="tree-item-children">
+                        <p>在线付款</p>
+                        <div class="tree-item-children">
+                            <p>企业用户可查看、接收和支付停车相关账单，包括：</p>
+                            <ul>
+                                <li>账单查看：查看员工月卡费用、访客临时停车费用等详细账单信息</li>
+                                <li>在线付款：支持多种支付方式，包括B2B支付（对公转账）、B2C支付（个人网银）、微信支付等</li>
+                                <li>U盘密钥验证：大额B2B支付时，需插入企业U盘密钥进行身份验证，确保交易安全。密钥验证过程包括：读取U盘中的企业标识信息、验证密钥与企业账号的绑定关系、检查密钥的有效期和权限状态。验证通过后才能进入企业网银支付环节，用户输入企业网银账号和密码完成最终支付授权。支付成功后，系统自动记录付款凭证，并将支付结果通知发送到用户手机和企业邮箱。整个流程有效防止未授权支付和账户盗用风险，系统会保存完整的验证记录和支付日志，方便企业后续财务审计和对账。</li>
+                                <li>开票申请：支付完成后申请开具发票，租金与停车费等其他费项严格分开开票</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>开票申请</strong>
+                    <div class="tree-item-children">
+                        <p>用户可为已支付的停车费用（包括月卡费用、临时停车费用等）申请开具电子发票。系统会关联用户的开票信息，自动填充关键数据，简化申请流程。支持查看开票进度和历史开票记录。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>开票变更</strong>
+                    <div class="tree-item-children">
+                        <p>用户可管理用于停车费用开票的企业信息，支持增加新的开票信息或修改现有信息。变更后的开票信息将用于后续的发票申请，用户可设置默认使用的开票信息，并添加备注说明不同开票信息的适用场景。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>需求发布</strong>
+                    <div class="tree-item-children">
+                        <p>企业用户可发布停车相关需求（如增加月卡配额），提交企业信息、需求详情和佐证材料。系统支持需求的新增、删除、查询、修改、提交和撤销操作，帮助园区管理方了解和响应企业的停车需求。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 用户中心模块 -->
+        <div class="function-card">
+            <h4>2. 用户中心 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>我的月卡</strong>
+                    <div class="tree-item-children">
+                        <p>用户可查看和管理个人月卡信息。系统清晰展示用户所有月卡记录（包括当前使用中和历史月卡），每张月卡显示核心信息（车牌号、月卡类型、有效期、停车区域、当前状态）。提供以下功能：</p>
+                        <ul>
+                            <li>月卡详情查看：显示月卡基本信息，包括购买日期、支付金额、支付方式、发票状态等</li>
+                            <li>车辆管理：查看和管理绑定到月卡的车辆信息，支持一人多车设置（最多绑定系统限定数量的车辆），可指定主副车辆，系统根据"先出场车辆享受月卡"规则自动处理权益使用</li>
+                            <li>使用记录：查看月卡使用历史，包括车辆进出时间、使用出入口、是否享受月卡优惠等信息</li>
+                            <li>续费管理：系统提前提醒月卡到期（默认10天），用户可选择续费时长，系统根据企业类型自动计算优惠价格，支持多种支付方式（微信支付、银联支付、银行B2C支付、企业预付款等）</li>
+                            <li>转让功能：用户可申请将月卡转让给他人，填写接收人信息和转让生效日期，系统通知企业管理员审批，审批通过后自动在指定日期将月卡权益转移，保留原有有效期，完整记录转让历史便于后续查询</li>
+                            <li>发票申请：直接在月卡详情页申请发票，系统关联购买记录自动填充关键信息，简化发票申请流程</li>
+                        </ul>
+                        <p>通过集成这些功能，为用户提供一站式的月卡管理体验，提高用户对停车资源的管理效率和满意度。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 车辆管理模块 -->
+        <div class="function-card">
+            <h4>5. 车辆管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>场内车辆管理</strong>
+                    <div class="tree-item-children">
+                        <p>对当前园区内已进未出的车辆（包括月卡车和临停车）进行管理，提供实时查看、筛选和导出功能。支持按车辆类型、入场时间、停放区域等多维度筛选，对停留时间异常的车辆自动标记，便于管理员及时发现问题。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>白名单车辆管理</strong>
+                    <div class="tree-item-children">
+                        <p>允许用户新增、删除、查询和修改白名单车辆的车牌信息，并可设置免费停车时间段。支持为企业主的车辆根据合同有效期设置免费停车权限，提供批量导入功能和有效期管理，自动提醒即将到期的白名单车辆。系统支持通过Excel模板批量导入白名单车辆，验证车牌号格式和重复性后一次性添加多辆车辆。当车辆权限即将到期时（默认提前7天），系统会自动提醒管理员进行续期或调整，支持对过期记录进行一键延期或批量处理，极大提高车辆权限管理效率。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>免费车辆管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理特种车辆（如军用车、警用车、残疾人车等），自动将其设为免费车辆，享受永久免费停车。支持按车辆类型设置不同的免费规则，并提供免费车辆的使用记录查询和统计分析功能。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>月卡车辆管理</strong>
+                    <div class="tree-item-children">
+                        <p>记录和管理园区工作人员和企业员工购买月卡时登记的车辆信息，支持按企业、到期时间、月卡类型等多维度筛选。对于一人多车的情况，清晰显示主副车牌设置，支持车辆信息的批量导入和导出。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>黑名单车辆管理</strong>
+                    <div class="tree-item-children">
+                        <p>允许用户新增、删除、查询和修改黑名单车辆信息，并可设置禁止进入园区的时间段，增强园区安全管理。支持设置黑名单原因、有效期和备注信息，提供高级筛选功能（按有效期排序、按企业筛选、按限制类型筛选等）。系统支持批量管理和导入黑名单车辆，对于临时性限制的车辆，自动在限制期满后恢复正常状态，确保黑名单数据的时效性和准确性。所有操作都有详细日志记录，包括操作人、操作时间和内容，确保管理透明度。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>车辆出入记录</strong>
+                    <div class="tree-item-children">
+                        <p>提供车辆出入记录查询功能，支持按时间段（小时级精度）、出入口位置、车辆类型（月卡/临停/白名单/黑名单）等多维度组合查询。查看车辆的进出时间、使用出入口、停放时长、费用信息等详情，并可查看出入口摄像头拍摄的车辆图片。支持查询结果导出为Excel格式，便于管理员进行数据分析和存档。对于设备异常导致未正常记录的情况，支持手动添加出入记录功能。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 临停收费模式设置模块 -->
+        <div class="function-card">
+            <h4>6. 临停收费模式设置 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>按时长收费设置</strong>
+                    <div class="tree-item-children">
+                        <p>配置基于车辆停放实际时间的精确计费方式，如首小时10元，之后每小时5元等，适用于需要精确计费的场景。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>按区间收费设置</strong>
+                    <div class="tree-item-children">
+                        <p>将一天划分为不同的时间段，如白天和晚上，对不同时间段实行不同的收费标准，以反映不同时间段的停车需求和运营成本，如白天8:00-18:00每小时8元，夜间18:00-次日8:00每小时3元。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>节假日收费设置</strong>
+                    <div class="tree-item-children">
+                        <p>为节假日设置特殊的收费标准，区别于工作日的收费规则，以适应节假日可能增加的停车需求。系统会自动根据日期识别工作日和节假日，并应用相应的收费标准。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>临停收费模式说明</strong>
+                    <div class="tree-item-children">
+                        <p>根据需求调整，系统已取消"临停免费管理"和"临停优惠设置"功能。临停免费需求可通过扫描企业停车二维码由企业统一结算实现，企业也可以通过"服务小程序的临停缴费"功能，查询车牌代为缴费。临停收费标准已统一设置，无需额外优惠设置。此调整简化了系统功能，提高了使用效率。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 企业停车二维码管理模块 -->
+        <div class="function-card">
+            <h4>7. 企业停车二维码管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>二维码生成</strong>
+                    <div class="tree-item-children">
+                        <p>为企业生成动态的停车二维码，支持设置二维码的使用限额、有效期和权限级别（如仅限指定访客使用或开放给所有访客）。企业可以在各自的公共服务平台和小程序中查看和使用这些二维码。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>访客停车登记</strong>
+                    <div class="tree-item-children">
+                        <p>访客通过扫码完成停车登记，系统自动记录车牌和企业关联信息，离场时无需支付停车费用，系统自动计算费用并生成企业账单。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>使用统计与限额管理</strong>
+                    <div class="tree-item-children">
+                        <p>跟踪记录企业二维码的使用情况，当累计使用金额达到预设预警阈值时，自动通知企业管理员进行确认或调整限额。提供使用趋势分析和报表导出功能。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>费用确认与支付</strong>
+                    <div class="tree-item-children">
+                        <p>企业管理员接收并确认访客停车费用，可选择使用企业预付款完成临停缴费。系统自动记录费用明细，便于后续财务核对。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 财务管理相关模块 -->
+        <div class="function-card">
+            <h4>8. 收款管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>账单收款</strong>
+                    <div class="tree-item-children">
+                        <p>支持用户对企业的停车相关账单进行收款操作，包括选择具体账单、输入实际收款金额等。系统根据收款情况自动更新账单状态和财务数据。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>企业预存收款</strong>
+                    <div class="tree-item-children">
+                        <p>为企业新增预存费用，支持指定预存款用于特定费项（如停车费）或所有费项。企业可通过预付款支付各类停车费用，包括月卡费用、临时停车费用和访客停车费用等。系统支持预付款使用优先级设置功能，企业管理员可以设置预付款的使用优先级（如优先用于停车费、优先用于月卡续费等），便于企业进行财务核对和资金规划。系统会自动记录每笔预付款的使用情况，生成详细的预付款使用明细，包括每笔交易的时间、金额、用途和操作人。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>在线收款记录管理</strong>
+                    <div class="tree-item-children">
+                        <p>查看和管理企业通过在线方式支付的所有停车相关费用记录，包括缴费企业名称、缴费金额、缴费时间、流水号等详细信息。支持多维度筛选和导出功能。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="function-card">
+            <h4>9. 结算单管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>退园结算单生成</strong>
+                    <div class="tree-item-children">
+                        <p>当企业申请退租时，系统自动触发退园结算流程，生成包含停车费用在内的完整结算单。对于未使用完的月卡，按实际剩余天数计算退款金额；对于预付款账户中的停车预存款余额，全额退还；同时核查未支付的临时停车费用或访客停车费用。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>停车费用核算</strong>
+                    <div class="tree-item-children">
+                        <p>在结算单中清晰展示停车相关费用的明细，与租金等其他费用分开显示，确保费用核算的准确性和透明度。系统根据各类停车费用的实际使用情况，精确计算应退或应补金额。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>结算单下载</strong>
+                    <div class="tree-item-children">
+                        <p>支持以Word格式下载包含停车费用明细的结算单，方便园区管理方和企业进行核对、存档和打印。下载的文档清晰展示各项费用的计算依据和结果。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="function-card">
+            <h4>10. 开票管理 <span class="priority p0">P0</span></h4>
+            <div class="tree-view">
+                <div class="tree-item">
+                    <strong>未付开票管理</strong>
+                    <div class="tree-item-children">
+                        <p>管理企业在付款前申请的开票记录。系统支持企业在支付账单前提前申请开票的流程，园区财务管理员可以查看企业的未付款开票申请，根据企业信用状况和历史缴费记录进行审核。审核通过后，系统自动生成电子发票并发送给企业，同时在"未付开票管理"模块中更新记录状态为"已开票未付款"，并设置付款期限（默认30天）。系统自动跟踪付款状态，对于超过期限未付款的记录，会自动提醒财务管理员跟进处理。企业完成支付后，系统自动将记录状态更新为"已付款"，并在"已开票管理"模块中生成对应记录。此功能为特殊企业报销流程提供了灵活支持，同时通过审批机制控制财务风险。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>已开票管理</strong>
+                    <div class="tree-item-children">
+                        <p>查看企业已付款后申请的开票记录，包括停车月卡费用、临时停车费用等开票信息。系统严格确保租金与停车费等其他费项分开开具发票，满足财务合规要求。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>发票压缩包生成</strong>
+                    <div class="tree-item-children">
+                        <p>支持按月将已开具的发票按费项类型分类打包，生成租金和其他费项（包括停车费）的分离压缩包，方便财务管理和税务申报。系统严格遵循租金与其他费项严格分开开票的财务合规要求，在生成压缩包时提供"按费项类型分类"选项，将租金发票与其他费项（包括停车费）发票分别打包成独立的压缩文件。每张发票以企业名称+费项类型+金额+日期命名，便于后续查找和核对。系统还会生成月度开票汇总报表，详细记录每张发票的关键信息，包括企业名称、费项类型、开票金额、开票日期和发票号码等，为园区和企业的财务工作提供有力支持。</p>
+                    </div>
+                </div>
+                <div class="tree-item">
+                    <strong>发票统计报表</strong>
+                    <div class="tree-item-children">
+                        <p>生成停车相关发票的统计报表，包括按企业、按费项类型、按时间周期等多维度的发票金额统计和分析，帮助园区管理方了解停车收入情况。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <h3>4.3 功能详细说明</h3>
+    <p>以下是停车管理系统核心功能的详细说明：</p>
+    
+    <table>
+        <tr>
+            <th>功能名称</th>
+            <th>功能描述</th>
+            <th>输入参数</th>
+            <th>输出结果</th>
+            <th>业务规则</th>
+            <th>约束条件</th>
+        </tr>
+        
+        <!-- 停车月卡申请功能 -->
+        <tr>
+            <td>停车月卡申请</td>
+            <td>用户通过公共服务平台申请停车月卡，填写相关信息并提交</td>
+            <td>
+                - 申请人信息（姓名、手机号等）<br>
+                - 车辆信息（车牌号、车型等）<br>
+                - 月卡类型和时长<br>
+                - 所属企业信息
+            </td>
+            <td>
+                - 月卡申请记录<br>
+                - 申请提交成功提示<br>
+                - 审批状态实时反馈
+            </td>
+            <td>
+                - 企业用户可批量申请多张月卡<br>
+                - 个人用户只能申请个人使用的月卡<br>
+                - 系统根据企业类型自动计算月卡费用和折扣<br>
+                - 申请提交后需园区管理员审批
+            </td>
+            <td>
+                - 同一车牌同一时间只能申请一张月卡<br>
+                - 车辆信息必须真实有效<br>
+                - 企业申请需关联到有效的企业账户
+            </td>
+        </tr>
+        
+        <!-- 临时停车缴费功能 -->
+        <tr>
+            <td>临时停车缴费</td>
+            <td>用户通过公共服务平台完成临时停车费用的支付</td>
+            <td>
+                - 车牌号<br>
+                - 支付方式选择
+            </td>
+            <td>
+                - 停车费用计算结果<br>
+                - 支付状态反馈<br>
+                - 电子支付凭证
+            </td>
+            <td>
+                - 系统根据实际停车时长自动计算费用<br>
+                - 支持多种支付方式<br>
+                - 支付成功后自动更新车辆状态为已缴费<br>
+                - 提供电子发票申请选项
+            </td>
+            <td>
+                - 缴费前车辆必须已在园区停车场内<br>
+                - 缴费成功后有效离场时间为30分钟<br>
+                - 超时未离场需补缴费用
+            </td>
+        </tr>
+        
+        <!-- 企业访客停车功能 -->
+        <tr>
+            <td>企业访客停车</td>
+            <td>企业为访客提供停车服务，费用计入企业账单</td>
+            <td>
+                - 访客信息（可选）<br>
+                - 有效期限设置<br>
+                - 停车限制设置（可选）
+            </td>
+            <td>
+                - 访客停车二维码<br>
+                - 访客停车记录<br>
+                - 企业账单更新
+            </td>
+            <td>
+                - 企业可生成有时效性的访客停车二维码<br>
+                - 访客通过扫码可将停车费用计入企业账单<br>
+                - 企业可设置访客停车的最长时间和使用次数<br>
+                - 访客停车费用按月汇总到企业账单
+            </td>
+            <td>
+                - 访客二维码有效期最长不超过7天<br>
+                - 企业账户必须有足够的预付款或信用额度<br>
+                - 单个企业每月访客停车费用有上限
+            </td>
+        </tr>
+        
+        <!-- 月卡审批功能 -->
+        <tr>
+            <td>月卡审批</td>
+            <td>园区管理员对用户提交的月卡申请进行审批</td>
+            <td>
+                - 申请记录ID<br>
+                - 审批结果<br>
+                - 审批意见（可选）
+            </td>
+            <td>
+                - 审批状态更新<br>
+                - 系统通知给申请人<br>
+                - 新增月卡记录（审批通过时）
+            </td>
+            <td>
+                - 管理员可批量审批多个申请<br>
+                - 审批通过后系统自动为车牌开通月卡权限<br>
+                - 拒绝申请需填写拒绝原因<br>
+                - 审批结果实时通知申请人
+            </td>
+            <td>
+                - 审批必须由有权限的管理员执行<br>
+                - 审批时需校验车辆信息真实性<br>
+                - 月卡数量受园区停车位总量限制
+            </td>
+        </tr>
+    </table>
+    
+    <h3>4.4 功能优先级排序</h3>
+    <p>根据用户需求和业务价值，停车管理系统功能优先级排序如下：</p>
+    
+    <table>
+        <tr>
+            <th>优先级</th>
+            <th>功能模块</th>
+            <th>说明</th>
+        </tr>
+        <tr>
+            <td><span class="priority p0">P0</span></td>
+            <td>
+                - 停车场基础配置<br>
+                - 停车月卡申请与审批<br>
+                - 临时停车缴费<br>
+                - 收费标准设置<br>
+                - 企业访客停车
+            </td>
+            <td>核心功能，必须在第一阶段实现，是系统运行的基础</td>
+        </tr>
+        <tr>
+            <td><span class="priority p1">P1</span></td>
+            <td>
+                - 车辆管理<br>
+                - 月卡转让<br>
+                - 收费记录统计<br>
+                - 优惠政策管理<br>
+                - 企业车辆批量管理
+            </td>
+            <td>重要功能，提升用户体验和管理效率，第二阶段实现</td>
+        </tr>
+        <tr>
+            <td><span class="priority p2">P2</span></td>
+            <td>
+                - 停车位查询<br>
+                - 停车场导航<br>
+                - 数据统计分析<br>
+                - 设备管理<br>
+                - 异常情况统计
+            </td>
+            <td>扩展功能，进一步提升系统价值和用户体验，第三阶段实现</td>
+        </tr>
+    </table>
+    
+</body>
+</html> 

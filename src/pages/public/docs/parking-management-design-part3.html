@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧园区停车管理系统设计文档 - 第三部分</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #1890ff;
+            border-bottom: 2px solid #1890ff;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #096dd9;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #0050b3;
+            margin-top: 25px;
+        }
+        h4 {
+            color: #003a8c;
+            margin-top: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .feature-card {
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .feature-title {
+            font-weight: bold;
+            color: #1890ff;
+            margin-bottom: 10px;
+        }
+        .role-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            color: white;
+        }
+        .admin-role {
+            background-color: #722ed1;
+        }
+        .finance-role {
+            background-color: #13c2c2;
+        }
+        .enterprise-role {
+            background-color: #52c41a;
+        }
+        .public-role {
+            background-color: #fa8c16;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .flow-chart {
+            width: 100%;
+            padding: 20px;
+            background-color: #f0f5ff;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .highlight {
+            background-color: #fffbe6;
+            border-left: 4px solid #faad14;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>智慧园区停车管理系统设计文档 - 财务管理功能</h1>
+    
+    <div class="section">
+        <h2>6. 财务管理功能设计</h2>
+        
+        <h3>6.1 停车账单管理</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>管理企业和个人的停车费用账单，支持账单生成、推送、收回等操作。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>账单自动生成：按月自动生成企业和个人的停车费用账单</li>
+                <li>账单手动生成：根据需要手动生成特定企业或时间段的账单</li>
+                <li>账单组成管理：
+                    <ul>
+                        <li>月卡费用：企业或个人购买的月卡费用</li>
+                        <li>临时停车费用：企业访客的临时停车费用（企业支付）</li>
+                        <li>其他停车相关费用：如车位预留费、特殊活动停车费等</li>
+                    </ul>
+                </li>
+                <li>账单审核：财务人员对生成的账单进行审核，确认金额准确性</li>
+                <li>账单推送：将审核通过的账单推送给企业或个人</li>
+                <li>账单撤销：当账单有误需修改时，可撤销已推送的账单</li>
+                <li>账单状态跟踪：跟踪账单的支付状态、支付方式等</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>与现有财务系统集成：</strong></p>
+                <p>停车账单管理将与现有的账单管理系统集成，成为其中的一个子模块。企业停车账单将与其他费用账单（如租金、物业费等）一起，由财务统一管理和催收。</p>
+            </div>
+        </div>
+        
+        <h3>6.2 临时停车预收费管理</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>管理企业为访客预存的临时停车费，支持余额查询、消费记录查询等功能。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>企业预存管理：企业可预存一定金额作为访客临时停车费</li>
+                <li>余额查询：企业和财务人员可查询预存余额</li>
+                <li>自动扣费：访客停车费自动从企业预存金额中扣除</li>
+                <li>消费记录：记录每笔扣费的详细信息，包括车牌号、进出时间、金额等</li>
+                <li>余额预警：当预存余额低于阈值时，自动发送提醒通知</li>
+                <li>退还管理：企业不再使用时，可申请退还剩余预存金额</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>集成要点：</strong></p>
+                <p>临时停车预收费将与现有的预收费管理模块集成，作为"企业预付费"和"临时停车费预收"的功能板块。系统会自动记录预收金额的变动和使用情况，并生成相应的财务凭证。</p>
+            </div>
+        </div>
+        
+        <h3>6.3 停车收款管理</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>管理各类停车费用的收款操作，记录收款信息，生成收款凭证。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>在线支付管理：
+                    <ul>
+                        <li>月卡费用在线支付：记录用户通过微信、银行等渠道支付的月卡费用</li>
+                        <li>临时停车在线支付：记录用户通过公共服务平台支付的临时停车费</li>
+                    </ul>
+                </li>
+                <li>线下收款登记：财务人员登记线下收取的停车相关费用</li>
+                <li>企业账单收款：企业支付停车账单的收款管理</li>
+                <li>收款统计：按时间、支付方式、费用类型等维度统计收款情况</li>
+                <li>收款凭证生成：自动生成收款凭证，支持打印</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>集成要点：</strong></p>
+                <p>停车收款管理将与现有收款管理模块集成，共享收款渠道和收款管理流程。所有停车费用的收款记录将集中在一个界面中展示和管理，便于财务人员进行统一操作。</p>
+            </div>
+        </div>
+        
+        <h3>6.4 停车发票管理</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>管理用户申请的停车费用发票，支持发票申请处理、开具和查询等功能。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>发票申请管理：处理用户提交的停车费用发票申请</li>
+                <li>发票开具：财务人员开具停车费用发票
+                    <ul>
+                        <li>月卡费用发票：企业或个人购买月卡的发票</li>
+                        <li>临时停车费发票：临时停车的费用发票</li>
+                    </ul>
+                </li>
+                <li>发票信息管理：管理用户的发票抬头、税号等信息</li>
+                <li>发票查询：查询已开具的发票信息和状态</li>
+                <li>发票统计：按类型、金额等统计发票开具情况</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>集成要点：</strong></p>
+                <p>停车发票管理将与现有开票管理模块集成，共享发票开具流程和发票管理规则。用户可在同一界面申请各类费用的发票，财务人员也可在统一的界面中处理所有发票申请。</p>
+                <p>根据需求，租金类发票不能与其他费项合并开票，而停车费用应当被归类为非租金类费用，可与其他非租金类费用合并开票。</p>
+            </div>
+        </div>
+        
+        <h3>6.5 停车费用统计分析</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>对停车相关的各类收入进行统计分析，生成报表，为管理决策提供数据支持。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>收入构成分析：分析月卡收入、临时停车收入等各类收入的构成比例</li>
+                <li>收入趋势分析：分析停车收入的月度、季度、年度变化趋势</li>
+                <li>停车场收益分析：分析各停车场的收益情况和利用率</li>
+                <li>企业停车消费分析：分析园区企业的停车消费情况</li>
+                <li>报表导出：支持将统计数据导出为Excel、PDF等格式</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>集成要点：</strong></p>
+                <p>停车费用统计分析将纳入综合统计模块，与其他财务统计数据一起，提供园区整体的财务分析视图。管理者可以在同一界面中查看停车收入与其他收入类型的对比和关联情况。</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>7. 公共服务平台停车功能设计</h2>
+        
+        <h3>7.1 临时停车缴费</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>提供在线缴纳临时停车费的功能，支持查询停车费用，选择支付方式完成支付。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>费用查询：通过车牌号查询当前的停车费用</li>
+                <li>支付方式选择：支持微信支付、银联支付、企业预付款支付等多种方式</li>
+                <li>支付结果查询：查询支付是否成功，支持支付凭证查看和下载</li>
+                <li>发票申请：支付完成后可申请开具发票</li>
+                <li>历史缴费记录：查询历史停车缴费记录</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>流程设计：</strong></p>
+                <ol>
+                    <li>用户在公共服务平台输入车牌号并查询</li>
+                    <li>系统显示该车牌当前的停车信息和应缴费用</li>
+                    <li>用户选择支付方式并完成支付</li>
+                    <li>系统更新支付状态，生成支付凭证</li>
+                    <li>用户可选择是否申请开具发票</li>
+                </ol>
+            </div>
+        </div>
+        
+        <h3>7.2 企业访客停车管理</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>为企业提供访客停车管理功能，支持生成访客停车二维码，访客停车费用计入企业账单。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>访客停车码生成：企业可生成专属的访客停车二维码</li>
+                <li>访客车辆登记：企业可预先登记访客车辆信息</li>
+                <li>访客停车费用查询：企业可查询访客产生的停车费用</li>
+                <li>费用结算设置：企业可设置访客停车费用的结算方式（如即时结算、月度结算）</li>
+                <li>访客记录查询：查询历史访客停车记录</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>流程设计：</strong></p>
+                <ol>
+                    <li>企业在公共服务平台生成访客停车二维码，可打印或发送给访客</li>
+                    <li>访客到访时出示二维码或扫描二维码，系统记录访客信息</li>
+                    <li>访客离开时，系统自动计算停车费用并关联到企业账单</li>
+                    <li>企业可在"企业账单"模块查看和支付访客停车费用</li>
+                </ol>
+            </div>
+        </div>
+        
+        <h3>7.3 停车月卡申请与管理</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>提供在线申请和管理停车月卡的功能，支持月卡购买、续费、转让等操作。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>月卡申请：用户填写个人和车辆信息申请月卡，系统根据用户所属企业自动匹配优惠政策</li>
+                <li>在线支付：支持多种支付方式完成月卡费用支付</li>
+                <li>月卡查询：查询当前持有的月卡信息，包括有效期、使用状态等</li>
+                <li>月卡续费：在月卡到期前进行续费操作</li>
+                <li>月卡转让：将月卡转让给其他用户（需审核）</li>
+                <li>使用记录查询：查询月卡的使用记录</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>流程设计：</strong></p>
+                <ol>
+                    <li>用户在公共服务平台选择"停车月卡"服务</li>
+                    <li>填写申请信息，包括个人信息、车辆信息、所属企业等</li>
+                    <li>系统根据企业类型自动计算月卡费用并显示优惠信息</li>
+                    <li>用户选择支付方式完成支付</li>
+                    <li>系统提交申请至管理平台进行审核（可配置为自动审核）</li>
+                    <li>审核通过后，月卡自动生效，用户可在"我的月卡"中查看</li>
+                </ol>
+            </div>
+        </div>
+        
+        <h3>7.4 企业车辆管理</h3>
+        <div class="feature-card">
+            <div class="feature-title">功能描述</div>
+            <p>为企业提供员工车辆管理功能，支持添加、删除企业车辆，查看车辆状态等。</p>
+            
+            <div class="feature-title">核心功能点</div>
+            <ul>
+                <li>企业车辆添加：企业管理员可添加员工车辆信息到企业车辆库</li>
+                <li>车辆状态管理：查看和管理企业车辆的状态，如是否有月卡、月卡到期时间等</li>
+                <li>批量月卡申请：为多个员工车辆批量申请月卡</li>
+                <li>车辆使用统计：统计企业车辆的使用情况，如入场次数、停车时长等</li>
+                <li>员工离职处理：处理员工离职时的车辆权限移除</li>
+            </ul>
+            
+            <div class="highlight">
+                <p><strong>流程设计：</strong></p>
+                <ol>
+                    <li>企业管理员登录公共服务平台，进入"企业车辆管理"</li>
+                    <li>添加员工车辆信息或从员工列表中关联员工车辆</li>
+                    <li>设置车辆权限，如是否允许使用企业预付款支付临时停车费</li>
+                    <li>为员工车辆申请月卡或设置为访客车辆</li>
+                    <li>定期查看企业车辆使用统计和费用统计</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
