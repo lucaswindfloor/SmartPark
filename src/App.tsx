@@ -16,6 +16,18 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminLogin from './pages/admin/Login';
 import IntentionPage from './pages/admin/investment/Intention';
 
+// 停车管理页面
+import ParkingDashboard from './pages/admin/parking/ParkingDashboard';
+import ParkingLotManagement from './pages/admin/parking/ParkingLotManagement';
+import EntranceManagement from './pages/admin/parking/EntranceManagement';
+import MonthlyPlanManagement from './pages/admin/parking/MonthlyPlanManagement';
+import TempPlanManagement from './pages/admin/parking/TempPlanManagement';
+// 注释掉有问题的导入
+import MonthlyPurchaseRecord from './pages/admin/parking/MonthlyPurchaseRecord';
+import EnterpriseQRCode from './pages/admin/parking/EnterpriseQRCode';
+import VehicleManagement from './pages/admin/parking/VehicleManagement';
+import AccessRecords from './pages/admin/parking/AccessRecords';
+
 // 财务管理页面
 import BillManagement from './pages/finance/bill';
 
@@ -106,13 +118,23 @@ const App: React.FC = () => {
             <Route path="finance/bill" element={<BillManagement />} />
             <Route path="service/management" element={<ServiceManagement />} />
             {/* 信息公开管理路由 */}
-            <Route path="info/notice" element={<InfoModule />} />
-            <Route path="info/policy" element={<InfoModule />} />
-            <Route path="info/activity" element={<InfoModule />} />
-            <Route path="info/survey" element={<InfoModule />} />
-            <Route path="info/demands" element={<InfoModule />} />
+            <Route path="info/notice" element={<InformationManagement />} />
             <Route path="info" element={<Navigate to="/admin/info/notice" replace />} />
             <Route path="operations/contract" element={<ContractList />} />
+            
+            {/* 停车管理路由 - 只保留没问题的 */}
+            <Route path="parking/dashboard" element={<ParkingDashboard />} />
+            <Route path="parking/lot-management" element={<ParkingLotManagement />} />
+            <Route path="parking/entrance-management" element={<EntranceManagement />} />
+            <Route path="parking/monthly-plan-management" element={<MonthlyPlanManagement />} />
+            <Route path="parking/temp-plan-management" element={<TempPlanManagement />} />
+            
+            {/* 注释掉有问题的路由 */}
+            <Route path="parking/monthly-purchase-record" element={<MonthlyPurchaseRecord />} />
+            <Route path="parking/enterprise-qr-code" element={<EnterpriseQRCode />} />
+            <Route path="parking/vehicle-management" element={<VehicleManagement />} />
+            <Route path="parking/access-records" element={<AccessRecords />} />
+            
             <Route index element={<Navigate to="dashboard" replace />} />
           </Route>
           

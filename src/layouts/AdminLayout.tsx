@@ -324,13 +324,15 @@ const getServiceMenuItems = (): MenuProps['items'] => {
       label: '停车管理',
       icon: <CarOutlined />,
       children: [
-        { key: 'parking-lot', label: '停车场管理', disabled: true },
-        { key: 'entrance', label: '车道口管理', disabled: true },
-        { key: 'monthly-plan', label: '月卡收费方案', disabled: true },
-        { key: 'monthly-purchase', label: '月卡购买管理', disabled: true },
-        { key: 'temp-plan', label: '临停收费方案', disabled: true },
-        { key: 'access-records', label: '车辆通行记录', disabled: true },
-        { key: 'vehicle-manage', label: '车辆管理', disabled: true },
+        { key: 'parking-dashboard', label: '停车管理中心' },
+        { key: 'parking-lot', label: '停车场管理' },
+        { key: 'entrance', label: '车道口管理' },
+        { key: 'monthly-plan', label: '月卡收费方案' },
+        { key: 'monthly-purchase', label: '月卡购买记录' },
+        { key: 'temp-plan', label: '临停收费方案' },
+        { key: 'enterprise-qrcode', label: '企业停车二维码' },
+        { key: 'vehicle-manage', label: '车辆管理' },
+        { key: 'access-records', label: '车辆通行记录' },
       ],
     },
     { key: 'surveys', label: '调查问卷管理', icon: <FormOutlined />, disabled: true },
@@ -385,11 +387,29 @@ const AdminLayout: React.FC = () => {
   const activeTopTab = pathSegments.length > 1 ? pathSegments[1] : 'dashboard';
   const activeMenuItem = pathSegments.length > 2 ? pathSegments[2] : '';
   
+  // 特殊处理parking相关路径
+  useEffect(() => {
+    if (pathSegments[1] === 'parking') {
+      setCurrentTopTab('service');
+      // 设置左侧菜单为停车管理
+      setOpenKeys(['parking']);
+    }
+  }, [pathSegments]);
+  
   // 从URL的第三段提取子菜单项，例如 customer-management/intention
   const activeSubMenuItem = pathSegments.length > 3 ? pathSegments[3] : '';
   
   // 用于左侧菜单的选中键，如果有嵌套菜单则使用子菜单的key
-  const selectedMenuKey = activeSubMenuItem ? activeSubMenuItem : activeMenuItem;
+  const selectedMenuKey = activeSubMenuItem ? activeSubMenuItem : (
+    // 特殊处理 parking 路径
+    pathSegments[1] === 'parking' ? (
+      pathSegments[2] === 'dashboard' ? 'parking-dashboard' :
+      pathSegments[2] === 'lot-management' ? 'parking-lot' :
+      pathSegments[2] === 'entrance-management' ? 'entrance' :
+      pathSegments[2] === 'monthly-plan-management' ? 'monthly-plan' :
+      pathSegments[2] === 'temp-plan-management' ? 'temp-plan' : ''
+    ) : activeMenuItem
+  );
   
   // 处理菜单展开逻辑
   const [openKeys, setOpenKeys] = useState<string[]>([]);
@@ -465,28 +485,135 @@ const AdminLayout: React.FC = () => {
     }
   };
 
-  // 处理左侧菜单项点击
-  const handleMenuClick = ({ key, keyPath }: { key: string; keyPath?: string[] }) => {
-    // 如果是客户管理下的意向登记
-    if (activeTopTab === 'investment' && key === 'intention') {
-      navigate(`/admin/${activeTopTab}/intention`);
-    } else if (activeTopTab === 'finance' && keyPath && keyPath.length > 1) {
-      // 处理财务管理菜单，确保正确的导航路径
-      const parentKey = keyPath[keyPath.length - 1];
-      navigate(`/admin/${activeTopTab}/${key}`);
-    } else if (activeTopTab === 'service' && keyPath && keyPath.length > 1) {
-      const parentKey = keyPath[1]; // 获取父菜单key
-      // 处理信息公开菜单
-      if (parentKey === 'info') {
-        navigate(`/admin/info/${key}`);
-        console.log(`导航到: /admin/info/${key}`);
-      } else {
-        navigate(`/admin/${activeTopTab}/${key}`);
+  // 处理菜单点击事件
+  const handleMenuClick = ({ key, keyPath }: { key: string; keyPath: string[] }) => {
+    if (keyPath.includes('parking')) {
+      // 停车管理相关路由
+      switch (key) {
+        case 'parking-dashboard':
+          navigate('/admin/parking/dashboard');
+          break;
+        case 'parking-lot':
+          navigate('/admin/parking/lot-management');
+          break;
+        case 'entrance':
+          navigate('/admin/parking/entrance-management');
+          break;
+        case 'monthly-plan':
+          navigate('/admin/parking/monthly-plan-management');
+          break;
+        case 'temp-plan':
+          navigate('/admin/parking/temp-plan-management');
+          break;
+        case 'monthly-purchase':
+          navigate('/admin/parking/monthly-purchase-record');
+          break;
+        case 'enterprise-qrcode':
+          navigate('/admin/parking/enterprise-qr-code');
+          break;
+        case 'vehicle-manage':
+          navigate('/admin/parking/vehicle-management');
+          break;
+        case 'access-records':
+          navigate('/admin/parking/access-records');
+          break;
+        default:
+          break;
       }
+    } else if (keyPath.includes('bill-management')) {
+      // 账单管理相关路由
+      switch (key) {
+        case 'bill':
+          navigate('/admin/finance/bill');
+          break;
+        case 'receivable-management':
+          navigate('/admin/finance/receivable');
+          break;
+        default:
+          break;
+      }
+    } else if (keyPath.includes('temp-fee-management')) {
+      // 临时费管理相关路由
+      switch (key) {
+        case 'temp-fee':
+          navigate('/admin/finance/temp-fee');
+          break;
+        default:
+          break;
+      }
+    } else if (keyPath.includes('deposit-management')) {
+      // 押金管理相关路由
+      switch (key) {
+        case 'deposit':
+          navigate('/admin/finance/deposit');
+          break;
+        default:
+          break;
+      }
+    } else if (keyPath.includes('prepaid-fee-management')) {
+      // 预收费管理相关路由
+      switch (key) {
+        case 'electricity-prepaid':
+          navigate('/admin/finance/electricity-prepaid');
+          break;
+        case 'enterprise-prepaid':
+          navigate('/admin/finance/enterprise-prepaid');
+          break;
+        default:
+          break;
+      }
+    } else if (keyPath.includes('payment-management')) {
+      // 收/付款管理相关路由
+      switch (key) {
+        case 'payment':
+          navigate('/admin/finance/payment');
+          break;
+        default:
+          break;
+      }
+    } else if (keyPath.includes('invoice-management')) {
+      // 开票管理相关路由
+      switch (key) {
+        case 'invoice':
+          navigate('/admin/finance/invoice');
+          break;
+        default:
+          break;
+      }
+    } else if (keyPath.includes('service')) {
+      // 服务管理相关路由
+      switch (key) {
+        case 'management':
+          navigate('/admin/service/management');
+          break;
+        default:
+          break;
+      }
+    } else if (keyPath.includes('info')) {
+      // 信息公开相关路由
+      navigate(`/admin/info/${key}`);
+    } else if (key === 'intention') {
+      // 意向登记特殊处理
+      navigate('/admin/investment/intention');
+    } else if (key === 'contract') {
+      // 合同管理特殊处理
+      navigate('/admin/operations/contract');
     } else {
-      // 其他菜单项
-      navigate(`/admin/${activeTopTab}/${key}`);
+      // 其他路由处理
+      switch (key) {
+        case 'dashboard':
+          navigate('/admin/dashboard');
+          break;
+        default:
+          navigate(`/admin/${currentTopTab}/${key}`);
+          break;
+      }
     }
+  };
+
+  // 菜单点击事件处理
+  const onMenuClick = ({ key, keyPath }: { key: string; keyPath: string[] }) => {
+    handleMenuClick({ key, keyPath });
   };
 
   // 用户下拉菜单
@@ -632,7 +759,7 @@ const AdminLayout: React.FC = () => {
             openKeys={openKeys}
             className="side-menu"
             items={getMenuItemsByActiveTab(currentTopTab)}
-            onClick={handleMenuClick}
+            onClick={onMenuClick}
             onOpenChange={handleOpenChange}
           />
         </Sider>
