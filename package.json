@@ -6,15 +6,25 @@
     "@ant-design/icons": "^5.2.6",
     "@ant-design/plots": "^1.2.5",
     "@ant-design/pro-components": "^2.6.43",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/sqlite3": "^3.1.11",
     "antd": "^5.11.0",
     "axios": "^1.6.0",
+    "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "cors": "^2.8.5",
     "dayjs": "^1.11.10",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.18.0",
+    "sqlite3": "^5.1.7",
     "zustand": "^4.4.6"
   },
   "devDependencies": {
@@ -29,6 +39,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:init": "ts-node src/backend/db/initdb.ts",
+    "db:seed": "ts-node src/backend/db/seed.ts",
+    "start:backend": "ts-node src/backend/server.ts"
   }
 }
