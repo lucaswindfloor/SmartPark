@@ -47,7 +47,18 @@ export const informationApi = {
   // 通知公告
   getNotices: (params: any) => api.get('/notices', { params }),
   getNoticeById: (id: number) => api.get(`/notices/${id}`),
-  createNotice: (data: any) => api.post('/notices', data),
+  createNotice: (data: any) => {
+    console.log('创建通知API请求数据:', data);
+    return api.post('/notices', data)
+      .then(response => {
+        console.log('创建通知API响应:', response);
+        return response;
+      })
+      .catch(error => {
+        console.error('创建通知API错误:', error.response ? error.response.data : error.message);
+        throw error;
+      });
+  },
   updateNotice: (id: number, data: any) => api.put(`/notices/${id}`, data),
   deleteNotice: (id: number) => api.delete(`/notices/${id}`),
   reviewNotice: (id: number, data: any) => api.post(`/notices/${id}/review`, data),

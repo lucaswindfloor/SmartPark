@@ -161,6 +161,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       // 模拟获取用户可用角色
       const mockAvailableRoles: UserRole[] = ['enterprise', 'employee'];
       
+      // 生成一个模拟的JWT token
+      const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIzNDUsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1lIjoi5byg5LiJIiwicm9sZSI6ImFkbWluIn0.7I4BhiIFVW7-ZiqYxNb5LwZr_y0d1DQpuxYQvgTEcnw';
+      
       // 更新状态
       setIsAuthenticated(true);
       setUserInfo(mockUserInfo);
@@ -173,6 +176,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
         userRole: mockAvailableRoles[0],
         availableRoles: mockAvailableRoles
       }));
+      
+      // 保存token到本地存储，供API请求使用
+      localStorage.setItem('token', mockToken);
       
       message.success('登录成功');
       return true;
@@ -190,6 +196,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     setUserRole('public');
     setAvailableRoles(['public']);
     localStorage.removeItem('auth');
+    localStorage.removeItem('token'); // 清除token
     message.success('已退出登录');
   };
 

@@ -37,21 +37,7 @@ async function initDatabase() {
     await runQuery('PRAGMA foreign_keys = ON;');
     
     // 创建用户表
-    await runQuery(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        name TEXT NOT NULL,
-        email TEXT,
-        phone TEXT,
-        avatar TEXT,
-        role TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'active',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+    await runQuery('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, name TEXT NOT NULL, email TEXT, phone TEXT, avatar TEXT, role TEXT NOT NULL, status TEXT NOT NULL DEFAULT \'active\', created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);');
     
     // 创建通知公告表
     await runQuery(`
@@ -64,12 +50,14 @@ async function initDatabase() {
         is_top INTEGER NOT NULL DEFAULT 0,
         require_confirmation INTEGER NOT NULL DEFAULT 0,
         created_by INTEGER NOT NULL,
+        updated_by INTEGER,
         reviewed_by INTEGER,
         reject_reason TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         published_at DATETIME,
         FOREIGN KEY (created_by) REFERENCES users(id),
+        FOREIGN KEY (updated_by) REFERENCES users(id),
         FOREIGN KEY (reviewed_by) REFERENCES users(id)
       )
     `);

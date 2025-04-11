@@ -40,6 +40,18 @@ app.use((req, res, next) => {
   // 先确保user是undefined
   req.user = undefined;
   
+  // 开发阶段，如果没有认证信息，提供一个默认的管理员用户
+  if (process.env.NODE_ENV !== 'production') {
+    req.user = {
+      id: 1,
+      username: 'admin',
+      name: '管理员',
+      role: 'admin'
+    };
+    next();
+    return;
+  }
+  
   // 尝试从认证头获取用户信息
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {

@@ -125,20 +125,49 @@ const NoticeManagement: React.FC = () => {
     try {
       // 构建查询参数
       const params = {
-        ...queryParams,
+        page: queryParams.page,
+        page_size: queryParams.pageSize,
         keyword: searchText,
         status: statusFilter,
         category: categoryFilter,
-        startDate: dateRange?.[0]?.format('YYYY-MM-DD'),
-        endDate: dateRange?.[1]?.format('YYYY-MM-DD'),
+        start_date: dateRange?.[0]?.format('YYYY-MM-DD'),
+        end_date: dateRange?.[1]?.format('YYYY-MM-DD'),
       };
       
       // 调用API获取数据
       const response = await informationApi.getNotices(params);
-      // 响应拦截器已经将response.data提取出来
-      setNoticeList(response.data.data);
-      setTotalCount(response.data.total);
+      console.log('获取通知列表响应:', response);
+      
+      // 将后端响应数据字段转换为前端组件需要的字段名
+      if (response.data && response.data.data) {
+        const notices = response.data.data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          content: item.content,
+          category: item.category,
+          status: item.status,
+          isTop: item.is_top === 1,
+          requireConfirmation: item.require_confirmation === 1,
+          publicRange: item.public_ranges || [],
+          confirmCount: item.confirm_count || 0,
+          viewCount: item.view_count || 0,
+          createdBy: item.created_by,
+          createdAt: item.created_at,
+          updatedAt: item.updated_at,
+          publishedAt: item.published_at,
+          reviewedBy: item.reviewed_by,
+          rejectReason: item.reject_reason
+        }));
+        
+        setNoticeList(notices);
+        setTotalCount(response.data.total);
+      } else {
+        // 如果没有数据或格式不对，设置为空数组
+        setNoticeList([]);
+        setTotalCount(0);
+      }
     } catch (err: any) {
+      console.error('获取通知公告失败:', err);
       setError(err.message || '获取通知公告失败');
       message.error('获取通知公告失败: ' + (err.message || '未知错误'));
     } finally {
@@ -148,8 +177,10 @@ const NoticeManagement: React.FC = () => {
 
   // 检查权限
   const hasPermission = (permission: string): boolean => {
-    // 使用 auth 上下文提供的权限检查，将权限字符串转换为PermissionAction类型
-    return auth.hasPermission(permission as any);
+    // 在开发阶段始终返回true，使所有按钮可见
+    return true;
+    // 实际环境中应使用auth上下文:
+    // return auth.hasPermission(permission as any);
   };
 
   // 处理日期范围变化
@@ -216,10 +247,11 @@ const NoticeManagement: React.FC = () => {
     setFormMode('create');
     form.resetFields();
     form.setFieldsValue({
+      title: '',
+      content: '',
       category: 'notice' as NoticeCategory,
       publicRange: ['enterprise', 'employee'] as PublicRange[],
-      requireConfirmation: false,
-      status: 'draft' as Status
+      requireConfirmation: false
     });
     setFormVisible(true);
   };
@@ -329,38 +361,97 @@ const NoticeManagement: React.FC = () => {
   };
 
   // 提交表单
-  const handleFormSubmit = async () => {
+  const handleFormSubmit = async (): Promise<void> => {
+    setFormLoading(true);
     try {
       const values = await form.validateFields();
-      setFormLoading(true);
       
-      // 准备提交到后端的数据
+      // 转换数据格式，适配后端API
       const submitData = {
         title: values.title,
         content: values.content,
         category: values.category,
-        require_confirmation: values.requireConfirmation,
         public_ranges: values.publicRange,
+        status: formMode === 'create' ? 'draft' : values.status,
+        require_confirmation: values.requireConfirmation ? 1 : 0,
+        expire_time: values.expireTime ? values.expireTime.format('YYYY-MM-DD HH:mm:ss') : null,
       };
       
       if (formMode === 'create') {
         try {
-          await informationApi.createNotice(submitData);
-          message.success('创建成功');
-          // 刷新列表
-          fetchNotices();
-          setFormVisible(false);
+          Modal.confirm({
+            title: '确认创建通知',
+            content: (
+              <div>
+                <p>即将创建以下通知：</p>
+                <p><strong>标题:</strong> {values.title}</p>
+                <p><strong>类别:</strong> {CATEGORY_MAP[values.category as NoticeCategory]}</p>
+                <p><strong>公开范围:</strong> {(values.publicRange as PublicRange[]).map(r => PUBLIC_RANGE_MAP[r].text).join(', ')}</p>
+              </div>
+            ),
+            onOk: async () => {
+              setFormLoading(true);
+              try {
+                const response = await informationApi.createNotice(submitData);
+                console.log('创建通知成功:', response);
+                message.success('创建成功');
+                fetchNotices();
+                setFormVisible(false);
+              } catch (error: any) {
+                console.error('创建通知失败:', error);
+                if (error.response && error.response.status === 401) {
+                  Modal.error({
+                    title: '认证失败',
+                    content: '您的身份验证失败，请重新登录后再试。'
+                  });
+                } else {
+                  message.error('创建通知失败: ' + (error.message || '未知错误'));
+                }
+              } finally {
+                setFormLoading(false);
+              }
+            }
+          });
         } catch (error: any) {
           console.error('创建通知失败:', error);
           message.error('创建通知失败: ' + (error.message || '未知错误'));
         }
       } else if (formMode === 'edit' && currentNotice) {
         try {
-          await informationApi.updateNotice(currentNotice.id, submitData);
-          message.success('更新成功');
-          // 刷新列表
-          fetchNotices();
-          setFormVisible(false);
+          Modal.confirm({
+            title: '确认更新通知',
+            content: (
+              <div>
+                <p>即将更新以下通知：</p>
+                <p><strong>标题:</strong> {values.title}</p>
+                <p><strong>类别:</strong> {CATEGORY_MAP[values.category as NoticeCategory]}</p>
+                <p><strong>公开范围:</strong> {(values.publicRange as PublicRange[]).map(r => PUBLIC_RANGE_MAP[r].text).join(', ')}</p>
+              </div>
+            ),
+            onOk: async () => {
+              setFormLoading(true);
+              try {
+                const response = await informationApi.updateNotice(currentNotice.id, submitData);
+                console.log('更新通知成功:', response);
+                message.success('更新成功');
+                // 刷新列表
+                fetchNotices();
+                setFormVisible(false);
+              } catch (error: any) {
+                console.error('更新通知失败:', error);
+                if (error.response && error.response.status === 401) {
+                  Modal.error({
+                    title: '认证失败',
+                    content: '您的身份验证失败，请重新登录后再试。'
+                  });
+                } else {
+                  message.error('更新通知失败: ' + (error.message || '未知错误'));
+                }
+              } finally {
+                setFormLoading(false);
+              }
+            }
+          });
         } catch (error: any) {
           console.error('更新通知失败:', error);
           message.error('更新通知失败: ' + (error.message || '未知错误'));

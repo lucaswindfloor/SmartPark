@@ -42,6 +42,6 @@
     "preview": "vite preview",
     "db:init": "ts-node src/backend/db/initdb.ts",
     "db:seed": "ts-node src/backend/db/seed.ts",
-    "start:backend": "ts-node src/backend/server.ts"
+    "start:backend": "ts-node --transpile-only src/backend/server.ts"
   }
 }

@@ -78,43 +78,6 @@ const InformationManagement: React.FC = () => {
     }
   };
 
-  // 新建按钮点击事件
-  const handleCreate = () => {
-    switch (activeTab) {
-      case 'notice':
-        alert('新建通知公告功能尚未实现');
-        break;
-      case 'policy':
-        alert('新建政策文件功能尚未实现');
-        break;
-      case 'activity':
-        alert('新建园区活动功能尚未实现');
-        break;
-      case 'survey':
-        alert('新建调查问卷功能尚未实现');
-        break;
-      case 'demands':
-        alert('新建需求功能尚未实现');
-        break;
-    }
-  };
-
-  // 渲染标签页标题和右侧按钮
-  const tabBarExtraContent = {
-    right: (
-      <Button 
-        type="primary" 
-        icon={<PlusOutlined />}
-        onClick={handleCreate}
-      >
-        新建{activeTab === 'notice' ? '通知' : 
-             activeTab === 'policy' ? '政策' : 
-             activeTab === 'activity' ? '活动' : 
-             activeTab === 'survey' ? '问卷' : '需求'}
-      </Button>
-    ),
-  };
-
   // 渲染面包屑导航
   const renderBreadcrumb = () => (
     <Breadcrumb style={{ marginBottom: 16 }}>
@@ -181,7 +144,6 @@ const InformationManagement: React.FC = () => {
               label: '需求发布'
             }
           ]}
-          tabBarExtraContent={tabBarExtraContent}
         />
         {renderContent()}
       </div>
