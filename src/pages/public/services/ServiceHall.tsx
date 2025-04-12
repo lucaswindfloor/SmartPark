@@ -29,7 +29,8 @@ import {
   SearchOutlined,
   QrcodeOutlined
 } from '@ant-design/icons';
-import { useAuth, PermissionAction } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../contexts/AuthContext';
+import { PermissionAction } from '../../../constants/permissions';
 
 const { Title, Paragraph } = Typography;
 const { TabPane } = Tabs;

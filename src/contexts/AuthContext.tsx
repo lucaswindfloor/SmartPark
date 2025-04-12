@@ -1,108 +1,29 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { message } from 'antd';
+import { message, Alert } from 'antd';
+import { AnnouncementPermission, PermissionAction, PermissionModule } from '../constants/permissions';
 
 // 定义角色类型
-export type UserRole = 'enterprise' | 'employee' | 'public';
-
-// 定义功能模块
-export enum PermissionModule {
-  ENTERPRISE_MANAGEMENT = 'enterpriseManagement',
-  CONTRACT_MANAGEMENT = 'contractManagement',
-  BILLING_MANAGEMENT = 'billingManagement',
-  SERVICE_APPLICATION = 'serviceApplication',
-  VISITOR_MANAGEMENT = 'visitorManagement',
-  PARK_ACTIVITIES = 'parkActivities',
-}
-
-// 定义具体功能点
-export enum PermissionAction {
-  // 企业管理
-  VIEW_ENTERPRISE_INFO = 'viewEnterpriseInfo',
-  EDIT_ENTERPRISE_INFO = 'editEnterpriseInfo',
-  MANAGE_EMPLOYEES = 'manageEmployees',
-  CONFIGURE_DEPARTMENTS = 'configureDepartments',
-  // 合同管理
-  VIEW_CONTRACTS = 'viewContracts',
-  APPLY_CONTRACT_RENEWAL = 'applyContractRenewal',
-  APPLY_CONTRACT_CHANGE = 'applyContractChange',
-  UPLOAD_CONTRACT_DOCUMENTS = 'uploadContractDocuments',
-  // 账单管理
-  VIEW_BILLS = 'viewBills',
-  PAY_BILLS = 'payBills',
-  VIEW_PAYMENT_RECORDS = 'viewPaymentRecords',
-  REQUEST_INVOICE = 'requestInvoice',
-  // 服务申请
-  APPLY_ENTERPRISE_SERVICE = 'applyEnterpriseService',
-  BOOK_MEETING_ROOM = 'bookMeetingRoom',
-  REPORT_MAINTENANCE = 'reportMaintenance',
-  CHECK_SERVICE_STATUS = 'checkServiceStatus',
-  // 访客管理
-  INVITE_VISITORS = 'inviteVisitors',
-  VIEW_VISITOR_RECORDS = 'viewVisitorRecords',
-  BATCH_IMPORT_VISITORS = 'batchImportVisitors',
-  REQUEST_VISITOR_ACCESS = 'requestVisitorAccess',
-  // 园区活动
-  VIEW_ACTIVITIES = 'viewActivities',
-  REGISTER_ACTIVITIES = 'registerActivities',
-  PUBLISH_ACTIVITIES = 'publishActivities',
-  DOWNLOAD_ACTIVITY_MATERIALS = 'downloadActivityMaterials',
-}
+export type UserRole = 'contentAdmin' | 'reviewer';
 
 // 权限矩阵定义
-const PERMISSION_MATRIX: Record<UserRole, PermissionAction[]> = {
-  'enterprise': [
-    // 企业管理
-    PermissionAction.VIEW_ENTERPRISE_INFO,
-    PermissionAction.EDIT_ENTERPRISE_INFO,
-    PermissionAction.MANAGE_EMPLOYEES,
-    PermissionAction.CONFIGURE_DEPARTMENTS,
-    // 合同管理
-    PermissionAction.VIEW_CONTRACTS,
-    PermissionAction.APPLY_CONTRACT_RENEWAL,
-    PermissionAction.APPLY_CONTRACT_CHANGE,
-    PermissionAction.UPLOAD_CONTRACT_DOCUMENTS,
-    // 账单管理
-    PermissionAction.VIEW_BILLS,
-    PermissionAction.PAY_BILLS,
-    PermissionAction.VIEW_PAYMENT_RECORDS,
-    PermissionAction.REQUEST_INVOICE,
-    // 服务申请
-    PermissionAction.APPLY_ENTERPRISE_SERVICE,
-    PermissionAction.BOOK_MEETING_ROOM,
-    PermissionAction.REPORT_MAINTENANCE,
-    PermissionAction.CHECK_SERVICE_STATUS,
-    // 访客管理
-    PermissionAction.INVITE_VISITORS,
-    PermissionAction.VIEW_VISITOR_RECORDS,
-    PermissionAction.BATCH_IMPORT_VISITORS,
-    // 园区活动
-    PermissionAction.VIEW_ACTIVITIES,
-    PermissionAction.REGISTER_ACTIVITIES,
-    PermissionAction.PUBLISH_ACTIVITIES,
-    PermissionAction.DOWNLOAD_ACTIVITY_MATERIALS,
+const PERMISSION_MATRIX: Record<UserRole, (PermissionAction | AnnouncementPermission)[]> = {
+  'contentAdmin': [
+    // 通知公告权限
+    AnnouncementPermission.CREATE,        // 创建通知公告
+    AnnouncementPermission.UPDATE,        // 编辑草稿
+    AnnouncementPermission.DELETE,        // 删除草稿
+    AnnouncementPermission.VIEW_ALL,      // 查看通知公告
+    AnnouncementPermission.VIEW_STATS,    // 查看统计数据
   ],
-  'employee': [
-    // 企业管理
-    PermissionAction.VIEW_ENTERPRISE_INFO, // 仅查看
-    // 服务申请
-    PermissionAction.BOOK_MEETING_ROOM,
-    PermissionAction.REPORT_MAINTENANCE,
-    PermissionAction.CHECK_SERVICE_STATUS, // 仅本人
-    // 访客管理
-    PermissionAction.INVITE_VISITORS,
-    PermissionAction.VIEW_VISITOR_RECORDS, // 仅本人
-    // 园区活动
-    PermissionAction.VIEW_ACTIVITIES,
-    PermissionAction.REGISTER_ACTIVITIES,
-    PermissionAction.DOWNLOAD_ACTIVITY_MATERIALS,
-  ],
-  'public': [
-    // 园区活动
-    PermissionAction.VIEW_ACTIVITIES, // 仅公开
-    PermissionAction.REGISTER_ACTIVITIES, // 仅公开
-    PermissionAction.DOWNLOAD_ACTIVITY_MATERIALS, // 仅公开
-    // 访客管理
-    PermissionAction.REQUEST_VISITOR_ACCESS,
+  'reviewer': [
+    // 通知公告权限
+    AnnouncementPermission.VIEW_ALL,      // 查看通知公告
+    AnnouncementPermission.REVIEW,        // 审核内容
+    AnnouncementPermission.UPDATE,        // 编辑待审核
+    AnnouncementPermission.DELETE,        // 删除待审核
+    AnnouncementPermission.PUBLISH,       // 发布
+    AnnouncementPermission.TOP,           // 置顶
+    AnnouncementPermission.VIEW_STATS,    // 查看统计数据
   ],
 };
 
@@ -115,8 +36,8 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   switchRole: (role: UserRole) => boolean;
-  hasPermission: (action: PermissionAction) => boolean;
-  checkPermission: (action: PermissionAction) => JSX.Element | null;
+  hasPermission: (action: PermissionAction | AnnouncementPermission | string) => boolean;
+  checkPermission: (action: PermissionAction | string) => JSX.Element | null;
 }
 
 // 创建上下文
@@ -126,8 +47,8 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [userInfo, setUserInfo] = useState<any | null>(null);
-  const [userRole, setUserRole] = useState<UserRole>('public');
-  const [availableRoles, setAvailableRoles] = useState<UserRole[]>(['public']);
+  const [userRole, setUserRole] = useState<UserRole>('contentAdmin');
+  const [availableRoles, setAvailableRoles] = useState<UserRole[]>(['contentAdmin']);
 
   // 初始化时检查本地存储的登录信息
   useEffect(() => {
@@ -140,51 +61,68 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
         setUserRole(authData.userRole);
         setAvailableRoles(authData.availableRoles);
       } catch (error) {
-        console.error('Failed to parse auth data:', error);
+        console.error('解析本地存储的认证信息失败:', error);
+        // 如果解析失败，清除无效数据
         localStorage.removeItem('auth');
+        localStorage.removeItem('token');
       }
     }
   }, []);
 
-  // 登录函数
+  // 模拟登录请求
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      // 实际应用中会调用API进行身份验证
-      // 这里模拟一个成功的登录
-      const mockUserInfo = {
-        id: '12345',
-        name: '张三',
-        avatar: '',
-        enterprise: '湘江科技有限公司'
-      };
+      // 清除现有的localStorage数据
+      localStorage.removeItem('auth');
+      localStorage.removeItem('token');
       
-      // 模拟获取用户可用角色
-      const mockAvailableRoles: UserRole[] = ['enterprise', 'employee'];
+      // 根据用户名确定角色
+      let role: UserRole;
+      let realName: string;
       
-      // 生成一个模拟的JWT token
-      const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIzNDUsInVzZXJuYW1lIjoiYWRtaW4iLCJuYW1lIjoi5byg5LiJIiwicm9sZSI6ImFkbWluIn0.7I4BhiIFVW7-ZiqYxNb5LwZr_y0d1DQpuxYQvgTEcnw';
+      if (username === 'content_admin' && password === 'content123') {
+        role = 'contentAdmin';
+        realName = '内容管理员';
+        console.log('分配内容管理员角色');
+      } else if (username === 'reviewer' && password === 'reviewer123') {
+        role = 'reviewer';
+        realName = '审核员';
+        console.log('分配审核员角色');
+      } else {
+        throw new Error('无效的用户名或密码');
+      }
       
-      // 更新状态
+      console.log('登录成功，分配角色:', role);
+      
+      // 设置登录状态
       setIsAuthenticated(true);
-      setUserInfo(mockUserInfo);
-      setUserRole(mockAvailableRoles[0]); // 默认使用第一个角色
-      setAvailableRoles(mockAvailableRoles);
+      setUserInfo({
+        id: 1,
+        username,
+        realName,
+        avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
+      });
+      setUserRole(role);
+      setAvailableRoles([role]);
       
-      // 保存到本地存储
+      // 存储到本地
       localStorage.setItem('auth', JSON.stringify({
-        userInfo: mockUserInfo,
-        userRole: mockAvailableRoles[0],
-        availableRoles: mockAvailableRoles
+        userInfo: {
+          id: 1,
+          username,
+          realName,
+          avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
+        },
+        userRole: role,
+        availableRoles: [role]
       }));
+      localStorage.setItem('token', 'fake-jwt-token');
       
-      // 保存token到本地存储，供API请求使用
-      localStorage.setItem('token', mockToken);
-      
-      message.success('登录成功');
+      message.success(`登录成功，当前角色: ${realName}`);
       return true;
     } catch (error) {
-      console.error('Login failed:', error);
-      message.error('登录失败，请检查用户名和密码');
+      console.error('登录失败:', error);
+      message.error('登录失败: 用户名或密码错误');
       return false;
     }
   };
@@ -193,10 +131,10 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const logout = () => {
     setIsAuthenticated(false);
     setUserInfo(null);
-    setUserRole('public');
-    setAvailableRoles(['public']);
+    setUserRole('contentAdmin');
+    setAvailableRoles(['contentAdmin']);
     localStorage.removeItem('auth');
-    localStorage.removeItem('token'); // 清除token
+    localStorage.removeItem('token');
     message.success('已退出登录');
   };
 
@@ -214,8 +152,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       }
       
       message.success(`已切换至${
-        role === 'enterprise' ? '企业管理员' : 
-        role === 'employee' ? '企业员工' : '访客'
+        role === 'contentAdmin' ? '内容管理员' : '审核员'
       }模式`);
       return true;
     }
@@ -224,17 +161,31 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     return false;
   };
 
-  // 检查当前用户是否拥有特定权限
-  const hasPermission = (action: PermissionAction): boolean => {
-    return PERMISSION_MATRIX[userRole].includes(action);
+  // 检查权限
+  const hasPermission = (action: PermissionAction | AnnouncementPermission | string): boolean => {
+    console.log('权限检查 ->', '角色:', userRole, '权限:', action);
+    
+    // 检查权限矩阵
+    const permissions = PERMISSION_MATRIX[userRole] || [];
+    const hasPermission = permissions.includes(action as any);
+    
+    console.log('权限检查结果:', hasPermission);
+    return hasPermission;
   };
 
-  // 条件渲染组件的权限检查
-  const checkPermission = (action: PermissionAction): JSX.Element | null => {
-    if (!hasPermission(action)) {
+  // 检查权限并返回组件
+  const checkPermission = (action: PermissionAction | string): JSX.Element | null => {
+    if (hasPermission(action)) {
       return null;
     }
-    return <></>;
+    return (
+      <Alert
+        message="权限不足"
+        description="您没有执行此操作的权限，请联系管理员。"
+        type="warning"
+        showIcon
+      />
+    );
   };
 
   const value = {
@@ -248,7 +199,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     hasPermission,
     checkPermission
   };
-
+  
   return (
     <AuthContext.Provider value={value}>
       {children}
@@ -256,7 +207,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
   );
 };
 
-// 自定义钩子
+// 自定义钩子，方便消费上下文
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

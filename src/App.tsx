@@ -4,7 +4,7 @@ import { ConfigProvider } from 'antd';
 import zhCN from 'antd/locale/zh_CN';
 import 'dayjs/locale/zh-cn';
 import { AuthProvider } from './contexts/AuthContext';
-import { PermissionAction } from './contexts/AuthContext';
+import { PermissionAction } from './constants/permissions';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Platform layouts
@@ -35,8 +35,9 @@ import BillManagement from './pages/finance/bill';
 import ServiceManagement from './pages/service/management';
 // 信息公开管理
 import InformationManagement from './pages/admin/information/InformationManagement';
-import InfoManagement from './pages/admin/information-management/InfoManagement';
-import InfoModule from './pages/admin/info-module/InfoModule';
+// 注释掉不存在的导入
+// import InfoManagement from './pages/admin/information-management/InfoManagement';
+// import InfoModule from './pages/admin/info-module/InfoModule';
 
 // 运营管理页面
 import ContractList from './pages/operations/contract';
@@ -114,6 +115,9 @@ const App: React.FC = () => {
     <AuthProvider>
       <ConfigProvider locale={zhCN}>
         <Routes>
+          {/* Root path redirects to platform selector */}
+          <Route path="/" element={<Navigate to="/selector" replace />} />
+          
           {/* Platform selector */}
           <Route path="/selector" element={<PlatformSelector />} />
           
@@ -198,9 +202,6 @@ const App: React.FC = () => {
               </ProtectedRoute>
             } />
           </Route>
-          
-          {/* Root route */}
-          <Route path="/" element={<Navigate to="/selector" replace />} />
           
           {/* Fallback route */}
           <Route path="*" element={

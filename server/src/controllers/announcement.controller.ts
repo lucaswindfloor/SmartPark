@@ -11,7 +11,11 @@ export class AnnouncementController {
   // 创建通知公告
   create = async (req: Request, res: Response) => {
     try {
-      const announcement = await this.service.create(req.body);
+      const data = {
+        ...req.body,
+        createdBy: req.user?.id
+      };
+      const announcement = await this.service.create(data);
       res.status(201).json(announcement);
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
@@ -22,7 +26,11 @@ export class AnnouncementController {
   update = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const announcement = await this.service.update(parseInt(id), req.body);
+      const data = {
+        ...req.body,
+        updatedBy: req.user?.id
+      };
+      const announcement = await this.service.update(parseInt(id), data);
       res.json(announcement);
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
@@ -44,8 +52,12 @@ export class AnnouncementController {
   audit = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      await this.service.audit(parseInt(id), req.body);
-      res.status(200).send();
+      const auditData = {
+        ...req.body,
+        auditorId: req.user?.id
+      };
+      await this.service.audit(parseInt(id), auditData);
+      res.status(200).json({ message: '审核操作成功' });
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
     }
@@ -55,8 +67,9 @@ export class AnnouncementController {
   publish = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      await this.service.publish(parseInt(id));
-      res.status(200).send();
+      const publisherId = req.user?.id || 0; // 提供默认值防止undefined
+      await this.service.publish(parseInt(id), publisherId);
+      res.status(200).json({ message: '发布成功' });
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
     }
@@ -67,7 +80,7 @@ export class AnnouncementController {
     try {
       const { id } = req.params;
       await this.service.toggleTop(parseInt(id), req.body);
-      res.status(200).send();
+      res.status(200).json({ message: req.body.isTop ? '置顶成功' : '取消置顶成功' });
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
     }
@@ -88,6 +101,11 @@ export class AnnouncementController {
     try {
       const { id } = req.params;
       const announcement = await this.service.getDetail(parseInt(id));
+      
+      if (!announcement) {
+        return res.status(404).json({ message: '通知公告不存在' });
+      }
+      
       res.json(announcement);
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
@@ -108,7 +126,12 @@ export class AnnouncementController {
   // 获取用户端列表
   getClientList = async (req: Request, res: Response) => {
     try {
-      const announcements = await this.service.getClientList(req.query);
+      const query = {
+        ...req.query,
+        userId: req.user?.id,
+        userRole: req.user?.role
+      };
+      const announcements = await this.service.getClientList(query);
       res.json(announcements);
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
@@ -119,7 +142,12 @@ export class AnnouncementController {
   getClientDetail = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const announcement = await this.service.getClientDetail(parseInt(id));
+      const announcement = await this.service.getClientDetail(parseInt(id), req.user?.id);
+      
+      if (!announcement) {
+        return res.status(404).json({ message: '通知公告不存在' });
+      }
+      
       res.json(announcement);
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
@@ -130,8 +158,14 @@ export class AnnouncementController {
   confirm = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      await this.service.confirm(parseInt(id), req.body.userId);
-      res.status(200).send();
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: '请先登录' });
+      }
+      
+      await this.service.confirm(parseInt(id), userId);
+      res.status(200).json({ message: '确认接收成功' });
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
     }
@@ -141,8 +175,14 @@ export class AnnouncementController {
   markAsRead = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      await this.service.markAsRead(parseInt(id), req.body.userId);
-      res.status(200).send();
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: '请先登录' });
+      }
+      
+      await this.service.markAsRead(parseInt(id), userId);
+      res.status(200).json({ message: '标记已读成功' });
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Internal server error' });
     }

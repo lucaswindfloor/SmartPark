@@ -7,10 +7,22 @@ import './styles/index.css';
 // 设置全局的React
 window.React = React;
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
-); 
+// 添加调试信息
+console.log('Starting application...');
+console.log('Root element:', document.getElementById('root'));
+
+try {
+  const root = ReactDOM.createRoot(document.getElementById('root')!);
+  console.log('Root created successfully');
+  
+  root.render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </React.StrictMode>,
+  );
+  console.log('Application rendered');
+} catch (error) {
+  console.error('Error rendering application:', error);
+} 

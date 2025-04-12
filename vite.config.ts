@@ -5,6 +5,7 @@ import { resolve } from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  root: '.',
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
@@ -19,7 +20,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3001,
+    port: 3003,
     open: true,
     proxy: {
       '/api': {
@@ -28,5 +29,22 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '/api')
       }
     }
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+      },
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
   },
 }); 

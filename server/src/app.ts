@@ -8,25 +8,39 @@ import { Announcement } from './models/announcement.entity';
 import { AnnouncementView } from './models/announcement-view.entity';
 import { AnnouncementConfirm } from './models/announcement-confirm.entity';
 import { AnnouncementAudit } from './models/announcement-audit.entity';
+import { AnnouncementVisibility } from './models/announcement-visibility.entity';
+import { User } from './models/user.entity';
+import { Role } from './models/role.entity';
+import { Permission } from './models/permission.entity';
+import { RolePermission } from './models/role-permission.entity';
+import { UserRole } from './models/user-role.entity';
+import { initDatabase } from './config/initDb';
 
 // 加载环境变量
 dotenv.config();
 
-const app = express();
-
-// 创建数据库连接
+// 配置数据库连接
 export const AppDataSource = new DataSource({
   type: 'sqlite',
-  database: './database/smartpark.db',
-  synchronize: true,
-  logging: true,
+  database: process.env.DB_PATH || './database/smartpark.db',
   entities: [
     Announcement,
     AnnouncementView,
     AnnouncementConfirm,
-    AnnouncementAudit
-  ]
+    AnnouncementAudit,
+    AnnouncementVisibility,
+    User,
+    Role,
+    Permission,
+    RolePermission,
+    UserRole
+  ],
+  synchronize: true,
+  logging: process.env.NODE_ENV === 'development'
 });
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // 中间件
 app.use(cors());
@@ -40,22 +54,23 @@ app.get('/health', (req, res) => {
 // API路由
 app.use('/api', routes);
 
-// 数据库连接和服务器启动
-const startServer = async () => {
-  try {
-    // 初始化数据库连接
-    await AppDataSource.initialize();
-    console.log('Database connected');
-
-    // 启动服务器
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+// 启动服务器
+AppDataSource.initialize()
+  .then(async () => {
+    console.log('数据库连接成功');
+    
+    // 初始化权限数据
+    try {
+      await initDatabase();
+      console.log('权限数据初始化成功');
+    } catch (error) {
+      console.error('权限数据初始化失败:', error);
+    }
+    
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
-  } catch (error) {
-    console.error('Error starting server:', error);
-    process.exit(1);
-  }
-};
-
-startServer(); 
+  })
+  .catch(error => {
+    console.error('数据库连接失败:', error);
+  }); 

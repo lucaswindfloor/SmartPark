@@ -212,6 +212,246 @@ const demandsList = [
   }
 ];
 
+// 添加通知公告模拟数据
+// 通知公告模拟数据
+export const mockNotices = [
+  {
+    id: 1,
+    title: '园区安全管理规定更新通知',
+    content: '<p>各位园区企业及员工：</p><p>为了进一步加强园区安全管理，提升安全防范意识，园区管理委员会特更新发布《智慧园区安全管理规定》，自2023年6月1日起施行。主要更新内容包括：</p><ol><li>消防安全管理细则</li><li>门禁管理要求</li><li>视频监控系统使用规范</li><li>应急预案优化</li></ol><p>请各企业负责人认真学习并传达至所有员工，确保全员知晓并严格遵守。</p><p>特此通知。</p>',
+    category: 'important',
+    publicRange: ['enterprise', 'employee'],
+    status: 'published',
+    isTop: true,
+    requireConfirmation: true,
+    confirmCount: 245,
+    viewCount: 389,
+    createdBy: '园区管理员',
+    createdAt: '2023-05-20T08:30:00.000Z',
+    updatedAt: '2023-05-25T10:15:00.000Z',
+    publishedAt: '2023-05-25T10:15:00.000Z',
+    reviewedBy: '安全主管',
+  },
+  {
+    id: 2,
+    title: '6月份园区文化活动预告',
+    content: '<p>亲爱的园区伙伴们：</p><p>为丰富园区文化生活，增强园区企业凝聚力，6月份我们将举办以下活动：</p><ol><li>6月9日 15:00-17:00 创新沙龙（A栋多功能厅）</li><li>6月16日 10:00-12:00 健康讲座（B栋报告厅）</li><li>6月23日 全天 户外拓展活动（详见报名通知）</li><li>6月30日 19:00-21:00 露天电影之夜（园区中央广场）</li></ol><p>欢迎大家积极参与！</p>',
+    category: 'notice',
+    publicRange: ['enterprise', 'employee', 'public'],
+    status: 'published',
+    isTop: false,
+    requireConfirmation: false,
+    confirmCount: 0,
+    viewCount: 278,
+    createdBy: '文化专员',
+    createdAt: '2023-05-28T14:20:00.000Z',
+    updatedAt: '2023-05-29T09:10:00.000Z',
+    publishedAt: '2023-05-29T09:10:00.000Z',
+    reviewedBy: '文化主管',
+  },
+  {
+    id: 3,
+    title: '园区充电桩设施升级公告',
+    content: '<p>尊敬的园区用户：</p><p>为响应国家绿色出行政策，提升园区智慧化水平，我们将于近期对园区充电桩设施进行全面升级。升级内容包括：</p><ol><li>增加快充桩数量，由原来的10个增至25个</li><li>升级充电管理系统，支持手机APP预约</li><li>优化计费模式，引入会员折扣</li><li>增设充电状态实时监控</li></ol><p>升级工作预计在6月15日至6月20日进行，期间部分充电桩将暂停使用。给您带来的不便，敬请谅解。</p><p>特此公告。</p>',
+    category: 'announcement',
+    publicRange: ['enterprise', 'employee'],
+    status: 'pending',
+    isTop: false,
+    requireConfirmation: false,
+    confirmCount: 0,
+    viewCount: 0,
+    createdBy: '设施管理员',
+    createdAt: '2023-06-01T11:05:00.000Z',
+    updatedAt: '2023-06-01T11:05:00.000Z',
+  },
+  {
+    id: 4,
+    title: '防疫工作重要通知',
+    content: '<p>各位园区企业及员工：</p><p>近期周边地区疫情形势有所变化，为保障全体人员健康安全，园区决定采取以下防疫措施：</p><ol><li>所有入园人员须出示健康码和行程码</li><li>非必要不离开本市区域</li><li>公共区域每日消毒次数增加至3次</li><li>鼓励企业采取弹性工作制或远程办公</li></ol><p>以上措施自即日起执行，解除时间另行通知。</p><p>感谢您的理解与配合！</p>',
+    category: 'important',
+    publicRange: ['enterprise', 'employee', 'public'],
+    status: 'draft',
+    isTop: false,
+    requireConfirmation: true,
+    confirmCount: 0,
+    viewCount: 0,
+    createdBy: '防疫工作组',
+    createdAt: '2023-06-02T16:40:00.000Z',
+    updatedAt: '2023-06-02T16:40:00.000Z',
+  },
+  {
+    id: 5,
+    title: '园区餐厅服务调整通知',
+    content: '<p>尊敬的园区用户：</p><p>为提升就餐体验，园区中央餐厅将进行为期两周的设备更新和环境优化工程，具体安排如下：</p><ol><li>施工时间：6月10日至6月24日</li><li>施工期间，一楼餐厅暂停营业</li><li>二楼咖啡厅正常营业，并增设临时简餐区</li><li>园区西南角美食广场各商户正常营业</li></ol><p>施工期间噪音可能会对周边办公环境造成一定影响，我们将尽量控制施工时间，减少干扰。</p><p>感谢您的理解与支持！</p>',
+    category: 'notice',
+    publicRange: ['enterprise', 'employee'],
+    status: 'rejected',
+    isTop: false,
+    requireConfirmation: false,
+    confirmCount: 0,
+    viewCount: 3,
+    createdBy: '后勤主管',
+    createdAt: '2023-05-30T09:25:00.000Z',
+    updatedAt: '2023-05-31T14:10:00.000Z',
+    reviewedBy: '园区主任',
+    rejectReason: '餐厅调整计划尚未最终确定，请与餐饮服务商确认后再发布。',
+  }
+];
+
+// 模拟API处理函数
+export const mockApi = {
+  // ... 其他模拟API ...
+  
+  // 通知公告API
+  getNotices: (params: any) => {
+    console.log('Mock API - 获取通知列表', params);
+    
+    let filteredNotices = [...mockNotices];
+    
+    // 关键词过滤
+    if (params.keyword) {
+      const keyword = params.keyword.toLowerCase();
+      filteredNotices = filteredNotices.filter(notice => 
+        notice.title.toLowerCase().includes(keyword) || 
+        notice.content.toLowerCase().includes(keyword)
+      );
+    }
+    
+    // 状态过滤
+    if (params.status) {
+      filteredNotices = filteredNotices.filter(notice => notice.status === params.status);
+    }
+    
+    // 类别过滤
+    if (params.category) {
+      filteredNotices = filteredNotices.filter(notice => notice.category === params.category);
+    }
+    
+    // 日期范围过滤
+    if (params.start_date) {
+      const startDate = new Date(params.start_date);
+      filteredNotices = filteredNotices.filter(notice => new Date(notice.createdAt) >= startDate);
+    }
+    
+    if (params.end_date) {
+      const endDate = new Date(params.end_date);
+      filteredNotices = filteredNotices.filter(notice => new Date(notice.createdAt) <= endDate);
+    }
+    
+    // 计算分页
+    const page = params.page || 1;
+    const pageSize = params.page_size || 10;
+    const total = filteredNotices.length;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const paginatedNotices = filteredNotices.slice(start, end);
+    
+    return {
+      data: {
+        data: paginatedNotices,
+        total,
+        page,
+        pageSize
+      }
+    };
+  },
+  
+  getNoticeById: (id: number) => {
+    console.log('Mock API - 获取通知详情', id);
+    const notice = mockNotices.find(item => item.id === id);
+    if (notice) {
+      return { data: notice };
+    }
+    return { status: 404, message: '通知不存在' };
+  },
+  
+  createNotice: (data: any) => {
+    console.log('Mock API - 创建通知', data);
+    // 生成新ID
+    const newId = Math.max(...mockNotices.map(n => n.id)) + 1;
+    // 创建新通知
+    const newNotice = {
+      id: newId,
+      ...data,
+      status: 'draft',
+      viewCount: 0,
+      confirmCount: 0,
+      createdBy: '当前用户',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    mockNotices.push(newNotice as any);
+    return { data: newNotice, message: '创建成功' };
+  },
+  
+  updateNotice: (id: number, data: any) => {
+    console.log('Mock API - 更新通知', id, data);
+    const index = mockNotices.findIndex(item => item.id === id);
+    if (index !== -1) {
+      // 更新通知
+      const updatedNotice = {
+        ...mockNotices[index],
+        ...data,
+        updatedAt: new Date().toISOString()
+      };
+      mockNotices[index] = updatedNotice;
+      return { data: updatedNotice, message: '更新成功' };
+    }
+    return { status: 404, message: '通知不存在' };
+  },
+  
+  deleteNotice: (id: number) => {
+    console.log('Mock API - 删除通知', id);
+    const index = mockNotices.findIndex(item => item.id === id);
+    if (index !== -1) {
+      mockNotices.splice(index, 1);
+      return { message: '删除成功' };
+    }
+    return { status: 404, message: '通知不存在' };
+  },
+  
+  reviewNotice: (id: number, data: any) => {
+    console.log('Mock API - 审核通知', id, data);
+    const index = mockNotices.findIndex(item => item.id === id);
+    if (index !== -1) {
+      // 更新审核状态
+      mockNotices[index] = {
+        ...mockNotices[index],
+        status: data.status,
+        reviewedBy: '当前审核员',
+        rejectReason: data.status === 'rejected' ? data.reason : undefined,
+        publishedAt: data.status === 'published' ? new Date().toISOString() : mockNotices[index].publishedAt,
+        updatedAt: new Date().toISOString()
+      };
+      return { data: mockNotices[index], message: data.status === 'published' ? '发布成功' : '拒绝成功' };
+    }
+    return { status: 404, message: '通知不存在' };
+  },
+  
+  toggleNoticeTop: (id: number) => {
+    console.log('Mock API - 置顶通知', id);
+    const index = mockNotices.findIndex(item => item.id === id);
+    if (index !== -1) {
+      // 切换置顶状态
+      mockNotices[index].isTop = !mockNotices[index].isTop;
+      mockNotices[index].updatedAt = new Date().toISOString();
+      return { data: mockNotices[index], message: mockNotices[index].isTop ? '置顶成功' : '取消置顶成功' };
+    }
+    return { status: 404, message: '通知不存在' };
+  },
+  
+  confirmNotice: (id: number) => {
+    console.log('Mock API - 确认通知', id);
+    const index = mockNotices.findIndex(item => item.id === id);
+    if (index !== -1) {
+      // 增加确认数
+      mockNotices[index].confirmCount += 1;
+      return { message: '确认成功' };
+    }
+    return { status: 404, message: '通知不存在' };
+  }
+};
+
 // 初始化Mock
 const initMock = () => {
   const mock = new Mock(axios, { delayResponse: 1000 });

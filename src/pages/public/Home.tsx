@@ -13,7 +13,8 @@ import {
   AppstoreOutlined,
   HomeOutlined
 } from '@ant-design/icons';
-import { useAuth, PermissionAction } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { PermissionAction } from '../../constants/permissions';
 import { useNavigate } from 'react-router-dom';
 import './home.css'; // Import CSS file for custom styling
 

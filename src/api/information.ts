@@ -27,33 +27,10 @@ api.interceptors.request.use(
 // 响应拦截器
 api.interceptors.response.use(
   response => {
-    console.log('API响应成功:', response.config.url, response.data);
     return response;
   },
   error => {
     // 统一处理错误
-    console.error('API错误:', error.config?.url, error.message);
-    
-    // 如果是服务器错误但我们要模拟成功，可以在这里处理
-    if (error.response?.status >= 500) {
-      const url = error.config?.url || '';
-      
-      // 特殊处理某些API调用的错误
-      if (url.includes('/notices') && url.includes('/review')) {
-        console.log('模拟审核响应成功');
-        return Promise.resolve({
-          data: { message: '审核操作成功（模拟）' }
-        });
-      }
-      
-      if (url.includes('/notices') && error.config?.method === 'put') {
-        console.log('模拟更新通知成功');
-        return Promise.resolve({
-          data: { message: '更新通知成功（模拟）' }
-        });
-      }
-    }
-    
     if (error.response) {
       const { status } = error.response;
       if (status === 401) {
@@ -86,6 +63,7 @@ export const informationApi = {
   deleteNotice: (id: number) => api.delete(`/notices/${id}`),
   reviewNotice: (id: number, data: any) => api.post(`/notices/${id}/review`, data),
   toggleNoticeTop: (id: number) => api.post(`/notices/${id}/toggle-top`),
+  confirmNotice: (id: number) => api.post(`/notices/${id}/confirm`),
   
   // 政策文件
   getPolicies: (params: any) => api.get('/policies', { params }),
@@ -132,4 +110,4 @@ export const informationApi = {
   toggleDemandTop: (id: number) => api.post(`/demands/${id}/toggle-top`),
 };
 
-export default api; 
+export default informationApi; 
