@@ -152,6 +152,7 @@
 4. **配置管理模型**: 系统配置、参数设置等管理模型
 5. **数据字典模型**: 统一的编码和字典数据模型
 
+
 ## 4. 核心实体关系模型
 
 ### 4.1 E-R图
@@ -1052,3 +1053,1849 @@
 - INDEX idx_status (status)
 - INDEX idx_park_id (park_id)
 ```
+
+### 6.3 合同管理模块
+
+#### 6.3.1 租赁合同表设计
+```
+表名: lease_contract
+描述: 存储租赁合同信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 合同唯一标识
+- contract_code: VARCHAR(50), 非空, 合同编号
+- contract_name: VARCHAR(200), 非空, 合同名称
+- contract_type: TINYINT(2), 合同类型(1:房间租赁,2:工位租赁)
+- enterprise_id: INT(11), 非空, 企业ID
+- status: TINYINT(2), 合同状态(1:拟定中,2:待生效,3:已生效,4:已到期,5:已终止,6:已续签)
+- contract_amount: DECIMAL(15,2), 合同总金额
+- sign_date: DATE, 签约日期
+- start_date: DATE, 合同开始日期
+- end_date: DATE, 合同结束日期
+- billing_cycle: TINYINT(2), 账单周期(1:月,2:季,3:半年,4:年)
+- billing_day: INT(5), 结算日(每月/季/半年/年的第几天)
+- advance_billing_days: INT(5), 提前生成账单天数
+- payment_days: INT(5), 账单支付期限天数
+- overdue_rate: DECIMAL(5,2), 滞纳金费率(百分比)
+- rent_free_start_date: DATE, 免租期开始日期
+- rent_free_end_date: DATE, 免租期结束日期
+- files: TEXT, 合同附件(JSON格式)
+- remarks: TEXT, 备注
+- sign_user_id: INT(11), 签约人ID
+- approve_user_id: INT(11), 审批人ID
+- approve_time: DATETIME, 审批时间
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_contract_code (contract_code)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+- INDEX idx_sign_date (sign_date)
+- INDEX idx_start_date (start_date)
+- INDEX idx_end_date (end_date)
+```
+
+#### 6.3.2 合同空间关联表设计
+```
+表名: contract_space
+描述: 合同与空间的关联表
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键
+- contract_id: INT(11), 非空, 合同ID
+- space_id: INT(11), 非空, 空间ID
+- rental_price: DECIMAL(10,2), 租赁单价(元/平方米/月 或 元/工位/月)
+- total_amount: DECIMAL(15,2), 租赁总金额
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_contract_space (contract_id, space_id)
+- INDEX idx_space_id (space_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.3.3 物业合同表设计
+```
+表名: property_contract
+描述: 存储物业服务合同信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 物业合同唯一标识
+- contract_code: VARCHAR(50), 非空, 合同编号
+- contract_name: VARCHAR(200), 非空, 合同名称
+- enterprise_id: INT(11), 非空, 企业ID
+- lease_contract_id: INT(11), 关联租赁合同ID
+- status: TINYINT(2), 合同状态(1:拟定中,2:待生效,3:已生效,4:已到期,5:已终止,6:已续签)
+- contract_amount: DECIMAL(15,2), 合同总金额
+- sign_date: DATE, 签约日期
+- start_date: DATE, 合同开始日期
+- end_date: DATE, 合同结束日期
+- billing_cycle: TINYINT(2), 账单周期(1:月,2:季,3:半年,4:年)
+- billing_day: INT(5), 结算日(每月/季/半年/年的第几天)
+- advance_billing_days: INT(5), 提前生成账单天数
+- payment_days: INT(5), 账单支付期限天数
+- property_fee_standard: DECIMAL(10,2), 物业费标准(元/平方米/月)
+- overdue_rate: DECIMAL(5,2), 滞纳金费率(百分比)
+- files: TEXT, 合同附件(JSON格式)
+- remarks: TEXT, 备注
+- sign_user_id: INT(11), 签约人ID
+- approve_user_id: INT(11), 审批人ID
+- approve_time: DATETIME, 审批时间
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_contract_code (contract_code)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_lease_contract_id (lease_contract_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+- INDEX idx_sign_date (sign_date)
+- INDEX idx_start_date (start_date)
+- INDEX idx_end_date (end_date)
+```
+
+#### 6.3.4 合同变更表设计
+```
+表名: contract_change
+描述: 存储合同变更记录
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 变更记录唯一标识
+- contract_id: INT(11), 非空, 合同ID
+- contract_type: TINYINT(1), 合同类型(1:租赁合同,2:物业合同,3:入孵协议,4:注册合同)
+- change_type: TINYINT(2), 变更类型(1:金额变更,2:日期变更,3:空间变更,4:其他变更)
+- change_content: TEXT, 变更内容(JSON格式)
+- change_reason: VARCHAR(500), 变更原因
+- change_date: DATE, 变更日期
+- files: TEXT, 变更附件(JSON格式)
+- status: TINYINT(1), 状态(0:未审批,1:已审批,2:已拒绝)
+- approve_user_id: INT(11), 审批人ID
+- approve_time: DATETIME, 审批时间
+- approve_comment: VARCHAR(500), 审批意见
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_contract_id (contract_id)
+- INDEX idx_contract_type (contract_type)
+- INDEX idx_change_type (change_type)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+- INDEX idx_change_date (change_date)
+```
+
+#### 6.3.5 合同续签表设计
+```
+表名: contract_renewal
+描述: 存储合同续签信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 续签记录唯一标识
+- original_contract_id: INT(11), 非空, 原合同ID
+- new_contract_id: INT(11), 新合同ID
+- contract_type: TINYINT(1), 合同类型(1:租赁合同,2:物业合同,3:入孵协议,4:注册合同)
+- renewal_reason: VARCHAR(500), 续签原因
+- files: TEXT, 续签附件(JSON格式)
+- status: TINYINT(1), 状态(0:未审批,1:已审批,2:已拒绝)
+- approve_user_id: INT(11), 审批人ID
+- approve_time: DATETIME, 审批时间
+- approve_comment: VARCHAR(500), 审批意见
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_original_contract_id (original_contract_id)
+- INDEX idx_new_contract_id (new_contract_id)
+- INDEX idx_contract_type (contract_type)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.3.6 合同终止表设计
+```
+表名: contract_termination
+描述: 存储合同终止信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 终止记录唯一标识
+- contract_id: INT(11), 非空, 合同ID
+- contract_type: TINYINT(1), 合同类型(1:租赁合同,2:物业合同,3:入孵协议,4:注册合同)
+- termination_type: TINYINT(2), 终止类型(1:正常到期,2:提前终止,3:违约终止)
+- termination_date: DATE, 终止日期
+- termination_reason: VARCHAR(500), 终止原因
+- compensation_amount: DECIMAL(15,2), 赔偿金额
+- has_refund: TINYINT(1), 是否有退款(0:否,1:是)
+- refund_amount: DECIMAL(15,2), 退款金额
+- files: TEXT, 终止附件(JSON格式)
+- status: TINYINT(1), 状态(0:未审批,1:已审批,2:已拒绝)
+- approve_user_id: INT(11), 审批人ID
+- approve_time: DATETIME, 审批时间
+- approve_comment: VARCHAR(500), 审批意见
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_contract_id (contract_id)
+- INDEX idx_contract_type (contract_type)
+- INDEX idx_termination_type (termination_type)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+- INDEX idx_termination_date (termination_date)
+```
+
+### 6.4 财务管理模块
+
+#### 6.4.1 押金表设计
+```
+表名: deposit
+描述: 存储企业押金信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 押金唯一标识
+- deposit_code: VARCHAR(50), 非空, 押金编号
+- enterprise_id: INT(11), 非空, 企业ID
+- contract_id: INT(11), 关联合同ID
+- contract_type: TINYINT(1), 合同类型(1:租赁合同,2:物业合同,3:其他)
+- amount: DECIMAL(15,2), 非空, 押金金额
+- payment_method_id: INT(11), 支付方式ID
+- payment_time: DATETIME, 支付时间
+- refund_amount: DECIMAL(15,2), 已退还金额
+- refund_time: DATETIME, 退还时间
+- status: TINYINT(2), 押金状态(1:未支付,2:已支付,3:部分退还,4:全部退还,5:已抵扣)
+- deduction_amount: DECIMAL(15,2), 抵扣金额
+- deduction_reason: VARCHAR(500), 抵扣原因
+- remarks: VARCHAR(500), 备注
+- files: TEXT, 附件(JSON格式)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_deposit_code (deposit_code)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_contract_id (contract_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.4.2 预收款表设计
+```
+表名: advance_payment
+描述: 存储企业预收款信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 预收款唯一标识
+- payment_code: VARCHAR(50), 非空, 预收款编号
+- enterprise_id: INT(11), 非空, 企业ID
+- amount: DECIMAL(15,2), 非空, 预收款金额
+- payment_method_id: INT(11), 支付方式ID
+- payment_time: DATETIME, 支付时间
+- remaining_amount: DECIMAL(15,2), 剩余金额
+- status: TINYINT(2), 状态(1:未支付,2:已支付,3:部分使用,4:已用完)
+- payment_type: TINYINT(2), 款项类型(1:租金,2:物业费,3:其他费用)
+- use_instructions: VARCHAR(500), 使用说明
+- remarks: VARCHAR(500), 备注
+- files: TEXT, 附件(JSON格式)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_payment_code (payment_code)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_status (status)
+- INDEX idx_payment_type (payment_type)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.4.3 账单表设计
+```
+表名: bill
+描述: 存储企业账单信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 账单唯一标识
+- bill_code: VARCHAR(50), 非空, 账单编号
+- enterprise_id: INT(11), 非空, 企业ID
+- contract_id: INT(11), 关联合同ID
+- contract_type: TINYINT(1), 合同类型(1:租赁合同,2:物业合同,3:其他)
+- bill_type: TINYINT(2), 账单类型(1:租金,2:物业费,3:水费,4:电费,5:空调费,6:停车费,7:其他)
+- billing_start_date: DATE, 账单开始日期
+- billing_end_date: DATE, 账单结束日期
+- bill_month: VARCHAR(7), 账单月份(YYYY-MM)
+- amount: DECIMAL(15,2), 非空, 账单金额
+- discount_amount: DECIMAL(15,2), 优惠金额
+- actual_amount: DECIMAL(15,2), 实际应付金额
+- paid_amount: DECIMAL(15,2), 已付金额
+- status: TINYINT(2), 账单状态(1:待支付,2:部分支付,3:已支付,4:已逾期,5:已取消)
+- due_date: DATE, 付款截止日期
+- overdue_days: INT(5), 逾期天数
+- overdue_fee: DECIMAL(15,2), 滞纳金
+- is_invoiced: TINYINT(1), 是否已开票(0:否,1:是)
+- remarks: VARCHAR(500), 备注
+- bill_detail: TEXT, 账单明细(JSON格式)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_bill_code (bill_code)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_contract_id (contract_id)
+- INDEX idx_bill_type (bill_type)
+- INDEX idx_status (status)
+- INDEX idx_due_date (due_date)
+- INDEX idx_bill_month (bill_month)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.4.4 收款记录表设计
+```
+表名: payment_record
+描述: 存储收款记录信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 收款记录唯一标识
+- payment_code: VARCHAR(50), 非空, 收款编号
+- enterprise_id: INT(11), 非空, 企业ID
+- bill_id: INT(11), 关联账单ID
+- amount: DECIMAL(15,2), 非空, 支付金额
+- payment_method_id: INT(11), 支付方式ID
+- payment_time: DATETIME, 支付时间
+- transaction_no: VARCHAR(100), 交易流水号
+- receipt_no: VARCHAR(100), 收据编号
+- payment_type: TINYINT(2), 支付类型(1:账单支付,2:预收款,3:押金,4:补缴费用)
+- payment_account: VARCHAR(100), 支付账号
+- payer_name: VARCHAR(100), 付款人姓名
+- status: TINYINT(1), 状态(0:待确认,1:已确认,2:已退款)
+- confirm_user_id: INT(11), 确认人ID
+- confirm_time: DATETIME, 确认时间
+- advance_payment_id: INT(11), 关联预收款ID
+- remarks: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_payment_code (payment_code)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_bill_id (bill_id)
+- INDEX idx_payment_method_id (payment_method_id)
+- INDEX idx_payment_type (payment_type)
+- INDEX idx_status (status)
+- INDEX idx_payment_time (payment_time)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.4.5 开票记录表设计
+```
+表名: invoice_record
+描述: 存储发票记录信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 发票记录唯一标识
+- invoice_code: VARCHAR(50), 非空, 开票编号
+- enterprise_id: INT(11), 非空, 企业ID
+- invoice_type: TINYINT(2), 发票类型(1:增值税专票,2:增值税普票,3:电子发票)
+- invoice_amount: DECIMAL(15,2), 非空, 开票金额
+- invoice_content: VARCHAR(200), 开票内容
+- apply_time: DATETIME, 申请时间
+- invoice_status: TINYINT(2), 开票状态(1:待开票,2:已开票,3:已作废,4:已拒绝)
+- invoice_time: DATETIME, 开票时间
+- invoice_number: VARCHAR(50), 发票号码
+- invoice_file_url: VARCHAR(255), 发票文件URL
+- taxpayer_name: VARCHAR(100), 非空, 纳税人名称
+- taxpayer_identifier: VARCHAR(50), 纳税人识别号
+- registered_address: VARCHAR(200), 注册地址
+- registered_phone: VARCHAR(50), 注册电话
+- bank_name: VARCHAR(100), 开户银行
+- bank_account: VARCHAR(50), 银行账号
+- delivery_type: TINYINT(1), 交付方式(1:邮寄,2:自取,3:电子发票)
+- delivery_status: TINYINT(1), 交付状态(0:未交付,1:已交付)
+- recipient_name: VARCHAR(50), 收件人姓名
+- recipient_phone: VARCHAR(20), 收件人电话
+- recipient_address: VARCHAR(200), 收件地址
+- express_company: VARCHAR(50), 快递公司
+- express_number: VARCHAR(50), 快递单号
+- bill_ids: VARCHAR(500), 关联账单ID(逗号分隔)
+- invoice_operator_id: INT(11), 开票人ID
+- remarks: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_invoice_code (invoice_code)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_invoice_type (invoice_type)
+- INDEX idx_invoice_status (invoice_status)
+- INDEX idx_apply_time (apply_time)
+- INDEX idx_invoice_time (invoice_time)
+- INDEX idx_park_id (park_id)
+```
+
+### 6.5 能源管理模块
+
+#### 6.5.1 能源表信息表设计
+```
+表名: energy_meter
+描述: 存储能源表信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 能源表唯一标识
+- meter_code: VARCHAR(50), 非空, 表计编号
+- meter_name: VARCHAR(100), 表计名称
+- meter_type: TINYINT(2), 表计类型(1:水表,2:电表,3:燃气表,4:其他)
+- meter_model: VARCHAR(100), 表计型号
+- manufacturer: VARCHAR(100), 制造商
+- installation_date: DATE, 安装日期
+- initial_reading: DECIMAL(15,3), 初始读数
+- current_reading: DECIMAL(15,3), 当前读数
+- unit: VARCHAR(20), 计量单位(如kWh,m³)
+- space_id: INT(11), 安装位置ID
+- is_master: TINYINT(1), 是否总表(0:否,1:是)
+- parent_meter_id: INT(11), 父表ID(分表适用)
+- unit_price: DECIMAL(10,3), 单价
+- status: TINYINT(2), 状态(1:正常,2:故障,3:停用,4:更换)
+- is_smart: TINYINT(1), 是否智能表(0:否,1:是)
+- protocol_type: VARCHAR(50), 协议类型
+- communication_address: VARCHAR(100), 通信地址
+- read_cycle: TINYINT(2), 抄表周期(1:日,2:月,3:季,4:自定义)
+- last_read_date: DATE, 上次抄表日期
+- next_read_date: DATE, 下次抄表日期
+- enterprise_id: INT(11), 关联企业ID
+- remarks: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_meter_code (meter_code)
+- INDEX idx_meter_type (meter_type)
+- INDEX idx_space_id (space_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_park_id (park_id)
+- INDEX idx_status (status)
+- INDEX idx_is_master (is_master)
+- INDEX idx_parent_meter_id (parent_meter_id)
+```
+
+#### 6.5.2 抄表记录表设计
+```
+表名: meter_reading
+描述: 存储抄表记录信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 抄表记录唯一标识
+- meter_id: INT(11), 非空, 能源表ID
+- reading_date: DATE, 非空, 抄表日期
+- reading_type: TINYINT(2), 抄表类型(1:定期抄表,2:校正抄表,3:人工抄表,4:自动抄表)
+- previous_reading: DECIMAL(15,3), 上次读数
+- current_reading: DECIMAL(15,3), 当前读数
+- consumption: DECIMAL(15,3), 用量
+- unit_price: DECIMAL(10,3), 单价
+- amount: DECIMAL(15,2), 金额
+- reader_id: INT(11), 抄表人ID
+- reading_status: TINYINT(2), 抄表状态(1:正常,2:异常,3:估算)
+- abnormal_reason: VARCHAR(200), 异常原因
+- is_billed: TINYINT(1), 是否已生成账单(0:否,1:是)
+- bill_id: INT(11), 关联账单ID
+- remarks: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_meter_id (meter_id)
+- INDEX idx_reading_date (reading_date)
+- INDEX idx_reading_type (reading_type)
+- INDEX idx_reading_status (reading_status)
+- INDEX idx_is_billed (is_billed)
+- INDEX idx_bill_id (bill_id)
+- INDEX idx_park_id (park_id)
+```
+
+
+### 6.6 服务管理模块
+
+#### 6.6.1 服务类型表设计
+```
+表名: service_type
+描述: 存储服务类型信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 服务类型唯一标识
+- type_name: VARCHAR(100), 非空, 服务类型名称
+- type_code: VARCHAR(50), 非空, 服务类型编码
+- parent_id: INT(11), 父类型ID(0表示顶级类型)
+- icon: VARCHAR(255), 图标URL
+- process_template_id: INT(11), 流程模板ID
+- is_paid: TINYINT(1), 是否付费服务(0:否,1:是)
+- service_fee: DECIMAL(10,2), 服务费用
+- fee_description: VARCHAR(200), 费用说明
+- service_description: TEXT, 服务说明
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- sort: INT(5), 排序号
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_type_code (type_code)
+- INDEX idx_parent_id (parent_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.6.2 服务工单表设计
+```
+表名: service_order
+描述: 存储服务工单信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 工单唯一标识
+- order_code: VARCHAR(50), 非空, 工单编号
+- service_type_id: INT(11), 非空, 服务类型ID
+- title: VARCHAR(200), 非空, 工单标题
+- content: TEXT, 工单内容
+- applicant_id: INT(11), 非空, 申请人用户ID
+- applicant_type: TINYINT(1), 申请人类型(1:系统用户,2:企业用户)
+- enterprise_id: INT(11), 企业ID
+- space_id: INT(11), 空间ID
+- contact_name: VARCHAR(50), 联系人姓名
+- contact_phone: VARCHAR(20), 联系电话
+- is_urgent: TINYINT(1), 是否紧急(0:否,1:是)
+- expect_time: DATETIME, 期望处理时间
+- files: TEXT, 附件(JSON格式)
+- current_handler_id: INT(11), 当前处理人ID
+- current_step: VARCHAR(50), 当前处理步骤
+- status: TINYINT(2), 工单状态(1:待分派,2:处理中,3:已暂停,4:已完成,5:已取消,6:已拒绝)
+- process_instance_id: VARCHAR(64), 流程实例ID
+- evaluate_score: INT(5), 评价分数
+- evaluate_content: VARCHAR(500), 评价内容
+- evaluate_time: DATETIME, 评价时间
+- complete_time: DATETIME, 完成时间
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_order_code (order_code)
+- INDEX idx_service_type_id (service_type_id)
+- INDEX idx_applicant_id (applicant_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_status (status)
+- INDEX idx_current_handler_id (current_handler_id)
+- INDEX idx_space_id (space_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.6.3 工单处理记录表设计
+```
+表名: service_order_process
+描述: 存储工单处理记录
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 处理记录唯一标识
+- order_id: INT(11), 非空, 工单ID
+- handler_id: INT(11), 非空, 处理人ID
+- action_type: TINYINT(2), 操作类型(1:接单,2:处理,3:转派,4:完成,5:拒绝,6:取消,7:暂停)
+- action_comment: VARCHAR(500), 操作说明
+- action_time: DATETIME, 操作时间
+- action_result: VARCHAR(200), 操作结果
+- next_handler_id: INT(11), 下一处理人ID
+- files: TEXT, 附件(JSON格式)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_order_id (order_id)
+- INDEX idx_handler_id (handler_id)
+- INDEX idx_action_type (action_type)
+- INDEX idx_action_time (action_time)
+- INDEX idx_park_id (park_id)
+```
+
+### 6.7 资产管理模块
+
+#### 6.7.1 资产信息表设计
+```
+表名: asset
+描述: 存储资产信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 资产唯一标识
+- asset_code: VARCHAR(50), 非空, 资产编号
+- asset_name: VARCHAR(100), 非空, 资产名称
+- asset_type_id: INT(11), 资产类型ID
+- asset_status: TINYINT(2), 资产状态(1:在用,2:闲置,3:维修中,4:报废)
+- purchase_date: DATE, 购入日期
+- purchase_price: DECIMAL(15,2), 购入价格
+- supplier_id: INT(11), 供应商ID
+- manufacturer: VARCHAR(100), 制造商
+- model: VARCHAR(100), 型号
+- specification: VARCHAR(200), 规格
+- warranty_period: INT(5), 保修期(月)
+- warranty_end_date: DATE, 保修截止日期
+- responsible_user_id: INT(11), 责任人ID
+- department_id: INT(11), 归属部门ID
+- location_id: INT(11), 存放位置(space_id)
+- depreciation_method: TINYINT(1), 折旧方法(1:直线法,2:加速法)
+- depreciation_period: INT(5), 折旧期限(月)
+- salvage_value: DECIMAL(15,2), 残值
+- current_value: DECIMAL(15,2), 当前价值
+- maintenance_cycle: INT(5), 维护周期(天)
+- last_maintenance_date: DATE, 上次维护日期
+- next_maintenance_date: DATE, 下次维护日期
+- qr_code: VARCHAR(255), 二维码
+- files: TEXT, 附件(JSON格式)
+- remark: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_asset_code (asset_code)
+- INDEX idx_asset_type_id (asset_type_id)
+- INDEX idx_asset_status (asset_status)
+- INDEX idx_responsible_user_id (responsible_user_id)
+- INDEX idx_department_id (department_id)
+- INDEX idx_location_id (location_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.7.2 资产维修记录表设计
+```
+表名: asset_maintenance
+描述: 存储资产维修记录
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 维修记录唯一标识
+- maintenance_code: VARCHAR(50), 非空, 维修单号
+- asset_id: INT(11), 非空, 资产ID
+- maintenance_type: TINYINT(2), 维修类型(1:定期保养,2:故障维修,3:紧急处理)
+- fault_description: TEXT, 故障描述
+- maintenance_content: TEXT, 维修内容
+- maintenance_result: VARCHAR(200), 维修结果
+- start_time: DATETIME, 开始时间
+- end_time: DATETIME, 结束时间
+- maintenance_cost: DECIMAL(15,2), 维修费用
+- maintenance_user_id: INT(11), 维修人员ID
+- maintenance_company: VARCHAR(100), 维修单位
+- files: TEXT, 附件(JSON格式)
+- status: TINYINT(1), 状态(1:待维修,2:维修中,3:已完成,4:已取消)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_maintenance_code (maintenance_code)
+- INDEX idx_asset_id (asset_id)
+- INDEX idx_maintenance_type (maintenance_type)
+- INDEX idx_status (status)
+- INDEX idx_maintenance_user_id (maintenance_user_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 6.7.3 资产盘点表设计
+```
+表名: asset_inventory
+描述: 存储资产盘点信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 盘点唯一标识
+- inventory_code: VARCHAR(50), 非空, 盘点单号
+- inventory_name: VARCHAR(100), 非空, 盘点名称
+- inventory_type: TINYINT(2), 盘点类型(1:全部盘点,2:抽样盘点,3:部门盘点,4:区域盘点)
+- department_id: INT(11), 部门ID
+- location_id: INT(11), 区域ID
+- inventory_user_id: INT(11), 盘点负责人ID
+- start_time: DATETIME, 开始时间
+- end_time: DATETIME, 结束时间
+- status: TINYINT(2), 状态(1:未开始,2:进行中,3:已完成,4:已取消)
+- inventory_result: VARCHAR(200), 盘点结果
+- asset_total: INT(11), 资产总数
+- checked_count: INT(11), 已盘点数
+- normal_count: INT(11), 正常数
+- abnormal_count: INT(11), 异常数
+- lost_count: INT(11), 丢失数
+- remark: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_inventory_code (inventory_code)
+- INDEX idx_inventory_type (inventory_type)
+- INDEX idx_status (status)
+- INDEX idx_department_id (department_id)
+- INDEX idx_location_id (location_id)
+- INDEX idx_park_id (park_id)
+```
+
+## 7. 智慧园区公共服务平台数据模型
+
+### 7.1 企业门户模块
+
+#### 7.1.1 企业员工表设计
+```
+表名: enterprise_staff
+描述: 存储企业员工信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 员工唯一标识
+- user_id: INT(11), 非空, 关联用户ID
+- enterprise_id: INT(11), 非空, 企业ID
+- staff_name: VARCHAR(50), 非空, 员工姓名
+- staff_code: VARCHAR(50), 工号
+- department: VARCHAR(100), 部门
+- position: VARCHAR(100), 职位
+- type: TINYINT(2), 员工类型(1:全职,2:兼职,3:实习)
+- entry_date: DATE, 入职日期
+- leave_date: DATE, 离职日期
+- status: TINYINT(1), 员工状态(1:在职,2:离职,3:停职)
+- gender: TINYINT(1), 性别(0:未知,1:男,2:女)
+- phone: VARCHAR(20), 手机号码
+- email: VARCHAR(100), 电子邮箱
+- is_admin: TINYINT(1), 是否管理员(0:否,1:是)
+- admin_type: TINYINT(1), 管理员类型(1:超级管理员,2:普通管理员)
+- avatar: VARCHAR(255), 头像URL
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_user_id (user_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_staff_code (staff_code)
+- INDEX idx_phone (phone)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+#### 7.1.2 企业门禁权限表设计
+```
+表名: enterprise_access
+描述: 存储企业员工门禁权限
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 门禁权限唯一标识
+- staff_id: INT(11), 非空, 员工ID
+- enterprise_id: INT(11), 非空, 企业ID
+- space_id: INT(11), 非空, 空间ID
+- access_type: TINYINT(2), 权限类型(1:门禁,2:电梯,3:停车场)
+- device_id: INT(11), 设备ID
+- start_time: DATETIME, 生效开始时间
+- end_time: DATETIME, 生效结束时间
+- time_range: VARCHAR(100), 时间范围(如工作日9:00-18:00)
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- remark: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_staff_id (staff_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_space_id (space_id)
+- INDEX idx_device_id (device_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+### 7.2 账单管理模块
+
+#### 7.2.1 账单查询表设计
+```
+表名: enterprise_bill_view
+描述: 企业账单查询视图
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 视图唯一标识
+- bill_id: INT(11), 非空, 关联账单表ID
+- bill_code: VARCHAR(50), 非空, 账单编号
+- enterprise_id: INT(11), 非空, 企业ID
+- contract_id: INT(11), 关联合同ID
+- contract_code: VARCHAR(50), 合同编号
+- bill_type: TINYINT(2), 账单类型(1:租金,2:物业费,3:水费,4:电费,5:空调费,6:停车费,7:其他)
+- bill_name: VARCHAR(100), 账单名称
+- billing_start_date: DATE, 账单开始日期
+- billing_end_date: DATE, 账单结束日期
+- bill_month: VARCHAR(7), 账单月份(YYYY-MM)
+- amount: DECIMAL(15,2), 非空, 账单金额
+- discount_amount: DECIMAL(15,2), 优惠金额
+- actual_amount: DECIMAL(15,2), 实际应付金额
+- paid_amount: DECIMAL(15,2), 已付金额
+- unpaid_amount: DECIMAL(15,2), 未付金额
+- status: TINYINT(2), 账单状态(1:待支付,2:部分支付,3:已支付,4:已逾期,5:已取消)
+- due_date: DATE, 付款截止日期
+- overdue_days: INT(5), 逾期天数
+- overdue_fee: DECIMAL(15,2), 滞纳金
+- is_invoiced: TINYINT(1), 是否已开票(0:否,1:是)
+- bill_detail: TEXT, 账单明细(JSON格式)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_bill_id (bill_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_bill_type (bill_type)
+- INDEX idx_status (status)
+- INDEX idx_bill_month (bill_month)
+- INDEX idx_park_id (park_id)
+```
+
+#### 7.2.2 支付记录查询表设计
+```
+表名: enterprise_payment_view
+描述: 企业支付记录查询视图
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 视图唯一标识
+- payment_id: INT(11), 非空, 关联支付记录ID
+- payment_code: VARCHAR(50), 非空, 支付编号
+- enterprise_id: INT(11), 非空, 企业ID
+- bill_id: INT(11), 关联账单ID
+- bill_code: VARCHAR(50), 账单编号
+- amount: DECIMAL(15,2), 非空, 支付金额
+- payment_method_id: INT(11), 支付方式ID
+- payment_method_name: VARCHAR(100), 支付方式名称
+- payment_time: DATETIME, 支付时间
+- transaction_no: VARCHAR(100), 交易流水号
+- receipt_no: VARCHAR(100), 收据编号
+- payment_type: TINYINT(2), 支付类型(1:账单支付,2:预收款,3:押金,4:补缴费用)
+- payment_account: VARCHAR(100), 支付账号
+- payer_name: VARCHAR(100), 付款人姓名
+- status: TINYINT(1), 状态(0:待确认,1:已确认,2:已退款)
+- remarks: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_payment_id (payment_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_bill_id (bill_id)
+- INDEX idx_payment_method_id (payment_method_id)
+- INDEX idx_payment_type (payment_type)
+- INDEX idx_status (status)
+- INDEX idx_payment_time (payment_time)
+- INDEX idx_park_id (park_id)
+```
+
+### 7.3 服务中心模块
+
+#### 7.3.1 服务申请表设计
+```
+表名: service_application
+描述: 存储企业服务申请信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 服务申请唯一标识
+- application_code: VARCHAR(50), 非空, 申请编号
+- service_type_id: INT(11), 非空, 服务类型ID
+- service_type_name: VARCHAR(100), 服务类型名称
+- title: VARCHAR(200), 非空, 申请标题
+- content: TEXT, 申请内容
+- enterprise_id: INT(11), 非空, 企业ID
+- applicant_id: INT(11), 非空, 申请人ID
+- space_id: INT(11), 空间ID
+- contact_name: VARCHAR(50), 联系人姓名
+- contact_phone: VARCHAR(20), 联系电话
+- is_urgent: TINYINT(1), 是否紧急(0:否,1:是)
+- expect_time: DATETIME, 期望处理时间
+- order_id: INT(11), 关联工单ID
+- status: TINYINT(2), 状态(1:待处理,2:处理中,3:已完成,4:已取消,5:已拒绝)
+- files: TEXT, 附件(JSON格式)
+- evaluate_score: INT(5), 评价分数
+- evaluate_content: VARCHAR(500), 评价内容
+- evaluate_time: DATETIME, 评价时间
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_application_code (application_code)
+- INDEX idx_service_type_id (service_type_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_applicant_id (applicant_id)
+- INDEX idx_status (status)
+- INDEX idx_order_id (order_id)
+- INDEX idx_space_id (space_id)
+- INDEX idx_park_id (park_id)
+```
+
+#### 7.3.2 服务处理记录表设计
+```
+表名: service_process_record
+描述: 存储服务处理进度记录
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 记录唯一标识
+- application_id: INT(11), 非空, 服务申请ID
+- order_id: INT(11), 非空, 工单ID
+- process_time: DATETIME, 处理时间
+- process_user_id: INT(11), 处理人ID
+- process_user_name: VARCHAR(50), 处理人姓名
+- process_action: VARCHAR(50), 处理动作
+- process_content: VARCHAR(500), 处理内容
+- process_status: VARCHAR(50), 处理状态
+- files: TEXT, 附件(JSON格式)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_application_id (application_id)
+- INDEX idx_order_id (order_id)
+- INDEX idx_process_user_id (process_user_id)
+- INDEX idx_process_time (process_time)
+- INDEX idx_park_id (park_id)
+```
+
+### 7.4 会议室预约模块
+
+#### 7.4.1 会议室表设计
+```
+表名: meeting_room
+描述: 存储会议室信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 会议室唯一标识
+- room_name: VARCHAR(100), 非空, 会议室名称
+- room_code: VARCHAR(50), 非空, 会议室编号
+- space_id: INT(11), 非空, 空间ID
+- capacity: INT(5), 容纳人数
+- area: DECIMAL(10,2), 面积(平方米)
+- hour_price: DECIMAL(10,2), 小时单价
+- half_day_price: DECIMAL(10,2), 半天单价
+- day_price: DECIMAL(10,2), 全天单价
+- is_free: TINYINT(1), 是否免费(0:否,1:是)
+- equipment: VARCHAR(500), 配套设备(JSON格式)
+- image_urls: TEXT, 会议室图片URL(JSON格式)
+- description: TEXT, 会议室描述
+- open_time: TIME, 开放时间
+- close_time: TIME, 关闭时间
+- min_reserve_time: INT(5), 最小预约时长(分钟)
+- max_reserve_days_ahead: INT(5), 最大提前预约天数
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_room_code (room_code)
+- INDEX idx_space_id (space_id)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+#### 7.4.2 会议室预约表设计
+```
+表名: meeting_room_reservation
+描述: 存储会议室预约信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 预约唯一标识
+- reservation_code: VARCHAR(50), 非空, 预约编号
+- meeting_room_id: INT(11), 非空, 会议室ID
+- meeting_topic: VARCHAR(200), 会议主题
+- meeting_desc: VARCHAR(500), 会议说明
+- enterprise_id: INT(11), 非空, 企业ID
+- reservor_id: INT(11), 非空, 预约人ID
+- reservor_name: VARCHAR(50), 预约人姓名
+- contact_phone: VARCHAR(20), 联系电话
+- attendees_count: INT(5), 参会人数
+- attendees: VARCHAR(500), 参会人员(JSON格式)
+- start_time: DATETIME, 非空, 开始时间
+- end_time: DATETIME, 非空, 结束时间
+- duration: INT(11), 时长(分钟)
+- fee_amount: DECIMAL(10,2), 费用金额
+- is_paid: TINYINT(1), 是否已支付(0:否,1:是)
+- payment_id: INT(11), 支付记录ID
+- status: TINYINT(2), 状态(1:待审核,2:已确认,3:已拒绝,4:已取消,5:进行中,6:已结束)
+- reject_reason: VARCHAR(200), 拒绝原因
+- cancel_reason: VARCHAR(200), 取消原因
+- check_in_time: DATETIME, 签到时间
+- check_out_time: DATETIME, 签离时间
+- remark: VARCHAR(500), 备注
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_reservation_code (reservation_code)
+- INDEX idx_meeting_room_id (meeting_room_id)
+- INDEX idx_enterprise_id (enterprise_id)
+- INDEX idx_reservor_id (reservor_id)
+- INDEX idx_start_time (start_time)
+- INDEX idx_end_time (end_time)
+- INDEX idx_status (status)
+- INDEX idx_park_id (park_id)
+```
+
+## 8. 智慧园区系统管理员平台数据模型
+
+### 8.1 系统管理模块
+
+#### 8.1.1 系统日志表设计
+```
+表名: system_log
+描述: 存储系统操作日志
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 日志唯一标识
+- log_type: TINYINT(2), 日志类型(1:操作日志,2:异常日志,3:登录日志,4:安全日志)
+- module: VARCHAR(50), 操作模块
+- action: VARCHAR(100), 操作动作
+- description: VARCHAR(500), 操作描述
+- request_method: VARCHAR(10), 请求方法
+- request_url: VARCHAR(255), 请求URL
+- request_params: TEXT, 请求参数
+- request_ip: VARCHAR(50), 请求IP
+- response_code: VARCHAR(50), 响应状态码
+- response_data: TEXT, 响应数据
+- exception_info: TEXT, 异常信息
+- execution_time: INT(11), 执行时长(毫秒)
+- platform_type: TINYINT(1), 平台类型(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- user_id: INT(11), 操作用户ID
+- user_type: TINYINT(1), 用户类型(1:系统用户,2:企业用户,3:个人用户)
+- username: VARCHAR(50), 用户名
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_log_type (log_type)
+- INDEX idx_module (module)
+- INDEX idx_action (action)
+- INDEX idx_platform_type (platform_type)
+- INDEX idx_user_id (user_id)
+- INDEX idx_create_time (create_time)
+- INDEX idx_park_id (park_id)
+```
+
+#### 8.1.2 系统监控表设计
+```
+表名: system_monitor
+描述: 存储系统监控数据
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 监控数据唯一标识
+- monitor_type: TINYINT(2), 监控类型(1:CPU,2:内存,3:磁盘,4:网络,5:服务,6:数据库)
+- server_id: VARCHAR(50), 服务器标识
+- server_name: VARCHAR(100), 服务器名称
+- monitor_time: DATETIME, 监控时间
+- monitor_data: TEXT, 监控数据(JSON格式)
+- cpu_usage: DECIMAL(5,2), CPU使用率
+- memory_usage: DECIMAL(5,2), 内存使用率
+- disk_usage: DECIMAL(5,2), 磁盘使用率
+- network_io: VARCHAR(100), 网络IO
+- status: TINYINT(1), 状态(0:异常,1:正常)
+- alarm_threshold: DECIMAL(5,2), 报警阈值
+- is_alarmed: TINYINT(1), 是否已报警(0:否,1:是)
+- alarm_time: DATETIME, 报警时间
+- alarm_content: VARCHAR(500), 报警内容
+- create_time: DATETIME, 创建时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_monitor_type (monitor_type)
+- INDEX idx_server_id (server_id)
+- INDEX idx_monitor_time (monitor_time)
+- INDEX idx_status (status)
+```
+
+#### 8.1.3 安全审计表设计
+```
+表名: security_audit
+描述: 存储安全审计记录
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 审计记录唯一标识
+- audit_type: TINYINT(2), 审计类型(1:权限变更,2:敏感操作,3:数据访问,4:安全策略变更)
+- subject_id: VARCHAR(50), 审计主体ID
+- subject_type: VARCHAR(50), 审计主体类型
+- operation_type: VARCHAR(50), 操作类型
+- operation_content: TEXT, 操作内容
+- before_value: TEXT, 变更前值
+- after_value: TEXT, 变更后值
+- platform_type: TINYINT(1), 平台类型(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- user_id: INT(11), 操作用户ID
+- username: VARCHAR(50), 用户名
+- request_ip: VARCHAR(50), 请求IP
+- park_id: INT(11), 园区ID
+- create_time: DATETIME, 创建时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_audit_type (audit_type)
+- INDEX idx_subject_id (subject_id)
+- INDEX idx_operation_type (operation_type)
+- INDEX idx_platform_type (platform_type)
+- INDEX idx_user_id (user_id)
+- INDEX idx_create_time (create_time)
+- INDEX idx_park_id (park_id)
+```
+
+### 8.2 集成管理模块
+
+#### 8.2.1 API管理表设计
+```
+表名: api_config
+描述: 存储API配置信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, API配置唯一标识
+- api_name: VARCHAR(100), 非空, API名称
+- api_code: VARCHAR(50), 非空, API编码
+- api_type: TINYINT(2), API类型(1:内部API,2:外部API,3:第三方API)
+- request_url: VARCHAR(255), 请求URL
+- request_method: VARCHAR(10), 请求方法
+- request_headers: TEXT, 请求头(JSON格式)
+- request_params: TEXT, 请求参数(JSON格式)
+- response_type: VARCHAR(50), 响应类型
+- is_auth_required: TINYINT(1), 是否需要认证(0:否,1:是)
+- auth_type: TINYINT(2), 认证类型(1:Token,2:OAuth,3:ApiKey)
+- auth_config: TEXT, 认证配置(JSON格式)
+- rate_limit: INT(11), 速率限制(次/分钟)
+- timeout: INT(11), 超时时间(秒)
+- retry_count: INT(5), 重试次数
+- description: VARCHAR(500), API描述
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_api_code (api_code)
+- INDEX idx_api_type (api_type)
+- INDEX idx_status (status)
+```
+
+#### 8.2.2 第三方应用表设计
+```
+表名: third_party_app
+描述: 存储第三方应用配置
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 应用唯一标识
+- app_name: VARCHAR(100), 非空, 应用名称
+- app_code: VARCHAR(50), 非空, 应用编码
+- app_type: TINYINT(2), 应用类型(1:企业应用,2:功能应用,3:工具应用)
+- app_icon: VARCHAR(255), 应用图标URL
+- app_url: VARCHAR(255), 应用URL
+- app_version: VARCHAR(50), 应用版本
+- auth_type: TINYINT(2), 认证类型(1:Token,2:OAuth,3:内嵌)
+- app_key: VARCHAR(100), 应用密钥
+- app_secret: VARCHAR(255), 应用密钥
+- access_token: VARCHAR(255), 访问令牌
+- token_expire_time: DATETIME, 令牌过期时间
+- callback_url: VARCHAR(255), 回调URL
+- app_config: TEXT, 应用配置(JSON格式)
+- description: VARCHAR(500), 应用描述
+- vendor: VARCHAR(100), 应用厂商
+- contact_name: VARCHAR(50), 联系人
+- contact_phone: VARCHAR(20), 联系电话
+- contact_email: VARCHAR(100), 联系邮箱
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_app_code (app_code)
+- INDEX idx_app_type (app_type)
+- INDEX idx_status (status)
+```
+
+### 8.3 数据字典管理模块
+
+#### 8.3.1 行业分类表设计
+```
+表名: industry_type
+描述: 存储行业分类信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 行业分类唯一标识
+- industry_name: VARCHAR(100), 非空, 行业名称
+- industry_code: VARCHAR(50), 非空, 行业编码
+- parent_id: INT(11), 父分类ID(0表示顶级分类)
+- level: INT(3), 层级
+- sort: INT(5), 排序号
+- description: VARCHAR(500), 描述
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_industry_code (industry_code)
+- INDEX idx_parent_id (parent_id)
+- INDEX idx_status (status)
+```
+
+#### 8.3.2 企业类型表设计
+```
+表名: enterprise_type
+描述: 存储企业类型信息
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 企业类型唯一标识
+- type_name: VARCHAR(100), 非空, 类型名称
+- type_code: VARCHAR(50), 非空, 类型编码
+- description: VARCHAR(500), 描述
+- sort: INT(5), 排序号
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_type_code (type_code)
+- INDEX idx_status (status)
+```
+
+## 9. 跨平台数据服务
+
+### 9.1 数据同步机制
+
+#### 9.1.1 数据同步任务表设计
+```
+表名: data_sync_task
+描述: 存储数据同步任务配置
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 同步任务唯一标识
+- task_name: VARCHAR(100), 非空, 任务名称
+- task_code: VARCHAR(50), 非空, 任务编码
+- source_platform: TINYINT(2), 源平台(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- target_platform: TINYINT(2), 目标平台(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- data_type: VARCHAR(50), 数据类型
+- sync_policy: TINYINT(2), 同步策略(1:全量同步,2:增量同步,3:差异同步)
+- sync_interval: VARCHAR(50), 同步间隔(Cron表达式)
+- last_sync_time: DATETIME, 上次同步时间
+- next_sync_time: DATETIME, 下次同步时间
+- source_query: TEXT, 源数据查询
+- transform_rule: TEXT, 数据转换规则(JSON格式)
+- target_table: VARCHAR(50), 目标表
+- conflict_policy: TINYINT(2), 冲突策略(1:覆盖,2:跳过,3:合并)
+- pre_sync_script: TEXT, 同步前脚本
+- post_sync_script: TEXT, 同步后脚本
+- status: TINYINT(1), 状态(0:禁用,1:正常)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_task_code (task_code)
+- INDEX idx_source_platform (source_platform)
+- INDEX idx_target_platform (target_platform)
+- INDEX idx_data_type (data_type)
+- INDEX idx_status (status)
+```
+
+#### 9.1.2 数据同步记录表设计
+```
+表名: data_sync_log
+描述: 存储数据同步执行记录
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 日志唯一标识
+- task_id: INT(11), 非空, 同步任务ID
+- task_code: VARCHAR(50), 任务编码
+- start_time: DATETIME, 开始时间
+- end_time: DATETIME, 结束时间
+- duration: INT(11), 耗时(秒)
+- total_count: INT(11), 总数据量
+- success_count: INT(11), 成功数量
+- fail_count: INT(11), 失败数量
+- skip_count: INT(11), 跳过数量
+- status: TINYINT(1), 状态(0:失败,1:成功,2:部分成功)
+- error_message: TEXT, 错误信息
+- detail_log: TEXT, 详细日志
+- create_time: DATETIME, 创建时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_task_id (task_id)
+- INDEX idx_task_code (task_code)
+- INDEX idx_start_time (start_time)
+- INDEX idx_status (status)
+```
+
+### 9.2 API访问控制
+
+#### 9.2.1 API权限表设计
+```
+表名: api_permission
+描述: 存储API访问权限配置
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 权限唯一标识
+- api_id: INT(11), 非空, API配置ID
+- api_code: VARCHAR(50), API编码
+- role_id: INT(11), 角色ID
+- platform_type: TINYINT(1), 平台类型(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- access_type: TINYINT(2), 访问类型(1:允许访问,2:拒绝访问)
+- create_time: DATETIME, 创建时间
+- update_time: DATETIME, 更新时间
+- create_user_id: INT(11), 创建人ID
+- update_user_id: INT(11), 更新人ID
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- UNIQUE INDEX idx_api_role (api_id, role_id)
+- INDEX idx_api_code (api_code)
+- INDEX idx_role_id (role_id)
+- INDEX idx_platform_type (platform_type)
+```
+
+#### 9.2.2 API访问日志表设计
+```
+表名: api_access_log
+描述: 存储API访问日志
+主键: id
+
+字段列表:
+- id: INT(11), 自增, 主键, 日志唯一标识
+- api_id: INT(11), API配置ID
+- api_code: VARCHAR(50), API编码
+- request_method: VARCHAR(10), 请求方法
+- request_url: VARCHAR(255), 请求URL
+- request_params: TEXT, 请求参数
+- request_headers: TEXT, 请求头
+- request_ip: VARCHAR(50), 请求IP
+- response_code: INT(11), 响应状态码
+- response_time: INT(11), 响应时间(毫秒)
+- response_size: INT(11), 响应大小(字节)
+- platform_type: TINYINT(1), 平台类型(1:综合管理平台,2:公共服务平台,3:系统管理员平台)
+- user_id: INT(11), 用户ID
+- username: VARCHAR(50), 用户名
+- status: TINYINT(1), 状态(0:失败,1:成功)
+- error_message: VARCHAR(500), 错误信息
+- create_time: DATETIME, 创建时间
+- is_deleted: TINYINT(1), 是否删除(0:否,1:是)
+
+索引:
+- PRIMARY KEY (id)
+- INDEX idx_api_id (api_id)
+- INDEX idx_api_code (api_code)
+- INDEX idx_platform_type (platform_type)
+- INDEX idx_user_id (user_id)
+- INDEX idx_create_time (create_time)
+- INDEX idx_status (status)
+```
+
+## 10. 数据字典
+
+### 10.1 编码规则
+
+系统中使用的各类编码规则如下:
+
+1. **用户编码**: USER + 年月日 + 4位序列号，示例: USER2023050100001
+2. **企业编码**: ENT + 年月日 + 4位序列号，示例: ENT2023050100001
+3. **合同编码**: 
+   - 租赁合同: LC + 年月 + 园区编码(2位) + 4位序列号，示例: LC202305A00001
+   - 物业合同: PC + 年月 + 园区编码(2位) + 4位序列号，示例: PC202305A00001
+4. **账单编码**: BILL + 年月 + 园区编码(2位) + 5位序列号，示例: BILL202305A00001
+5. **工单编码**: SO + 年月日 + 园区编码(2位) + 4位序列号，示例: SO20230501A0001
+6. **空间编码**:
+   - 园区: PARK + 2位编号，示例: PARKA
+   - 片区: AREA + 园区编码 + 2位编号，示例: AREAA01
+   - 楼栋: BLD + 园区编码 + 片区编号 + 2位编号，示例: BLDA0101
+   - 楼层: FLR + 楼栋编码 + 2位楼层号，示例: FLRA010101
+   - 房间: RM + 楼层编码 + 3位房间号，示例: RMA01010101
+
+### 10.2 状态码定义
+
+系统中使用的主要状态码定义如下:
+
+1. **通用状态码**:
+   - 0: 禁用/无效
+   - 1: 启用/有效
+   - 9: 已删除
+
+2. **账单状态码**:
+   - 1: 待支付
+   - 2: 部分支付
+   - 3: 已支付
+   - 4: 已逾期
+   - 5: 已取消
+   
+3. **合同状态码**:
+   - 1: 拟定中
+   - 2: 待生效
+   - 3: 已生效
+   - 4: 已到期
+   - 5: 已终止
+   - 6: 已续签
+
+4. **工单状态码**:
+   - 1: 待分派
+   - 2: 处理中
+   - 3: 已暂停
+   - 4: 已完成
+   - 5: 已取消
+   - 6: 已拒绝
+
+5. **空间状态码**:
+   - 1: 待出租
+   - 2: 已出租
+   - 3: 已销售
+   - 4: 维修中
+   - 5: 不可租
+
+### 10.3 常用字段类型
+
+系统中使用的主要字段类型定义如下:
+
+1. **ID类型**: INT(11), 自增，用于各表唯一标识
+2. **编码类型**: VARCHAR(50), 用于业务编码
+3. **名称类型**: VARCHAR(100), 用于名称字段
+4. **描述类型**: VARCHAR(500), 用于描述字段
+5. **内容类型**: TEXT, 用于大文本内容
+6. **日期类型**: DATE, 用于日期字段
+7. **时间类型**: DATETIME, 用于日期时间字段
+8. **金额类型**: DECIMAL(15,2), 用于金额字段
+9. **比率类型**: DECIMAL(5,2), 用于比率字段
+10. **状态类型**: TINYINT(1/2), 用于状态标识
+11. **计数类型**: INT(5/11), 用于计数字段
+12. **配置类型**: TEXT, JSON格式, 用于配置信息
+
+### 10.4 公共字段
+
+系统中大多数表包含的公共字段如下:
+
+1. **id**: INT(11), 自增, 主键, 唯一标识
+2. **create_time**: DATETIME, 创建时间
+3. **update_time**: DATETIME, 更新时间
+4. **create_user_id**: INT(11), 创建人ID
+5. **update_user_id**: INT(11), 更新人ID
+6. **is_deleted**: TINYINT(1), 是否删除(0:否,1:是)
+7. **park_id**: INT(11), 园区ID(用于多园区数据隔离)
+8. **status**: TINYINT(1/2), 状态
+
+## 11. 数据安全与隐私保护
+
+### 11.1 敏感数据定义
+
+系统中的敏感数据主要包括以下类型:
+
+1. **个人敏感信息**:
+   - 身份证号: 用户表(id_card)字段、企业员工表(id_card)字段
+   - 手机号码: 用户表(phone)字段、企业表(legal_person_phone)字段
+   - 银行账号: 发票表(bank_account)字段
+   - 密码: 用户表(password_hash)字段
+
+2. **企业敏感信息**:
+   - 统一社会信用代码: 企业表(credit_code)字段
+   - 经营数据: 企业画像相关字段
+   - 合同金额: 合同表(contract_amount)字段
+
+3. **财务敏感信息**:
+   - 账单金额: 账单表(amount)字段
+   - 支付信息: 支付记录表相关字段
+   - 交易流水号: 支付记录表(transaction_no)字段
+
+### 11.2 数据加密策略
+
+对敏感数据实施以下加密策略:
+
+1. **传输加密**: 使用HTTPS协议加密数据传输
+2. **存储加密**:
+   - 密码使用SHA-256+盐值加密
+   - 身份证号采用AES-256加密
+   - 银行账号采用部分掩码(如 \*\*\*\*\*\*\*2642)存储
+3. **数据脱敏**:
+   - 手机号显示时采用中间四位掩码(如134\*\*\*\*1234)
+   - 身份证号显示时采用中间八位掩码
+   - 企业敏感数据在非授权用户查看时自动脱敏
+
+### 11.3 访问控制措施
+
+实施以下访问控制措施:
+
+1. **基于角色的访问控制(RBAC)**:
+   - 通过role和permission表实现
+   - 细粒度区分数据操作权限(如查询、修改、删除)
+   
+2. **数据范围控制**:
+   - 按园区隔离: 通过park_id字段限制
+   - 按部门隔离: 通过组织机构关联限制
+   - 按用户隔离: 针对特定数据仅创建者可见
+   
+3. **敏感操作控制**:
+   - 设置敏感操作白名单IP
+   - 敏感操作需二次认证
+   - 记录敏感操作审计日志
+
+### 11.4 数据审计
+
+对数据操作进行全面审计:
+
+1. **审计范围**:
+   - 用户认证事件(登录、注销、密码修改)
+   - 敏感数据操作(查询、修改、删除)
+   - 系统管理操作(权限变更、参数配置)
+   
+2. **审计内容**:
+   - 操作主体(用户ID、姓名、IP)
+   - 操作类型(查询、新增、修改、删除)
+   - 操作对象(表名、记录ID)
+   - 操作内容(修改前值、修改后值)
+   - 操作时间
+   
+3. **审计日志保留策略**:
+   - 一般操作日志保留1年
+   - 敏感操作日志保留3年
+   - 安全事件日志永久保留
+
+
+## 12. 数据存储与备份
+
+### 12.1 数据存储策略
+
+系统采用以下数据存储策略:
+
+1. **主要业务数据**: 使用MySQL关系型数据库存储
+2. **非结构化数据**: 
+   - 文档、图片等: 使用对象存储服务
+   - 合同附件、凭证图片: 使用对象存储服务
+3. **高频访问数据**:
+   - 字典数据、配置参数: 使用Redis缓存
+   - 用户会话信息: 使用Redis存储
+4. **历史数据归档**:
+   - 3年前数据自动归档至归档库
+   - 归档数据仅支持查询，不支持修改
+
+### 12.2 数据备份策略
+
+实施以下数据备份策略:
+
+1. **备份频率**:
+   - 核心业务数据: 每日全量备份 + 实时增量备份
+   - 非结构化数据: 每周全量备份 + 每日增量备份
+   - 配置与系统数据: 每日全量备份
+   
+2. **备份方式**:
+   - 数据库备份: 逻辑备份(SQL Dump) + 物理备份(Snapshot)
+   - 文件备份: 增量快照 + 跨区域复制
+   
+3. **备份保留期**:
+   - 每日备份: 保留30天
+   - 每周备份: 保留3个月
+   - 每月备份: 保留1年
+   - 每年备份: 永久保留
+
+### 12.3 灾难恢复计划
+
+建立以下灾难恢复机制:
+
+1. **多级恢复方案**:
+   - 数据库故障: 从备库自动切换(RTO < 1分钟)
+   - 服务器故障: 从镜像服务器恢复(RTO < 5分钟)
+   - 区域故障: 从备份区域恢复(RTO < 30分钟)
+   - 灾难性故障: 从离线备份恢复(RTO < 4小时)
+
+2. **数据恢复测试**:
+   - 每月进行数据恢复演练
+   - 每季度进行全面灾难恢复演练
+   - 记录并改进恢复流程
+
+## 13. 数据模型演进与维护
+
+### 13.1 版本管理
+
+数据模型的版本管理策略如下:
+
+1. **版本号规则**:
+   - 主版本号: 重大结构变更
+   - 次版本号: 新增表或字段
+   - 修订版本号: 小规模修改(如索引优化)
+   
+2. **变更记录**:
+   - 所有变更记录在数据模型变更日志中
+   - 记录变更内容、原因和影响范围
+   - 记录负责人和审核人
+
+### 13.2 变更管理
+
+数据模型变更的管理流程如下:
+
+1. **变更申请**:
+   - 提交变更申请表
+   - 说明变更原因和具体内容
+   - 评估影响范围
+
+2. **变更评审**:
+   - 技术评审
+   - 业务评审
+   - 安全评审
+
+3. **变更执行**:
+   - 制定详细的执行计划和回滚计划
+   - 在测试环境验证
+   - 在生产环境执行
+
+4. **变更验证**:
+   - 验证变更是否成功
+   - 监控系统是否正常运行
+   - 收集用户反馈
+
+### 13.3 向后兼容策略
+
+为确保数据模型变更的平滑过渡，采用以下向后兼容策略:
+
+1. **增量式变更**:
+   - 优先采用添加而非修改或删除
+   - 使用新的表或字段而非修改现有结构
+
+2. **过渡期策略**:
+   - 设置足够长的过渡期
+   - 在过渡期内同时支持新旧结构
+   - 过渡期结束后再删除旧结构
+
+3. **兼容层设计**:
+   - 建立数据访问层抽象接口
+   - 在接口层处理新旧模型差异
+   - 应用程序通过接口访问数据，屏蔽底层变化
+
+### 13.4 性能优化策略
+
+定期对数据模型进行性能优化:
+
+1. **定期评估**:
+   - 每季度评估数据模型性能
+   - 识别性能瓶颈和热点表
+   - 分析查询执行计划
+
+2. **优化措施**:
+   - 索引优化: 添加、删除或调整索引
+   - 表结构优化: 调整字段类型或拆分大表
+   - 查询优化: 优化复杂查询或创建视图
+   - 分区策略: 对大表实施分区
+
+3. **扩展策略**:
+   - 水平分表: 根据业务规则拆分大表
+   - 垂直分库: 按业务领域拆分数据库
+   - 读写分离: 分离读操作和写操作
+   - 分布式方案: 实施分布式数据库
+
+## 附录
+
+### 附录A: 表结构详细说明
+
+本附录提供系统中主要表的详细说明和使用说明，包括:
+
+1. 表的用途和业务场景
+2. 主要字段的业务含义
+3. 与其他表的关联关系
+4. 常见操作和查询示例
+5. 注意事项和最佳实践
+
+### 附录B: 索引设计说明
+
+本附录提供系统中主要索引的设计说明，包括:
+
+1. 索引的类型和选择依据
+2. 复合索引的设计原则
+3. 索引使用的最佳实践
+4. 索引维护策略
+
+### 附录C: E-R关系图
+
+本附录提供完整的实体关系图，按模块分类展示系统的实体及其关系。
+
+### 附录D: 数据模型变更历史
+
+| 版本号 | 变更日期 | 变更内容 | 变更原因 | 负责人 |
+|-------|---------|---------|---------|-------|
+| 1.0.0 | 2023-06-01 | 初始版本 | 系统初始设计 | 张三 |
+| 1.1.0 | 2023-07-15 | 新增服务模块相关表 | 新增服务管理功能 | 李四 |
+| 1.1.1 | 2023-08-05 | 优化合同表索引 | 提升查询性能 | 王五 |
+| 1.2.0 | 2023-09-20 | 新增资产管理模块表 | 新增资产管理功能 | 赵六 |
+| 2.0.0 | 2023-12-01 | 重构用户权限模型 | 提升安全性和灵活性 | 张三 |
+
+### 附录E: 数据字典
+
+本附录提供完整的数据字典，包括所有编码和状态值的详细定义。
+
+### 附录F: 数据迁移说明
+
+本附录提供数据迁移相关的说明，包括:
+
+1. 历史数据迁移策略
+2. 跨版本数据迁移方案
+3. 数据清洗和转换规则
+4. 迁移验证标准
+
+### 附录G: 数据安全措施
+
+本附录提供详细的数据安全措施说明，包括:
+
+1. 数据加密方案详情
+2. 敏感数据处理规范
+3. 数据脱敏规则
+4. 安全审计记录标准
