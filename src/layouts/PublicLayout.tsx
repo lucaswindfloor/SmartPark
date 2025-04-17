@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Dropdown, Avatar, Badge, Button, Typography, Space } from 'antd';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
 import type { MenuProps } from 'antd';
 import {
   HomeOutlined, 
@@ -20,11 +20,13 @@ import {
   MenuFoldOutlined,
   LoginOutlined,
   KeyOutlined,
-  CarOutlined
+  CarOutlined,
+  CalendarOutlined,
+  MessageOutlined
 } from '@ant-design/icons';
 import { useAuth } from '../contexts/AuthContext';
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 const { Title, Text } = Typography;
 
 // 定义菜单项类型
@@ -69,9 +71,11 @@ const mainNavItems: MenuItem[] = [
 const PublicLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedNavKey, setSelectedNavKey] = useState('home');
-  const { userRole, switchRole, availableRoles, logout, isAuthenticated } = useAuth();
+  const { userRole, switchRole, availableRoles, logout, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { pathname } = useLocation();
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   
   // 确保用户总是有访客角色
   useEffect(() => {
@@ -92,6 +96,14 @@ const PublicLayout: React.FC = () => {
       }
     }
   }, [location]);
+  
+  // 模拟获取未读消息数量
+  useEffect(() => {
+    if (isAuthenticated) {
+      // 这里应该是从API获取未读消息数量
+      setUnreadCount(5);
+    }
+  }, [isAuthenticated]);
   
   // 角色标签样式和图标
   const roleConfig = {
@@ -600,8 +612,13 @@ const PublicLayout: React.FC = () => {
     return currentNav ? currentNav.label : '';
   };
 
+  const selectedKeys = () => {
+    const path = pathname.split('/')[2] || 'home';
+    return [path];
+  };
+
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout className="layout" style={{ minHeight: '100vh' }}>
       <Header style={{ 
         padding: '0 30px', 
         background: 'linear-gradient(90deg, #0F2645 0%, #1D4073 100%)',
@@ -724,7 +741,7 @@ const PublicLayout: React.FC = () => {
           )}
           
           {/* 通知图标 - 根据登录状态显示通知数 */}
-          <Badge count={isAuthenticated ? 5 : 0} style={{ 
+          <Badge count={unreadCount} style={{ 
             marginRight: 14,
             backgroundColor: '#FF4D4F',
             boxShadow: '0 0 0 2px #0F2645',
@@ -815,7 +832,7 @@ const PublicLayout: React.FC = () => {
           </div>
           <Menu
             mode="inline"
-            defaultSelectedKeys={[]}
+            defaultSelectedKeys={selectedKeys()}
             style={{ 
               height: 'calc(100% - 64px)', 
               borderRight: 0,
@@ -861,6 +878,10 @@ const PublicLayout: React.FC = () => {
           </Content>
         </Layout>
       </Layout>
+      
+      <Footer style={{ textAlign: 'center', background: '#f0f2f5', padding: '24px' }}>
+        智慧园区公共服务平台 ©{new Date().getFullYear()} 湘江科创基地
+      </Footer>
       
       <style>
         {`

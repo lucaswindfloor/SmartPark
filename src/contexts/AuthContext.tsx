@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { message, Alert } from 'antd';
-import { AnnouncementPermission, PermissionAction, PermissionModule } from '../constants/permissions';
+import { PermissionAction, AnnouncementPermission } from '../constants/permissions';
 
-// 定义角色类型
+// 定义用户角色类型
 export type UserRole = 'contentAdmin' | 'reviewer';
 
 // 权限矩阵定义
@@ -31,6 +31,7 @@ const PERMISSION_MATRIX: Record<UserRole, (PermissionAction | AnnouncementPermis
 interface AuthContextType {
   isAuthenticated: boolean;
   userInfo: any | null;
+  user?: any | null;
   userRole: UserRole;
   availableRoles: UserRole[];
   login: (username: string, password: string) => Promise<boolean>;
@@ -61,7 +62,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
         setUserRole(authData.userRole);
         setAvailableRoles(authData.availableRoles);
       } catch (error) {
-        console.error('解析本地存储的认证信息失败:', error);
+        console.error('解析本地存储的认证信息失败', error);
         // 如果解析失败，清除无效数据
         localStorage.removeItem('auth');
         localStorage.removeItem('token');
@@ -75,11 +76,11 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       // 清除现有的localStorage数据
       localStorage.removeItem('auth');
       localStorage.removeItem('token');
-      
+
       // 根据用户名确定角色
       let role: UserRole;
       let realName: string;
-      
+
       if (username === 'content_admin' && password === 'content123') {
         role = 'contentAdmin';
         realName = '内容管理员';
@@ -91,9 +92,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       } else {
         throw new Error('无效的用户名或密码');
       }
-      
-      console.log('登录成功，分配角色:', role);
-      
+
+      console.log('登录成功，分配角色', role);
+
       // 设置登录状态
       setIsAuthenticated(true);
       setUserInfo({
@@ -104,7 +105,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
       });
       setUserRole(role);
       setAvailableRoles([role]);
-      
+
       // 存储到本地
       localStorage.setItem('auth', JSON.stringify({
         userInfo: {
@@ -117,7 +118,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
         availableRoles: [role]
       }));
       localStorage.setItem('token', 'fake-jwt-token');
-      
+
       message.success(`登录成功，当前角色: ${realName}`);
       return true;
     } catch (error) {
@@ -142,7 +143,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const switchRole = (role: UserRole): boolean => {
     if (availableRoles.includes(role)) {
       setUserRole(role);
-      
+
       // 更新本地存储
       const storedAuth = localStorage.getItem('auth');
       if (storedAuth) {
@@ -150,26 +151,26 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
         authData.userRole = role;
         localStorage.setItem('auth', JSON.stringify(authData));
       }
-      
+
       message.success(`已切换至${
         role === 'contentAdmin' ? '内容管理员' : '审核员'
       }模式`);
       return true;
     }
-    
+
     message.error('无权限切换至该角色');
     return false;
   };
 
   // 检查权限
   const hasPermission = (action: PermissionAction | AnnouncementPermission | string): boolean => {
-    console.log('权限检查 ->', '角色:', userRole, '权限:', action);
-    
+    console.log('权限检查->', '角色:', userRole, '权限:', action);
+
     // 检查权限矩阵
     const permissions = PERMISSION_MATRIX[userRole] || [];
     const hasPermission = permissions.includes(action as any);
-    
-    console.log('权限检查结果:', hasPermission);
+
+    console.log('权限检查结果', hasPermission);
     return hasPermission;
   };
 
@@ -191,6 +192,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const value = {
     isAuthenticated,
     userInfo,
+    user: userInfo, // 兼容user属性
     userRole,
     availableRoles,
     login,
@@ -199,7 +201,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     hasPermission,
     checkPermission
   };
-  
+
   return (
     <AuthContext.Provider value={value}>
       {children}
