@@ -2,7 +2,7 @@
 // 定义招商管理相关路由
 
 export default {
-  path: '/investment',
+  path: '/comprehensive/investment',
   name: 'Investment',
   component: () => import('../../views/investment/index.vue'),
   meta: {

@@ -6,7 +6,7 @@ import fs from 'fs';
 export default defineConfig({
   plugins: [
     vue(),
-    // 自定义插件：记录和阻止重定向
+    // 自定义插件：记录请求
     {
       name: 'log-requests',
       configureServer(server) {
@@ -14,11 +14,11 @@ export default defineConfig({
           // 记录请求
           console.log(`请求: ${req.method} ${req.url}`);
           
-          // 如果是根路径，重定向到我们的中间页面
+          // 如果是根路径，直接重定向到选择器页面
           if (req.url === '/' || req.url === '/index.html') {
-            console.log('拦截到根路径请求，重定向到redirect_fix.html');
+            console.log('拦截到根路径请求，重定向到选择器页面');
             res.writeHead(302, {
-              'Location': '/redirect_fix.html'
+              'Location': '/selector.html'
             });
             res.end();
             return;
@@ -67,8 +67,8 @@ export default defineConfig({
       disableDotRule: true,
       verbose: true,
       rewrites: [
-        // 使用我们的重定向修复页
-        { from: /^\/$/, to: '/redirect_fix.html' },
+        // 使用选择器页面作为根路径
+        { from: /^\/$/, to: '/selector.html' },
         // 选择器页面
         { from: /^\/selector\.html$/, to: '/selector.html' },
         // 其他路径

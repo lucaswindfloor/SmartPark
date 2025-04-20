@@ -13,10 +13,10 @@ console.log('Investment路由:', investmentRoute);
 
 // 创建路由实例
 const router = createRouter({
-  history: createWebHistory('/comprehensive'),
+  history: createWebHistory(),  // 移除基础路径'/comprehensive'
   routes: [
     {
-      path: '/login',
+      path: '/comprehensive/login',
       name: 'Login',
       component: () => import('../views/login/index.vue'),
       meta: {
@@ -25,7 +25,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/',
+      path: '/comprehensive',
       component: () => import('../views/login/index.vue'),
       meta: {
         title: '登录',
@@ -38,8 +38,8 @@ const router = createRouter({
     investmentRoute,
     // 捕获所有未匹配的路由，重定向到登录页
     {
-      path: '/:pathMatch(.*)*',
-      redirect: '/login'
+      path: '/comprehensive/:pathMatch(.*)*',
+      redirect: '/comprehensive/login'
     }
   ]
 });

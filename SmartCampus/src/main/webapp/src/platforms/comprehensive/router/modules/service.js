@@ -2,7 +2,7 @@
 // This file defines the routes for the Service Management module
 
 export default {
-  path: '/service',
+  path: '/comprehensive/service',
   name: 'ServiceManagement',
   component: () => import('../../views/service/index.vue'),
   meta: {

@@ -2,7 +2,7 @@
 // 定义工作门户相关路由
 
 export default {
-  path: '/dashboard',
+  path: '/comprehensive/dashboard',
   name: 'Dashboard',
   component: () => import('../../views/Dashboard.vue'),
   meta: {
