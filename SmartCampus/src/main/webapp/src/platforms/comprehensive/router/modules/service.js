@@ -1,134 +1,164 @@
 // Service Management Module Routes
 // This file defines the routes for the Service Management module
 
-const serviceRoutes = [
-  {
-    path: '/service',
-    name: 'ServiceManagement',
-    component: () => import('../../views/service/ServiceManagement.vue'),
-    meta: {
-      title: '服务管理',
-      icon: 'CustomerServiceOutlined',
-      permissions: ['service:view']
-    },
-    children: [
-      // Information disclosure routes
-      {
-        path: 'information',
-        name: 'InformationDisclosure',
-        component: () => import('../../views/service/information/InformationManagement.vue'),
-        meta: {
-          title: '信息发布管理',
-          icon: 'ProfileOutlined',
-          permissions: ['service:information:view']
-        },
-        children: [
-          {
-            path: 'notification',
-            name: 'NotificationManagement',
-            component: () => import('../../views/service/information/notification/NotificationList.vue'),
-            meta: {
-              title: '通知公告',
-              icon: 'NotificationOutlined',
-              permissions: ['service:information:notification:view']
-            }
+export default {
+  path: '/service',
+  name: 'ServiceManagement',
+  component: () => import('../../views/service/index.vue'),
+  meta: {
+    title: '服务管理',
+    icon: 'customer-service-outlined',
+    permission: ['service:view']
+  },
+  children: [
+    // 信息公开子模块
+    {
+      path: 'information',
+      name: 'InformationDisclosure',
+      component: () => import('../../views/service/information/index.vue'),
+      meta: {
+        title: '信息公开',
+        icon: 'info-circle-outlined',
+        permission: ['service:information:view']
+      },
+      children: [
+        // 通知公告管理
+        {
+          path: 'notification',
+          name: 'NotificationManagement',
+          component: () => import('../../views/service/information/notification/index.vue'),
+          meta: {
+            title: '通知公告管理',
+            icon: 'notification-outlined',
+            permission: ['service:information:notification:view']
           },
-          {
-            path: 'notification/create',
-            name: 'CreateNotification',
-            component: () => import('../../views/service/information/notification/NotificationForm.vue'),
-            meta: {
-              title: '创建通知公告',
-              hideInMenu: true,
-              permissions: ['service:information:notification:create']
+          children: [
+            {
+              path: 'list',
+              name: 'NotificationList',
+              component: () => import('../../views/service/information/notification/List.vue'),
+              meta: {
+                title: '通知公告列表',
+                icon: 'unordered-list-outlined',
+                permission: ['service:information:notification:list']
+              }
+            },
+            {
+              path: 'create',
+              name: 'CreateNotification',
+              component: () => import('../../views/service/information/notification/Form.vue'),
+              meta: {
+                title: '创建通知公告',
+                icon: 'form-outlined',
+                permission: ['service:information:notification:create'],
+                hidden: true
+              }
+            },
+            {
+              path: 'edit/:id',
+              name: 'EditNotification',
+              component: () => import('../../views/service/information/notification/Form.vue'),
+              meta: {
+                title: '编辑通知公告',
+                icon: 'edit-outlined',
+                permission: ['service:information:notification:edit'],
+                hidden: true
+              }
+            },
+            {
+              path: 'detail/:id',
+              name: 'NotificationDetail',
+              component: () => import('../../views/service/information/notification/Detail.vue'),
+              meta: {
+                title: '通知公告详情',
+                icon: 'file-text-outlined',
+                permission: ['service:information:notification:detail'],
+                hidden: true
+              }
+            },
+            {
+              path: 'statistics/:id',
+              name: 'NotificationStatistics',
+              component: () => import('../../views/service/information/notification/Statistics.vue'),
+              meta: {
+                title: '通知公告统计',
+                icon: 'pie-chart-outlined',
+                permission: ['service:information:notification:statistics'],
+                hidden: true
+              }
             }
-          },
-          {
-            path: 'notification/edit/:id',
-            name: 'EditNotification',
-            component: () => import('../../views/service/information/notification/NotificationForm.vue'),
-            meta: {
-              title: '编辑通知公告',
-              hideInMenu: true,
-              permissions: ['service:information:notification:edit']
-            }
-          },
-          {
-            path: 'notification/detail/:id',
-            name: 'NotificationDetail',
-            component: () => import('../../views/service/information/notification/NotificationDetail.vue'),
-            meta: {
-              title: '通知公告详情',
-              hideInMenu: true,
-              permissions: ['service:information:notification:view']
-            }
-          },
-          {
-            path: 'policy',
-            name: 'PolicyManagement',
-            component: () => import('../../views/service/information/policy/PolicyList.vue'),
-            meta: {
-              title: '政策文件',
-              icon: 'FileTextOutlined',
-              permissions: ['service:information:policy:view']
-            }
-          },
-          {
-            path: 'activity',
-            name: 'ActivityManagement',
-            component: () => import('../../views/service/information/activity/ActivityList.vue'),
-            meta: {
-              title: '园区活动',
-              icon: 'CalendarOutlined',
-              permissions: ['service:information:activity:view']
-            }
-          },
-          {
-            path: 'survey',
-            name: 'SurveyManagement',
-            component: () => import('../../views/service/information/survey/SurveyList.vue'),
-            meta: {
-              title: '问卷调查',
-              icon: 'FormOutlined',
-              permissions: ['service:information:survey:view']
-            }
-          },
-          {
-            path: 'demand',
-            name: 'DemandManagement',
-            component: () => import('../../views/service/information/demand/DemandList.vue'),
-            meta: {
-              title: '需求发布',
-              icon: 'BulbOutlined',
-              permissions: ['service:information:demand:view']
-            }
+          ]
+        }
+        // 其他信息公开页面暂时被注释掉
+        /*
+        // 政策文件管理
+        {
+          path: 'policy',
+          name: 'PolicyManagement',
+          component: () => import('../../views/service/information/policy/index.vue'),
+          meta: {
+            title: '政策文件管理',
+            icon: 'file-outlined',
+            permission: ['service:information:policy:view']
           }
-        ]
-      },
-      // Work order management routes
-      {
-        path: 'workorder',
-        name: 'WorkOrderManagement',
-        component: () => import('../../views/service/workorder/WorkOrderManagement.vue'),
-        meta: {
-          title: '工单管理',
-          icon: 'ToolOutlined',
-          permissions: ['service:workorder:view']
+        },
+        // 活动通知管理
+        {
+          path: 'activity',
+          name: 'ActivityManagement',
+          component: () => import('../../views/service/information/activity/index.vue'),
+          meta: {
+            title: '活动通知管理',
+            icon: 'calendar-outlined',
+            permission: ['service:information:activity:view']
+          }
+        },
+        // 问卷调查管理
+        {
+          path: 'survey',
+          name: 'SurveyManagement',
+          component: () => import('../../views/service/information/survey/index.vue'),
+          meta: {
+            title: '问卷调查管理',
+            icon: 'form-outlined',
+            permission: ['service:information:survey:view']
+          }
+        },
+        // 需求征集管理
+        {
+          path: 'demand',
+          name: 'DemandManagement',
+          component: () => import('../../views/service/information/demand/index.vue'),
+          meta: {
+            title: '需求征集管理',
+            icon: 'inbox-outlined',
+            permission: ['service:information:demand:view']
+          }
         }
-      },
-      // Service evaluation routes
-      {
-        path: 'evaluation',
-        name: 'ServiceEvaluation',
-        component: () => import('../../views/service/evaluation/EvaluationManagement.vue'),
-        meta: {
-          title: '服务评价',
-          icon: 'StarOutlined',
-          permissions: ['service:evaluation:view']
-        }
+        */
+      ]
+    },
+    // 工单管理子模块
+    {
+      path: 'workorder',
+      name: 'WorkOrderManagement',
+      component: () => import('../../views/service/workorder/index.vue'),
+      meta: {
+        title: '工单管理',
+        icon: 'solution-outlined',
+        permission: ['service:workorder:view']
       }
-    ]
-  }
-];
-
-export default serviceRoutes; 
+    },
+    // 服务评价子模块
+    {
+      path: 'evaluation',
+      name: 'ServiceEvaluation',
+      component: () => import('../../views/service/evaluation/index.vue'),
+      meta: {
+        title: '服务评价',
+        icon: 'star-outlined',
+        permission: ['service:evaluation:view']
+      }
+    }
+  ]
+}; 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>正在加载选择器...</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%);
+      color: white;
+    }
+    .loading {
+      text-align: center;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 5px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <h2>正在准备平台选择器...</h2>
+    <div class="spinner"></div>
+    <p>如果页面没有自动跳转，请点击<a href="/selector.html" style="color: white; font-weight: bold;">这里</a></p>
+  </div>
+
+  <script>
+    // 记录当前路径
+    console.log('当前路径:', window.location.pathname);
+    
+    // 检测是否直接访问这个页面
+    if (window.location.pathname === '/redirect_fix.html') {
+      // 如果是直接访问，则转到选择器
+      setTimeout(() => {
+        window.location.href = '/selector.html';
+      }, 1000);
+    } else {
+      // 如果通过重定向到这里，则直接中断重定向链
+      setTimeout(() => {
+        // 使用HTML5的History API来替换浏览器历史而不是添加新条目
+        window.history.replaceState({}, "平台选择器", "/selector.html");
+        window.location.reload();
+      }, 500);
+    }
+  </script>
+</body>
+</html> 

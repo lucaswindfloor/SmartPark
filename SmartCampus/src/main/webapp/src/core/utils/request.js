@@ -1,26 +1,32 @@
-// request.js
-// API请求封装工具
+/**
+ * @file request.js
+ * @description API请求工具类，基于axios封装
+ */
 
 import axios from 'axios';
+import { message } from 'antd';
+import { getToken, refreshToken, logout } from './auth';
 
-// 创建一个axios实例
+// 创建axios实例
 const service = axios.create({
-  baseURL: '/api', // API基础URL
-  timeout: 15000 // 请求超时
+  baseURL: process.env.REACT_APP_API_BASE_URL || '/api',
+  timeout: 15000, // 请求超时时间
+  headers: {
+    'Content-Type': 'application/json;charset=utf-8'
+  }
 });
 
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    // 在发送请求之前处理
-    const token = localStorage.getItem('token');
+    // 请求前获取token并添加到请求头
+    const token = getToken();
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
   error => {
-    // 处理请求错误
     console.error('请求错误:', error);
     return Promise.reject(error);
   }
@@ -29,89 +35,180 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   response => {
-    // 处理响应数据
     const res = response.data;
     
-    // 根据业务状态码处理响应
-    if (res.code && res.code !== 200) {
-      // 处理各种业务错误
+    // 根据业务状态码判断请求是否成功
+    if (res.code !== 200 && res.code !== 0) {
+      message.error(res.message || '请求失败');
+      
+      // 401: Token失效
       if (res.code === 401) {
-        // 未授权，重定向到登录页
-        window.location.href = '/login';
+        // 尝试刷新token
+        return refreshToken().then(newToken => {
+          if (newToken) {
+            // 使用新token重新请求
+            const config = response.config;
+            config.headers['Authorization'] = `Bearer ${newToken}`;
+            return service(config);
+          } else {
+            // 刷新失败，登出处理
+            logout();
+            window.location.href = '/login';
+            return Promise.reject(new Error('登录已过期，请重新登录'));
+          }
+        }).catch(() => {
+          logout();
+          window.location.href = '/login';
+          return Promise.reject(new Error('登录已过期，请重新登录'));
+        });
       }
       
-      return Promise.reject(new Error(res.message || '未知错误'));
+      // 403: 权限不足
+      if (res.code === 403) {
+        message.error('权限不足，无法访问此资源');
+      }
+      
+      return Promise.reject(new Error(res.message || '请求失败'));
     } else {
       return res;
     }
   },
   error => {
-    // 处理响应错误
     console.error('响应错误:', error);
+    const { status } = error.response || {};
     
-    if (error.response) {
-      // 根据HTTP状态码处理错误
-      switch (error.response.status) {
-        case 401:
-          // 未授权，重定向到登录页
-          window.location.href = '/login';
-          break;
-        case 403:
-          // 无权限
-          console.error('无权限访问该资源');
-          break;
-        case 404:
-          // 资源不存在
-          console.error('请求的资源不存在');
-          break;
-        case 500:
-          // 服务器错误
-          console.error('服务器错误');
-          break;
-        default:
-          console.error(`HTTP错误: ${error.response.status}`);
-      }
+    switch (status) {
+      case 401:
+        message.error('登录已过期，请重新登录');
+        logout();
+        window.location.href = '/login';
+        break;
+      case 403:
+        message.error('权限不足，无法访问此资源');
+        break;
+      case 404:
+        message.error('请求的资源不存在');
+        break;
+      case 500:
+        message.error('服务器错误，请联系管理员');
+        break;
+      default:
+        message.error(error.message || '请求失败，请稍后重试');
     }
     
     return Promise.reject(error);
   }
 );
 
-// 封装GET请求
-export function get(url, params) {
+/**
+ * 封装GET请求
+ * @param {string} url - 请求URL
+ * @param {object} params - 请求参数
+ * @param {object} config - 额外配置项
+ * @returns {Promise} - 返回Promise对象
+ */
+export function get(url, params = {}, config = {}) {
   return service({
     url,
     method: 'get',
-    params
+    params,
+    ...config
   });
 }
 
-// 封装POST请求
-export function post(url, data) {
+/**
+ * 封装POST请求
+ * @param {string} url - 请求URL
+ * @param {object} data - 请求体数据
+ * @param {object} config - 额外配置项
+ * @returns {Promise} - 返回Promise对象
+ */
+export function post(url, data = {}, config = {}) {
   return service({
     url,
     method: 'post',
-    data
+    data,
+    ...config
   });
 }
 
-// 封装PUT请求
-export function put(url, data) {
+/**
+ * 封装PUT请求
+ * @param {string} url - 请求URL
+ * @param {object} data - 请求体数据
+ * @param {object} config - 额外配置项
+ * @returns {Promise} - 返回Promise对象
+ */
+export function put(url, data = {}, config = {}) {
   return service({
     url,
     method: 'put',
-    data
+    data,
+    ...config
   });
 }
 
-// 封装DELETE请求
-export function del(url, params) {
+/**
+ * 封装DELETE请求
+ * @param {string} url - 请求URL
+ * @param {object} params - 请求参数
+ * @param {object} config - 额外配置项
+ * @returns {Promise} - 返回Promise对象
+ */
+export function del(url, params = {}, config = {}) {
   return service({
     url,
     method: 'delete',
-    params
+    params,
+    ...config
   });
 }
 
-// 导出请求工具
+/**
+ * 封装文件上传请求
+ * @param {string} url - 上传URL
+ * @param {FormData} formData - 表单数据
+ * @param {object} config - 额外配置项
+ * @returns {Promise} - 返回Promise对象
+ */
+export function upload(url, formData, config = {}) {
+  return service({
+    url,
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    ...config
+  });
+}
+
+/**
+ * 封装文件下载请求
+ * @param {string} url - 下载URL
+ * @param {object} params - 请求参数
+ * @param {string} filename - 保存的文件名
+ * @param {object} config - 额外配置项
+ * @returns {Promise} - 返回Promise对象
+ */
+export function download(url, params = {}, filename, config = {}) {
+  return service({
+    url,
+    method: 'get',
+    params,
+    responseType: 'blob',
+    ...config
+  }).then(response => {
+    // 创建blob链接并触发下载
+    const blob = new Blob([response.data]);
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename || 'download';
+    link.click();
+    window.URL.revokeObjectURL(link.href);
+    
+    return response;
+  });
+}
+
 export default service; 
