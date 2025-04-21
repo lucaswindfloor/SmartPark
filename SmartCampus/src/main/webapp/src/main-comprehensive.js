@@ -9,12 +9,19 @@ import 'element-plus/dist/index.css';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import './assets/styles/main.css';
 
+// 导入Pinia和共享状态
+import { createPinia } from 'pinia';
+import { useSharedStore } from './stores/shared';
+
 // 显示基本调试信息
 console.log('正在加载综合管理平台...');
 console.log('当前路径:', window.location.pathname);
 
 // 创建应用实例
 const app = createApp(App);
+
+// 创建Pinia实例
+const pinia = createPinia();
 
 // 添加错误处理
 app.config.errorHandler = (err, vm, info) => {
@@ -32,6 +39,7 @@ app.config.errorHandler = (err, vm, info) => {
 };
 
 // 使用插件
+app.use(pinia); // 添加Pinia
 app.use(router);
 app.use(ElementPlus);
 
@@ -48,4 +56,19 @@ setTimeout(() => {
   // 挂载应用
   app.mount('#app');
   console.log('综合管理平台已挂载');
+  
+  // 测试共享状态
+  const sharedStore = useSharedStore();
+  sharedStore.updatePlatformStatus('comprehensive', 'initialized');
+  sharedStore.addGlobalNotification({
+    title: '综合管理平台已启动',
+    message: '平台初始化完成，共享状态测试成功',
+    type: 'success'
+  });
+  
+  console.log('共享状态测试:', {
+    platforms: sharedStore.platformStatuses,
+    notifications: sharedStore.globalNotifications,
+    unreadCount: sharedStore.unreadNotificationsCount
+  });
 }, 0); 
