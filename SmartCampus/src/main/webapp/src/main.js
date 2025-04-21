@@ -9,6 +9,11 @@ import comprehensiveRouter from './platforms/comprehensive/router';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+
+// 添加 Ant Design Vue
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/reset.css';
+
 import './assets/styles/main.css';
 
 console.log('初始路径:', window.location.pathname);
@@ -49,6 +54,9 @@ if (window.location.pathname === '/' || window.location.pathname === '') {
     const app = createApp(PlatformSelector);
     console.log('平台选择器应用已创建');
     
+    // 添加 Ant Design Vue 支持
+    app.use(Antd);
+    
     app.mount('#app');
     console.log('平台选择器已挂载到#app');
     
@@ -86,6 +94,7 @@ else if (window.location.pathname.startsWith('/comprehensive/')) {
   // 使用插件
   app.use(comprehensiveRouter);
   app.use(ElementPlus);
+  app.use(Antd); // 使用 Ant Design Vue
   
   // 注册Element Plus图标
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -104,7 +113,9 @@ else if (window.location.pathname.startsWith('/comprehensive/')) {
   // 其他路径也加载平台选择器
   console.log('未识别的路径:', window.location.pathname, '加载平台选择器');
   try {
-    createApp(PlatformSelector).mount('#app');
+    const app = createApp(PlatformSelector);
+    app.use(Antd); // 使用 Ant Design Vue
+    app.mount('#app');
     console.log('平台选择器已挂载到#app (其他路径)');
   } catch (err) {
     console.error('挂载平台选择器时出错 (其他路径):', err);

@@ -61,8 +61,19 @@ SmartCampus/
 │   │   │   │
 │   │   │   ├── views/                      # 页面组件
 │   │   │   │   ├── dashboard/              # 工作门户
-│   │   │   │   │   ├── index.vue           # 主页面 ⏳
+│   │   │   │   │   ├── index.vue           # 主页面 ✅
 │   │   │   │   │   └── components/         # 仪表盘组件 ⏳
+│   │   │   │   │
+│   │   │   │   ├── home/                   # 首页组件
+│   │   │   │   │   └── index.vue           # 主页面 ✅
+│   │   │   │   │
+│   │   │   │   ├── login/                  # 登录页面
+│   │   │   │   │   └── index.vue           # 登录页面 ✅
+│   │   │   │   │
+│   │   │   │   ├── error/                  # 错误页面
+│   │   │   │   │   ├── 404.vue             # 404页面 ✅
+│   │   │   │   │   ├── 403.vue             # 403页面 ✅
+│   │   │   │   │   └── 500.vue             # 500页面 ✅
 │   │   │   │   │
 │   │   │   │   ├── investment/             # 招商管理模块
 │   │   │   │   │   ├── index.vue           # 投资管理入口 ✅
@@ -103,8 +114,9 @@ SmartCampus/
 │   │   │   │
 │   │   │   ├── components/                 # 平台特定组件 ⏳
 │   │   │   ├── api/                        # API接口 ⏳
-│   │   │   ├── store/                      # Pinia状态 ⏳
-│   │   │   └── App.vue                     # 综合管理平台主应用 ⏳
+│   │   │   ├── error/                      # 错误页面组件 ✅
+│   │   │   ├── stores/                     # Pinia状态管理 ✅
+│   │   │   └── App.vue                     # 综合管理平台主应用 ✅
 │   │   │
 │   │   ├── public-service/                 # 公共服务平台
 │   │   │   ├── router/                     # 路由配置 ⏳
@@ -153,7 +165,7 @@ SmartCampus/
 │   │   │   │
 │   │   │   ├── components/                 # 平台特定组件 ⏳
 │   │   │   ├── api/                        # API接口 ⏳
-│   │   │   ├── store/                      # Pinia状态 ⏳
+│   │   │   ├── stores/                     # Pinia状态 ⏳
 │   │   │   └── App.vue                     # 公共平台主应用 ⏳
 │   │   │
 │   │   └── system-admin/                   # 系统管理员平台
@@ -191,7 +203,7 @@ SmartCampus/
 │   │       │
 │   │       ├── components/                 # 平台特定组件 ⏳
 │   │       ├── api/                        # API接口 ⏳
-│   │       ├── store/                      # Pinia状态 ⏳
+│   │       ├── stores/                     # Pinia状态 ⏳
 │   │       └── App.vue                     # 系统管理员平台主应用 ⏳
 │   │
 │   ├── services/                           # 服务层

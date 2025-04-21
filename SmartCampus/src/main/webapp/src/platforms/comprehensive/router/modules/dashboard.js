@@ -4,7 +4,7 @@
 export default {
   path: '/comprehensive/dashboard',
   name: 'Dashboard',
-  component: () => import('../../views/Dashboard.vue'),
+  component: () => import('../../views/dashboard/index.vue'),
   meta: {
     title: '工作门户',
     icon: 'dashboard-outlined',

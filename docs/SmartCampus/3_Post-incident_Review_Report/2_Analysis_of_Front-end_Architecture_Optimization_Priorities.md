@@ -2134,3 +2134,1482 @@ export const useSharedStore = defineStore('shared', () => {
 - 刷新页面后，检查platformStatuses是否保持了刷新前的状态
 
 从这个最小实现开始，我们可以逐步扩展功能，下一步应该是实现基础权限管理系统。
+
+
+
+
+
+# 权限管理体系优化方案
+
+## 1. 整体架构设计
+
+### 核心组件
+1. **权限状态存储** - 基于Pinia的跨平台共享状态
+2. **权限指令系统** - 用于UI元素控制的Vue指令
+3. **路由守卫机制** - 针对路由级别的权限控制
+4. **权限数据同步** - 与后端API的数据同步机制
+5. **变更监听机制** - 动态响应权限变更
+
+## 2. 权限状态存储设计
+
+```javascript
+// src/stores/permission.js
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+import { getPermissions } from '../services/auth';
+
+export const usePermissionStore = defineStore('permission', () => {
+  // 状态
+  const permissions = ref([]);  // 权限代码列表
+  const roles = ref([]);        // 角色列表
+  const permissionMap = ref({}); // 权限映射表(快速查找)
+  const loading = ref(false);
+  
+  // 持久化标记
+  const $persistState = true;
+  
+  // 计算属性
+  const isAdmin = computed(() => roles.value.includes('admin'));
+  
+  // 权限检查函数
+  const hasPermission = computed(() => (permissionKey) => {
+    if (!permissionKey) return true;
+    if (isAdmin.value) return true;
+    
+    if (Array.isArray(permissionKey)) {
+      return permissionKey.some(key => permissionMap.value[key]);
+    }
+    
+    return !!permissionMap.value[permissionKey];
+  });
+  
+  // 方法
+  async function loadPermissions() {
+    loading.value = true;
+    try {
+      const res = await getPermissions();
+      permissions.value = res.data.permissions || [];
+      roles.value = res.data.roles || [];
+      
+      // 构建权限映射表
+      const permMap = {};
+      permissions.value.forEach(perm => {
+        permMap[perm] = true;
+      });
+      permissionMap.value = permMap;
+      
+      return true;
+    } catch (error) {
+      console.error('加载权限失败:', error);
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+  
+  // 权限更新处理
+  function updatePermissions(newPermissions, newRoles = null) {
+    permissions.value = newPermissions || permissions.value;
+    if (newRoles) roles.value = newRoles;
+    
+    // 更新权限映射
+    const permMap = {};
+    permissions.value.forEach(perm => {
+      permMap[perm] = true;
+    });
+    permissionMap.value = permMap;
+  }
+  
+  return {
+    permissions,
+    roles,
+    permissionMap,
+    loading,
+    $persistState,
+    isAdmin,
+    hasPermission,
+    loadPermissions,
+    updatePermissions
+  };
+});
+```
+
+## 3. 权限指令设计
+
+```javascript
+// src/core/directives/permission.js
+import { usePermissionStore } from '../../stores/permission';
+
+export default {
+  install(app) {
+    // v-permission 指令
+    app.directive('permission', {
+      mounted(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        
+        if (value && !permissionStore.hasPermission(value)) {
+          // DOM方法：移除元素
+          el.parentNode && el.parentNode.removeChild(el);
+        }
+      },
+      
+      updated(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        
+        if (value && !permissionStore.hasPermission(value)) {
+          el.parentNode && el.parentNode.removeChild(el);
+        }
+      }
+    });
+    
+    // v-role 指令 (基于角色的控制)
+    app.directive('role', {
+      mounted(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        const roles = permissionStore.roles;
+        
+        const hasRole = Array.isArray(value)
+          ? value.some(r => roles.includes(r))
+          : roles.includes(value);
+        
+        if (!hasRole) {
+          el.parentNode && el.parentNode.removeChild(el);
+        }
+      },
+      
+      updated(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        const roles = permissionStore.roles;
+        
+        const hasRole = Array.isArray(value)
+          ? value.some(r => roles.includes(r))
+          : roles.includes(value);
+        
+        if (!hasRole) {
+          el.parentNode && el.parentNode.removeChild(el);
+        }
+      }
+    });
+  }
+};
+```
+
+## 4. 路由守卫设计
+
+```javascript
+// 在各平台路由模块中添加
+// 例如: src/platforms/comprehensive/router/index.js
+
+import { usePermissionStore } from '../../../stores/permission';
+
+// 路由守卫实现
+router.beforeEach(async (to, from, next) => {
+  const permissionStore = usePermissionStore();
+  const hasToken = getToken();
+  
+  // 不需要登录的页面直接通过
+  if (to.meta.requiresAuth === false) {
+    return next();
+  }
+  
+  // 验证登录状态
+  if (!hasToken) {
+    return next({
+      path: '/comprehensive/login',
+      query: { redirect: to.fullPath }
+    });
+  }
+  
+  // 确保权限数据已加载
+  if (permissionStore.permissions.length === 0) {
+    try {
+      // 加载权限数据
+      await permissionStore.loadPermissions();
+    } catch (error) {
+      // 加载权限失败，跳转到错误页或登录页
+      return next('/comprehensive/error');
+    }
+  }
+  
+  // 验证页面权限
+  if (to.meta.permission) {
+    // 检查是否有权限访问
+    if (!permissionStore.hasPermission(to.meta.permission)) {
+      return next('/comprehensive/403'); // 无权限页面
+    }
+  }
+  
+  // 验证角色要求
+  if (to.meta.roles && to.meta.roles.length > 0) {
+    const hasRole = to.meta.roles.some(role => 
+      permissionStore.roles.includes(role)
+    );
+    
+    if (!hasRole) {
+      return next('/comprehensive/403'); // 无权限页面
+    }
+  }
+  
+  // 权限检查通过
+  next();
+});
+```
+
+## 5. 权限数据同步设计
+
+```javascript
+// src/services/auth.js
+import { request } from '../core/utils/request';
+
+// 获取权限数据
+export function getPermissions() {
+  return request({
+    url: '/api/auth/permissions',
+    method: 'get'
+  });
+}
+
+// 权限检查服务
+export function checkPermission(permissionKey) {
+  return request({
+    url: '/api/auth/check-permission',
+    method: 'post',
+    data: { permission: permissionKey }
+  });
+}
+
+// 权限变更监听通过WebSocket实现，在实时通信服务中订阅权限变更事件
+export function setupPermissionListener(callback) {
+  // 这部分将在WebSocket实现中处理
+}
+```
+
+## 6. 实时权限变更监听设计
+
+```javascript
+// 在权限存储中添加监听机制
+// 这将在实时服务实现后集成
+function setupPermissionChangeListener() {
+  import('../core/utils/realtime').then(module => {
+    const realtimeService = module.default;
+    
+    // 订阅权限变更消息
+    realtimeService.subscribe('PERMISSION_CHANGE', payload => {
+      if (payload.reload) {
+        // 需要完全重载权限
+        loadPermissions();
+      } else if (payload.changes) {
+        // 增量更新权限
+        const newPermissions = [...permissions.value];
+        
+        payload.changes.forEach(change => {
+          if (change.type === 'add') {
+            if (!permissionMap.value[change.permission]) {
+              newPermissions.push(change.permission);
+            }
+          } else if (change.type === 'remove') {
+            const index = newPermissions.indexOf(change.permission);
+            if (index !== -1) {
+              newPermissions.splice(index, 1);
+            }
+          }
+        });
+        
+        // 更新角色
+        let newRoles = roles.value;
+        if (payload.roleChanges) {
+          newRoles = [...roles.value];
+          
+          payload.roleChanges.forEach(change => {
+            if (change.type === 'add') {
+              if (!newRoles.includes(change.role)) {
+                newRoles.push(change.role);
+              }
+            } else if (change.type === 'remove') {
+              const index = newRoles.indexOf(change.role);
+              if (index !== -1) {
+                newRoles.splice(index, 1);
+              }
+            }
+          });
+        }
+        
+        // 更新权限状态
+        updatePermissions(newPermissions, newRoles);
+      }
+    });
+  });
+}
+```
+
+## 7. 权限管理使用方式
+
+### 在Vue组件中使用
+```html
+<template>
+  <!-- 使用权限指令控制元素显示 -->
+  <button v-permission="'service:add'">添加服务</button>
+  
+  <!-- 使用角色指令控制元素显示 -->
+  <div v-role="'admin'">管理员专属功能</div>
+  
+  <!-- 在方法中使用权限检查 -->
+  <button @click="handleOperation" :disabled="!hasPermission('finance:edit')">
+    财务操作
+  </button>
+  
+  <!-- 条件渲染 -->
+  <template v-if="hasPermission(['user:view', 'user:edit'])">
+    <user-management-panel />
+  </template>
+</template>
+
+<script setup>
+import { usePermissionStore } from '../stores/permission';
+
+const permissionStore = usePermissionStore();
+const hasPermission = permissionStore.hasPermission;
+
+function handleOperation() {
+  if (hasPermission('finance:edit')) {
+    // 执行操作...
+  }
+}
+</script>
+```
+
+### 在路由配置中使用
+```javascript
+// 路由配置示例
+const routes = [
+  {
+    path: '/dashboard',
+    component: () => import('../views/dashboard/index.vue'),
+    meta: {
+      title: '工作门户',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/investment',
+    component: () => import('../views/investment/index.vue'),
+    meta: {
+      title: '招商管理',
+      requiresAuth: true,
+      permission: 'investment:view' // 需要特定权限
+    }
+  },
+  {
+    path: '/system-settings',
+    component: () => import('../views/settings/index.vue'),
+    meta: {
+      title: '系统设置',
+      requiresAuth: true,
+      roles: ['admin', 'system-manager'] // 需要特定角色
+    }
+  }
+];
+```
+
+## 实施计划
+
+1. 创建权限状态存储 (permission.js)
+2. 实现权限指令 (v-permission, v-role)
+3. 编写路由守卫逻辑
+4. 在至少一个平台(建议首选综合管理平台)中集成并测试
+5. 逐步扩展到其他平台
+6. 后续实现实时权限变更监听机制
+
+以上方案提供了完整的权限管理体系设计，既满足基础权限控制需求，又为后续高级功能提供了可扩展基础。
+
+是否需要对方案进行调整或者有任何问题，我可以继续解释或修改？
+
+
+
+
+
+
+
+基于对项目结构的分析和昨天的优化过程，我的权限体系优化方案是可行的，但需要进行一些调整以保持与现有架构的一致性。
+
+检查结果：
+
+1. **目录结构兼容性**: 
+   - `stores/permission.js`路径与现有Pinia结构一致
+   - `core/directives`目录结构符合已有的模块化设计
+
+2. **与Pinia集成**:
+   - 权限状态将使用与已实现的shared状态相同的模式和持久化机制
+   - 通过`$persistState`标记实现跨平台持久化
+
+3. **初始实现策略**:
+   - 按照昨天计划的步骤2，应先实现最小化权限存储
+   - 初始版本的指令应使用`display: none`而非DOM移除，减少对现有代码的影响
+
+4. **逐步迭代计划**:
+   - 先实现基础权限状态和指令
+   - 在路由守卫中添加权限检查
+   - 后续再实现权限数据加载和变更监听
+
+我会按照步骤2的最小可行实现方案开始权限体系建设。与已实现的共享状态模式保持一致，从简单的静态数据开始，为后续扩展打下基础。
+
+我开始实施权限体系优化的第一步 - 创建权限存储和基础权限指令。
+
+
+
+
+
+
+我将开始实施权限体系优化的第一步，创建权限存储和基础权限指令。
+
+```javascript:SmartCampus/src/main/webapp/src/stores/permission.js
+/**
+ * @file stores/permission.js
+ * @description 统一权限管理 - 跨平台权限控制、角色管理和权限检查
+ */
+
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
+
+export const usePermissionStore = defineStore('permission', () => {
+  // 标记状态需要持久化
+  const $persistState = true;
+
+  // 权限状态
+  const permissions = ref([
+    // 默认模拟权限，后续由API加载实际权限
+    'dashboard:view',
+    'service:view',
+    'service:add',
+    'information:view'
+  ]);
+  
+  // 角色状态
+  const roles = ref([
+    // 默认模拟角色，后续由API加载实际角色
+    'user'
+  ]);
+  
+  // 权限映射(用于快速查找)
+  const permissionMap = ref({});
+  
+  // 加载状态
+  const loading = ref(false);
+  
+  // 初始化权限映射
+  function initPermissionMap() {
+    const permMap = {};
+    permissions.value.forEach(perm => {
+      permMap[perm] = true;
+    });
+    permissionMap.value = permMap;
+  }
+  
+  // 初始调用一次
+  initPermissionMap();
+  
+  // 计算属性
+  // 是否为管理员
+  const isAdmin = computed(() => roles.value.includes('admin'));
+  
+  // 权限检查函数
+  const hasPermission = computed(() => (permissionKey) => {
+    // 无需权限验证的情况
+    if (!permissionKey) return true;
+    
+    // 管理员拥有所有权限
+    if (isAdmin.value) return true;
+    
+    // 支持数组形式的权限检查（满足其中一个即可）
+    if (Array.isArray(permissionKey)) {
+      return permissionKey.some(key => permissionMap.value[key]);
+    }
+    
+    // 单个权限检查
+    return !!permissionMap.value[permissionKey];
+  });
+  
+  // 角色检查函数
+  const hasRole = computed(() => (roleKey) => {
+    // 支持数组形式的角色检查
+    if (Array.isArray(roleKey)) {
+      return roleKey.some(key => roles.value.includes(key));
+    }
+    
+    // 单个角色检查
+    return roles.value.includes(roleKey);
+  });
+  
+  // 方法
+  // 加载权限数据（预留API集成）
+  async function loadPermissions() {
+    loading.value = true;
+    
+    try {
+      // 模拟加载延迟
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // TODO: 替换为实际API调用
+      console.log('权限数据加载成功（模拟）');
+      
+      // 更新权限映射
+      initPermissionMap();
+      
+      return true;
+    } catch (error) {
+      console.error('加载权限失败:', error);
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  }
+  
+  // 更新权限列表
+  function updatePermissions(newPermissions) {
+    if (!newPermissions) return false;
+    
+    permissions.value = newPermissions;
+    initPermissionMap();
+    return true;
+  }
+  
+  // 更新角色列表
+  function updateRoles(newRoles) {
+    if (!newRoles) return false;
+    
+    roles.value = newRoles;
+    return true;
+  }
+  
+  // 添加单个权限
+  function addPermission(permission) {
+    if (!permission || permissionMap.value[permission]) return false;
+    
+    permissions.value.push(permission);
+    permissionMap.value[permission] = true;
+    return true;
+  }
+  
+  // 移除单个权限
+  function removePermission(permission) {
+    if (!permission || !permissionMap.value[permission]) return false;
+    
+    const index = permissions.value.indexOf(permission);
+    if (index !== -1) {
+      permissions.value.splice(index, 1);
+      delete permissionMap.value[permission];
+      return true;
+    }
+    return false;
+  }
+
+  return {
+    // 状态
+    permissions,
+    roles,
+    permissionMap,
+    loading,
+    $persistState,
+    
+    // 计算属性
+    isAdmin,
+    hasPermission,
+    hasRole,
+    
+    // 方法
+    loadPermissions,
+    updatePermissions,
+    updateRoles,
+    addPermission,
+    removePermission
+  };
+});
+```
+现在创建权限指令文件：
+
+Search files...
+看起来已经有一个简单的权限指令在 `core/plugins/index.js` 中，但我们需要创建一个更完整的版本作为单独的指令。我还需要检查一下目录是否存在：
+
+Ran tool
+很好，`directives`目录已经存在，现在让我们创建权限指令文件：
+
+```javascript:SmartCampus/src/main/webapp/src/core/directives/permission.js
+/**
+ * @file core/directives/permission.js
+ * @description 权限控制指令 - 基于权限控制UI元素的显示和隐藏
+ */
+
+import { usePermissionStore } from '../../stores/permission';
+
+export default {
+  install(app) {
+    // v-permission 指令 - 基于权限控制元素显示
+    app.directive('permission', {
+      mounted(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        
+        if (value && !permissionStore.hasPermission(value)) {
+          // 初始实现：隐藏元素而非从DOM移除
+          el.style.display = 'none';
+        }
+      },
+      
+      updated(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        
+        if (value && !permissionStore.hasPermission(value)) {
+          el.style.display = 'none';
+        } else {
+          // 恢复显示（如果之前被隐藏）
+          el.style.display = '';
+        }
+      }
+    });
+    
+    // v-role 指令 - 基于角色控制元素显示
+    app.directive('role', {
+      mounted(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        
+        const hasRole = permissionStore.hasRole(value);
+        
+        if (!hasRole) {
+          el.style.display = 'none';
+        }
+      },
+      
+      updated(el, binding) {
+        const permissionStore = usePermissionStore();
+        const { value } = binding;
+        
+        const hasRole = permissionStore.hasRole(value);
+        
+        if (!hasRole) {
+          el.style.display = 'none';
+        } else {
+          el.style.display = '';
+        }
+      }
+    });
+  }
+};
+```
+现在我们需要在平台入口点集成权限指令。首先从综合管理平台开始，让我们查看并修改它的入口文件：
+
+```javascript:SmartCampus/src/main/webapp/src/main-comprehensive.js
+// main-comprehensive.js
+// 综合管理平台入口文件
+
+import { createApp } from 'vue';
+import App from './platforms/comprehensive/App.vue';
+import router from './platforms/comprehensive/router';
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+import './assets/styles/main.css';
+
+// 导入Pinia和共享状态
+import { createPinia } from 'pinia';
+import { useSharedStore } from './stores/shared';
+// 导入权限状态和指令
+import { usePermissionStore } from './stores/permission';
+import permissionDirective from './core/directives/permission';
+
+// 显示基本调试信息
+console.log('正在加载综合管理平台...');
+console.log('当前路径:', window.location.pathname);
+
+// 创建应用实例
+const app = createApp(App);
+
+// 创建Pinia实例
+const pinia = createPinia();
+
+// 添加错误处理
+app.config.errorHandler = (err, vm, info) => {
+  console.error('Vue错误:', err);
+  console.error('错误信息:', info);
+  // 显示错误到页面
+  document.getElementById('app').innerHTML = `
+    <div style="padding: 20px; text-align: center;">
+      <h2>应用加载错误</h2>
+      <pre style="text-align: left; background: #f5f5f5; padding: 10px; overflow: auto;">
+        ${err.stack || err.message || '未知错误'}
+      </pre>
+    </div>
+  `;
+};
+
+// 使用插件
+app.use(pinia); // 添加Pinia
+app.use(router);
+app.use(ElementPlus);
+// 注册权限指令
+app.use(permissionDirective);
+
+// 注册Element Plus图标
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
+
+// 先渲染一个加载提示
+document.getElementById('app').innerHTML = '<div style="text-align:center;padding:50px;"><h3>加载中...</h3></div>';
+
+// 确保DOM已准备好
+setTimeout(() => {
+  // 挂载应用
+  app.mount('#app');
+  console.log('综合管理平台已挂载');
+  
+  // 测试共享状态
+  const sharedStore = useSharedStore();
+  sharedStore.updatePlatformStatus('comprehensive', 'initialized');
+  sharedStore.addGlobalNotification({
+    title: '综合管理平台已启动',
+    message: '平台初始化完成，共享状态测试成功',
+    type: 'success'
+  });
+  
+  console.log('共享状态测试:', {
+    platforms: sharedStore.platformStatuses,
+    notifications: sharedStore.globalNotifications,
+    unreadCount: sharedStore.unreadNotificationsCount
+  });
+  
+  // 测试权限状态
+  const permissionStore = usePermissionStore();
+  console.log('权限测试:', {
+    permissions: permissionStore.permissions,
+    roles: permissionStore.roles,
+    hasDashboardPermission: permissionStore.hasPermission('dashboard:view'),
+    hasAdminPermission: permissionStore.hasPermission('admin:access')
+  });
+}, 0);
+```
+现在，让我们创建一个测试页面来验证权限指令是否正常工作：
+
+```vue:SmartCampus/src/main/webapp/src/platforms/comprehensive/views/login/index.vue
+// ... existing code ...
+    </div>
+  </div>
+
+      <!-- 测试面板 -->
+      <div class="test-panel">
+        <h3>架构测试面板</h3>
+        <div class="test-actions">
+          <button @click="runTest">运行测试</button>
+          <button @click="testAddNotification">添加通知</button>
+          <button @click="syncToShared">同步到共享状态</button>
+          <button @click="clearLogs">清空日志</button>
+        </div>
+        
+        <div class="test-section">
+          <h4>状态信息</h4>
+          <div v-if="testStore">计数值: {{ testStore.counter }}</div>
+          <div>Pinia是否可用: {{ isPiniaAvailable ? '✅' : '❌' }}</div>
+          <div>Shared Store是否可用: {{ isSharedAvailable ? '✅' : '❌' }}</div>
+          <div v-if="isSharedAvailable">通知数量: {{ notificationCount }}</div>
+        </div>
+        
+        <!-- 权限测试区域 -->
+        <div class="test-section">
+          <h4>权限测试</h4>
+          <div>权限状态可用: {{ isPermissionAvailable ? '✅' : '❌' }}</div>
+          <div v-if="isPermissionAvailable">
+            <div>当前角色: {{ permissionStore?.roles.join(', ') || '无' }}</div>
+            <div>当前权限数: {{ permissionStore?.permissions.length || 0 }}</div>
+            <div class="permission-test-buttons">
+              <button v-permission="'dashboard:view'">有权限查看(dashboard:view)</button>
+              <button v-permission="'admin:access'">无权限查看(admin:access)</button>
+              <button v-role="'user'">用户角色可见</button>
+              <button v-role="'admin'">管理员角色可见</button>
+            </div>
+            <div class="permission-actions">
+              <button @click="addTestPermission">添加测试权限</button>
+              <button @click="removeTestPermission">移除测试权限</button>
+              <button @click="toggleAdminRole">切换管理员角色</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="test-section">
+          <h4>测试日志</h4>
+          <div class="logs">
+            <div v-for="(log, index) in logs" :key="index" :class="{'log-error': log.includes('错误')}">
+              {{ log }}
+            </div>
+          </div>
+        </div>
+      </div>
+// ... existing code ...
+
+// ===================== 测试功能 =====================
+// ... existing code ...
+
+// 测试相关的变量
+const logs = ref([]);
+const isPiniaAvailable = ref(false);
+const isSharedAvailable = ref(false);
+const isPermissionAvailable = ref(false);
+const notificationCount = ref(0);
+const permissionStore = ref(null);
+
+// ... existing code ...
+
+// 测试逻辑
+function runTest() {
+  addLog('开始测试...');
+  
+  // 测试Pinia
+  try {
+    isPiniaAvailable.value = window.__pinia !== undefined;
+    addLog(`Pinia全局实例: ${isPiniaAvailable.value ? '可用' : '不可用'}`);
+    
+    // 检查本地测试存储
+    testStore.increment();
+    addLog(`测试存储更新成功，当前计数: ${testStore.counter}`);
+    
+    // 测试localStorage
+    localStorage.setItem('test-timestamp', Date.now().toString());
+    const savedTime = localStorage.getItem('test-timestamp');
+    addLog(`localStorage测试: ${savedTime ? '成功' : '失败'}`);
+    
+    // 尝试访问共享状态
+    try {
+      // 首先尝试从全局Pinia获取
+      if (window.__pinia) {
+        const sharedStore = window.__pinia._s.get('shared');
+        if (sharedStore) {
+          isSharedAvailable.value = true;
+          notificationCount.value = sharedStore.globalNotifications.length;
+          addLog(`共享状态存在，通知数量: ${notificationCount.value}`);
+        } else {
+          addLog('全局Pinia中未找到shared状态');
+        }
+      }
+      
+      // 尝试引入模块方式获取
+      import('../../../../stores/shared.js').then(module => {
+        const useSharedStore = module.useSharedStore;
+        const store = useSharedStore();
+        isSharedAvailable.value = true;
+        notificationCount.value = store.globalNotifications.length;
+        addLog(`通过导入获取共享状态成功，通知数量: ${notificationCount.value}`);
+      }).catch(error => {
+        addLog(`尝试导入shared.js失败: ${error.message}`);
+      });
+      
+      // 测试权限状态
+      import('../../../../stores/permission.js').then(module => {
+        const usePermissionStore = module.usePermissionStore;
+        permissionStore.value = usePermissionStore();
+        isPermissionAvailable.value = true;
+        
+        addLog(`权限状态获取成功，拥有权限数量: ${permissionStore.value.permissions.length}`);
+        addLog(`当前角色: ${permissionStore.value.roles.join(', ')}`);
+        addLog(`测试权限: dashboard:view = ${permissionStore.value.hasPermission('dashboard:view') ? '有权限' : '无权限'}`);
+        addLog(`测试权限: admin:access = ${permissionStore.value.hasPermission('admin:access') ? '有权限' : '无权限'}`);
+      }).catch(error => {
+        addLog(`尝试导入permission.js失败: ${error.message}`);
+      });
+    } catch (error) {
+      addLog(`获取状态出错: ${error.message}`);
+    }
+  } catch (error) {
+    addLog(`测试过程发生错误: ${error.message}`);
+  }
+}
+
+// ... existing code ...
+
+// 权限测试函数
+function addTestPermission() {
+  if (!permissionStore.value) {
+    addLog('权限存储不可用');
+    return;
+  }
+  
+  const testPerm = 'admin:access';
+  const result = permissionStore.value.addPermission(testPerm);
+  if (result) {
+    addLog(`成功添加权限: ${testPerm}`);
+  } else {
+    addLog(`添加权限失败，可能已存在: ${testPerm}`);
+  }
+}
+
+function removeTestPermission() {
+  if (!permissionStore.value) {
+    addLog('权限存储不可用');
+    return;
+  }
+  
+  const testPerm = 'admin:access';
+  const result = permissionStore.value.removePermission(testPerm);
+  if (result) {
+    addLog(`成功移除权限: ${testPerm}`);
+  } else {
+    addLog(`移除权限失败，可能不存在: ${testPerm}`);
+  }
+}
+
+function toggleAdminRole() {
+  if (!permissionStore.value) {
+    addLog('权限存储不可用');
+    return;
+  }
+  
+  const adminRole = 'admin';
+  const hasAdmin = permissionStore.value.roles.includes(adminRole);
+  
+  if (hasAdmin) {
+    // 移除admin角色
+    const newRoles = permissionStore.value.roles.filter(r => r !== adminRole);
+    permissionStore.value.updateRoles(newRoles);
+    addLog('已移除管理员角色');
+  } else {
+    // 添加admin角色
+    const newRoles = [...permissionStore.value.roles, adminRole];
+    permissionStore.value.updateRoles(newRoles);
+    addLog('已添加管理员角色');
+  }
+}
+
+// ... existing code ...
+```
+现在，让我们在路由配置中添加权限检查，以实现路由级别的权限控制：
+
+Read file: SmartCampus/src/main/webapp/src/platforms/comprehensive/router/index.js
+让我们修改路由守卫，添加权限检查：
+
+Read file: SmartCampus/src/main/webapp/src/core/utils/auth.js
+
+Read file: SmartCampus/src/main/webapp/src/core/utils/auth.js
+现在让我们修改路由守卫，添加权限检查：
+
+```javascript:SmartCampus/src/main/webapp/src/platforms/comprehensive/router/index.js
+// 综合管理平台路由配置
+import { createRouter, createWebHistory } from 'vue-router';
+import { isLoggedIn } from '../../../core/utils/auth';
+import { usePermissionStore } from '../../../stores/permission';
+
+// 导入路由模块
+import dashboardRoute from './modules/dashboard';
+import serviceRoute from './modules/service';
+import investmentRoute from './modules/investment';
+
+// 为调试打印路由模块
+console.log('Dashboard路由:', dashboardRoute);
+console.log('Service路由:', serviceRoute);
+console.log('Investment路由:', investmentRoute);
+
+// 创建路由实例
+const router = createRouter({
+  history: createWebHistory(),  // 移除基础路径'/comprehensive'
+  routes: [
+    {
+      path: '/comprehensive/login',
+      name: 'Login',
+      component: () => import('../views/login/index.vue'),
+      meta: {
+        title: '登录',
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/comprehensive',
+      component: () => import('../views/login/index.vue'),
+      meta: {
+        title: '登录',
+        requiresAuth: false
+      }
+    },
+    // 403无权限页面
+    {
+      path: '/comprehensive/403',
+      name: 'Forbidden',
+      component: () => import('../views/error/403.vue'),
+      meta: {
+        title: '无权访问',
+        requiresAuth: false
+      }
+    },
+    // 使用模块化路由
+    dashboardRoute,
+    serviceRoute,
+    investmentRoute,
+    // 捕获所有未匹配的路由，重定向到登录页
+    {
+      path: '/comprehensive/:pathMatch(.*)*',
+      redirect: '/comprehensive/login'
+    }
+  ]
+});
+
+// 路由导航守卫 - 记录所有导航
+router.beforeEach((to, from, next) => {
+  console.log('综合平台路由守卫触发:', { 
+    to: to.fullPath, 
+    from: from.fullPath 
+  });
+  
+  // 设置页面标题
+  if (to.meta.title) {
+    document.title = `${to.meta.title} - 综合管理平台`;
+  }
+  
+  // 不需要认证的页面直接通过
+  if (to.meta.requiresAuth === false) {
+    return next();
+  }
+  
+  // 检查登录状态
+  if (!isLoggedIn()) {
+    console.log('用户未登录，重定向到登录页');
+    return next({
+      path: '/comprehensive/login',
+      query: { redirect: to.fullPath }
+    });
+  }
+  
+  // 权限检查
+  const permissionStore = usePermissionStore();
+  
+  // 检查页面是否需要特定权限
+  if (to.meta.permission) {
+    if (!permissionStore.hasPermission(to.meta.permission)) {
+      console.warn(`用户无权访问路由: ${to.fullPath}, 需要权限: ${to.meta.permission}`);
+      return next('/comprehensive/403');
+    }
+  }
+  
+  // 检查页面是否需要特定角色
+  if (to.meta.roles && to.meta.roles.length > 0) {
+    const hasRole = to.meta.roles.some(role => permissionStore.hasRole(role));
+    if (!hasRole) {
+      console.warn(`用户无权访问路由: ${to.fullPath}, 需要角色: ${to.meta.roles.join(',')}`);
+      return next('/comprehensive/403');
+    }
+  }
+  
+  // 通过权限检查
+  next();
+});
+
+export default router;
+```
+现在我们需要创建403无权限访问页面：
+
+Ran tool
+让我们创建错误页面目录和403页面：
+
+```bash
+mkdir -p SmartCampus/src/main/webapp/src/platforms/comprehensive/views/error
+```
+现在创建403无权限访问页面：
+
+```vue:SmartCampus/src/main/webapp/src/platforms/comprehensive/views/error/403.vue
+<template>
+  <div class="forbidden-container">
+    <div class="forbidden-content">
+      <div class="error-code">403</div>
+      <h2 class="error-title">无权限访问</h2>
+      <p class="error-message">很抱歉，您没有权限访问该页面</p>
+      <div class="action-buttons">
+        <button class="back-button" @click="goBack">返回上一页</button>
+        <button class="home-button" @click="goHome">返回首页</button>
+      </div>
+      
+      <!-- 权限调试信息（仅开发环境显示） -->
+      <div class="debug-info" v-if="isDev">
+        <h3>权限调试信息</h3>
+        <div v-if="permissionStore">
+          <div>当前角色: {{ permissionStore.roles.join(', ') }}</div>
+          <div>权限列表:</div>
+          <ul class="permission-list">
+            <li v-for="(perm, index) in permissionStore.permissions" :key="index">
+              {{ perm }}
+            </li>
+          </ul>
+          <div>
+            <button class="debug-button" @click="toggleAdmin">
+              {{ isAdmin ? '移除管理员角色' : '添加管理员角色' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { usePermissionStore } from '../../../../stores/permission';
+
+const router = useRouter();
+const permissionStore = usePermissionStore();
+
+// 是否为开发环境
+const isDev = import.meta.env.DEV;
+
+// 计算属性
+const isAdmin = computed(() => permissionStore.roles.includes('admin'));
+
+// 方法
+const goBack = () => {
+  router.back();
+};
+
+const goHome = () => {
+  router.push('/comprehensive/dashboard');
+};
+
+// 切换管理员角色（仅开发环境使用）
+const toggleAdmin = () => {
+  if (isAdmin.value) {
+    // 移除admin角色
+    const newRoles = permissionStore.roles.filter(r => r !== 'admin');
+    permissionStore.updateRoles(newRoles);
+  } else {
+    // 添加admin角色
+    const newRoles = [...permissionStore.roles, 'admin'];
+    permissionStore.updateRoles(newRoles);
+  }
+};
+</script>
+
+<style scoped>
+.forbidden-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.forbidden-content {
+  text-align: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 90%;
+}
+
+.error-code {
+  font-size: 80px;
+  font-weight: bold;
+  color: #f56c6c;
+  margin-bottom: 20px;
+}
+
+.error-title {
+  font-size: 24px;
+  color: #303133;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  font-size: 16px;
+  color: #606266;
+  margin-bottom: 30px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.back-button, .home-button, .debug-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.back-button {
+  background-color: #909399;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #a6a9ad;
+}
+
+.home-button {
+  background-color: #409eff;
+  color: white;
+}
+
+.home-button:hover {
+  background-color: #66b1ff;
+}
+
+.debug-info {
+  margin-top: 30px;
+  text-align: left;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+  border-left: 4px solid #E6A23C;
+}
+
+.debug-info h3 {
+  margin-top: 0;
+  color: #E6A23C;
+  font-size: 18px;
+}
+
+.permission-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.debug-button {
+  background-color: #E6A23C;
+  color: white;
+  margin-top: 10px;
+}
+
+.debug-button:hover {
+  background-color: #ebb563;
+}
+</style>
+```
+现在，让我们更新至少一个路由模块，添加权限配置以便测试：
+
+Read file: SmartCampus/src/main/webapp/src/platforms/comprehensive/router/modules/dashboard.js
+
+Read file: SmartCampus/src/main/webapp/src/platforms/comprehensive/router/modules/service.js
+
+```javascript:SmartCampus/src/main/webapp/src/platforms/comprehensive/router/modules/service.js
+// Service Management Module Routes
+// This file defines the routes for the Service Management module
+
+export default {
+  path: '/comprehensive/service',
+  name: 'ServiceManagement',
+  component: () => import('../../views/service/index.vue'),
+  meta: {
+    title: '服务管理',
+    icon: 'customer-service-outlined',
+    permission: ['service:view']
+  },
+  children: [
+    // 信息公开子模块
+    {
+      path: 'information',
+      name: 'InformationDisclosure',
+      component: () => import('../../views/service/information/index.vue'),
+      meta: {
+        title: '信息公开',
+        icon: 'info-circle-outlined',
+        permission: ['service:information:view']
+      },
+      children: [
+        // 通知公告管理
+        {
+          path: 'notification',
+          name: 'NotificationManagement',
+          component: () => import('../../views/service/information/notification/index.vue'),
+          meta: {
+            title: '通知公告管理',
+            icon: 'notification-outlined',
+            permission: ['service:information:notification:view']
+          },
+          children: [
+            {
+              path: 'list',
+              name: 'NotificationList',
+              component: () => import('../../views/service/information/notification/List.vue'),
+              meta: {
+                title: '通知公告列表',
+                icon: 'unordered-list-outlined',
+                permission: ['service:information:notification:list']
+              }
+            },
+            {
+              path: 'create',
+              name: 'CreateNotification',
+              component: () => import('../../views/service/information/notification/Form.vue'),
+              meta: {
+                title: '创建通知公告',
+                icon: 'form-outlined',
+                permission: ['service:information:notification:create'],
+                roles: ['admin', 'content-manager'], // 需要管理员或内容管理员角色
+                hidden: true
+              }
+            },
+            {
+              path: 'edit/:id',
+              name: 'EditNotification',
+              component: () => import('../../views/service/information/notification/Form.vue'),
+              meta: {
+                title: '编辑通知公告',
+                icon: 'edit-outlined',
+                permission: ['service:information:notification:edit'],
+                roles: ['admin', 'content-manager'], // 需要管理员或内容管理员角色
+                hidden: true
+              }
+            },
+            {
+              path: 'detail/:id',
+              name: 'NotificationDetail',
+              component: () => import('../../views/service/information/notification/Detail.vue'),
+              meta: {
+                title: '通知公告详情',
+                icon: 'file-text-outlined',
+                permission: ['service:information:notification:detail'],
+                hidden: true
+              }
+            },
+            {
+              path: 'statistics/:id',
+              name: 'NotificationStatistics',
+              component: () => import('../../views/service/information/notification/Statistics.vue'),
+              meta: {
+                title: '通知公告统计',
+                icon: 'pie-chart-outlined',
+                permission: ['service:information:notification:statistics'],
+                roles: ['admin'], // 只有管理员可以查看统计信息
+                hidden: true
+              }
+            }
+          ]
+        }
+        // 其他信息公开页面暂时被注释掉
+        /*
+        // 政策文件管理
+        {
+          path: 'policy',
+          name: 'PolicyManagement',
+          component: () => import('../../views/service/information/policy/index.vue'),
+          meta: {
+            title: '政策文件管理',
+            icon: 'file-outlined',
+            permission: ['service:information:policy:view']
+          }
+        },
+        // 活动通知管理
+        {
+          path: 'activity',
+          name: 'ActivityManagement',
+          component: () => import('../../views/service/information/activity/index.vue'),
+          meta: {
+            title: '活动通知管理',
+            icon: 'calendar-outlined',
+            permission: ['service:information:activity:view']
+          }
+        },
+        // 问卷调查管理
+        {
+          path: 'survey',
+          name: 'SurveyManagement',
+          component: () => import('../../views/service/information/survey/index.vue'),
+          meta: {
+            title: '问卷调查管理',
+            icon: 'form-outlined',
+            permission: ['service:information:survey:view']
+          }
+        },
+        // 需求征集管理
+        {
+          path: 'demand',
+          name: 'DemandManagement',
+          component: () => import('../../views/service/information/demand/index.vue'),
+          meta: {
+            title: '需求征集管理',
+            icon: 'inbox-outlined',
+            permission: ['service:information:demand:view']
+          }
+        }
+        */
+      ]
+    },
+    // 工单管理子模块
+    {
+      path: 'workorder',
+      name: 'WorkOrderManagement',
+      component: () => import('../../views/service/workorder/index.vue'),
+      meta: {
+        title: '工单管理',
+        icon: 'solution-outlined',
+        permission: ['service:workorder:view'],
+        roles: ['admin', 'service-manager'] // 需要管理员或服务管理员角色
+      }
+    },
+    // 服务评价子模块
+    {
+      path: 'evaluation',
+      name: 'ServiceEvaluation',
+      component: () => import('../../views/service/evaluation/index.vue'),
+      meta: {
+        title: '服务评价',
+        icon: 'star-outlined',
+        permission: ['service:evaluation:view'] 
+      }
+    },
+    // 服务配置子模块 - 仅管理员可见
+    {
+      path: 'config',
+      name: 'ServiceConfiguration',
+      component: () => import('../../views/service/config/index.vue'),
+      meta: {
+        title: '服务配置',
+        icon: 'setting-outlined',
+        roles: ['admin'], // 只有管理员可以访问
+        permission: ['service:config:view']
+      }
+    }
+  ]
+};
+```
+权限体系的基础实现已经完成！我们创建了以下组件：
+
+1. **权限状态存储 (permission.js)**:
+   - 包含权限和角色数据
+   - 提供权限和角色检查方法
+   - 支持权限动态添加和移除
+   - 实现了持久化
+
+2. **权限指令 (permission.js指令)**:
+   - 实现了`v-permission`指令用于基于权限控制UI元素
+   - 实现了`v-role`指令用于基于角色控制UI元素
+   - 初始版本使用display:none实现元素隐藏
+
+3. **路由权限守卫**:
+   - 在路由守卫中集成了权限检查
+   - 支持基于权限和角色的路由访问控制
+   - 实现了无权限时的重定向到403页面
+
+4. **错误页面**:
+   - 创建了403无权限访问页面
+   - 提供了开发环境下的权限调试功能
+
+5. **测试功能**:
+   - 在登录页面添加了权限测试区域
+   - 提供了添加/移除权限和角色的测试功能
+
+权限体系的后续改进可以包括：
+
+1. 完成权限API集成，从后端加载实际权限数据
+2. 增强权限指令，支持DOM移除而非仅隐藏
+3. 实现实时权限变更监听，结合WebSocket实现
+4. 优化菜单渲染，根据权限动态生成菜单项
+
+目前的实现已经满足了基础的权限控制需求，为整个平台提供了统一的权限管理机制。

@@ -1,24 +1,51 @@
 <template>
   <div class="login-container">
-    <div class="login-card">
-      <h2 class="title">智慧园区综合管理平台</h2>
-      <form class="login-form">
-        <div class="form-item">
-          <label>用户名</label>
-          <input type="text" v-model="username" placeholder="请输入用户名">
-        </div>
-        <div class="form-item">
-          <label>密码</label>
-          <input type="password" v-model="password" placeholder="请输入密码">
-        </div>
-        <div class="remember-forgot">
-          <label>
-            <input type="checkbox" v-model="remember"> 记住我
-          </label>
-          <a href="javascript:void(0)" @click="forgotPassword">忘记密码</a>
-        </div>
-        <button type="button" class="login-button" @click="handleLogin">登录</button>
-      </form>
+    <a-card class="login-card" title="智慧园区综合管理平台" :bordered="false">
+      <a-form
+        :model="formState"
+        name="login"
+        :label-col="{ span: 24 }"
+        :wrapper-col="{ span: 24 }"
+        autocomplete="off"
+        @finish="handleLogin"
+      >
+        <a-form-item
+          label="用户名"
+          name="username"
+          :rules="[{ required: true, message: '请输入用户名!' }]"
+        >
+          <a-input v-model:value="formState.username" placeholder="请输入用户名">
+            <template #prefix>
+              <user-outlined class="site-form-item-icon" />
+            </template>
+          </a-input>
+        </a-form-item>
+
+        <a-form-item
+          label="密码"
+          name="password"
+          :rules="[{ required: true, message: '请输入密码!' }]"
+        >
+          <a-input-password v-model:value="formState.password" placeholder="请输入密码">
+            <template #prefix>
+              <lock-outlined class="site-form-item-icon" />
+            </template>
+          </a-input-password>
+        </a-form-item>
+
+        <a-form-item name="remember" :wrapper-col="{ span: 24 }">
+          <div class="login-options">
+            <a-checkbox v-model:checked="formState.remember">记住我</a-checkbox>
+            <a class="login-form-forgot" @click="forgotPassword">忘记密码</a>
+          </div>
+        </a-form-item>
+
+        <a-form-item :wrapper-col="{ span: 24 }">
+          <a-button type="primary" html-type="submit" class="login-button">
+            登录
+          </a-button>
+        </a-form-item>
+      </a-form>
 
       <!-- 测试面板 -->
       <div class="test-panel">
@@ -47,40 +74,52 @@
           </div>
         </div>
       </div>
-    </div>
+    </a-card>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { defineStore } from 'pinia';
 import { createPinia } from 'pinia';
+import { message } from 'ant-design-vue';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 
 const router = useRouter();
-const username = ref('admin');  // 默认值方便测试
-const password = ref('admin123');  // 默认值方便测试
-const remember = ref(true);
+
+// 登录表单状态
+const formState = reactive({
+  username: 'admin',  // 默认值方便测试
+  password: 'admin123',  // 默认值方便测试
+  remember: true
+});
 
 // 简化的登录处理逻辑
 const handleLogin = () => {
-  if (!username.value || !password.value) {
-    alert('请输入用户名和密码');
+  if (!formState.username || !formState.password) {
+    message.error('请输入用户名和密码');
     return;
   }
   
   console.log('登录信息:', {
-    username: username.value,
-    password: password.value,
-    remember: remember.value
+    username: formState.username,
+    password: formState.password,
+    remember: formState.remember
   });
   
-  alert('登录成功');
+  // 模拟登录成功，设置认证状态
+  localStorage.setItem('isAuthenticated', 'true');
+  if (formState.remember) {
+    localStorage.setItem('username', formState.username);
+  }
+  
+  message.success('登录成功');
   router.push('/comprehensive/dashboard');
 };
 
 const forgotPassword = () => {
-  alert('忘记密码功能暂未实现');
+  message.info('忘记密码功能暂未实现');
 };
 
 // ===================== 测试功能 =====================
@@ -247,68 +286,33 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-  padding: 20px;
 }
 
 .login-card {
-  width: 600px;
-  background: white;
-  border-radius: 8px;
+  width: 400px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  padding: 20px;
 }
 
-.title {
+.login-card :deep(.ant-card-head) {
   text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.form-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.form-item label {
+  font-size: 24px;
   font-weight: bold;
-  font-size: 14px;
 }
 
-.form-item input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.remember-forgot {
+.login-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .login-button {
-  background: #1890ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 12px;
-  font-size: 16px;
-  cursor: pointer;
+  width: 100%;
 }
 
-.login-button:hover {
-  background: #40a9ff;
+.login-form-forgot {
+  float: right;
 }
 
 /* 测试面板样式 */
