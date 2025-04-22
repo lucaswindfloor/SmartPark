@@ -11,7 +11,78 @@ export default {
     permission: ['service:view']
   },
   children: [
-    // 信息公开子模块
+    // 服务事项子模块 - 展示为开发中
+    {
+      path: 'service-items',
+      name: 'ServiceItems',
+      component: () => import('../../views/service/components/UnderDevelopment.vue'),
+      meta: {
+        title: '服务事项',
+        icon: 'profile-outlined',
+        permission: ['service:items:view']
+      },
+      props: { title: '服务事项' }
+    },
+    // 服务设置子模块 - 展示为开发中
+    {
+      path: 'service-settings',
+      name: 'ServiceSettings',
+      component: () => import('../../views/service/components/UnderDevelopment.vue'),
+      meta: {
+        title: '服务设置',
+        icon: 'setting-outlined',
+        permission: ['service:settings:view']
+      },
+      props: { title: '服务设置' }
+    },
+    // 服务管理子模块 - 展示为开发中
+    {
+      path: 'service-mgmt',
+      name: 'ServiceManagementConfig',
+      component: () => import('../../views/service/service-mgmt/index.vue'),
+      meta: {
+        title: '服务管理',
+        icon: 'control-outlined',
+        permission: ['service:mgmt:view']
+      },
+      children: [
+        // 基础配置
+        {
+          path: 'basic-config',
+          name: 'BasicConfiguration',
+          component: () => import('../../views/service/components/UnderDevelopment.vue'),
+          meta: {
+            title: '基础配置',
+            icon: 'tool-outlined',
+            permission: ['service:mgmt:basic:view']
+          },
+          props: { title: '基础配置' }
+        },
+        // 评价管理
+        {
+          path: 'evaluation',
+          name: 'EvaluationManagement',
+          component: () => import('../../views/service/service-mgmt/evaluation/index.vue'),
+          meta: {
+            title: '评价管理',
+            icon: 'star-outlined',
+            permission: ['service:mgmt:evaluation:view']
+          }
+        },
+        // 服务指南
+        {
+          path: 'guide',
+          name: 'ServiceGuide',
+          component: () => import('../../views/service/service-mgmt/guide/index.vue'),
+          meta: {
+            title: '服务指南',
+            icon: 'read-outlined',
+            permission: ['service:mgmt:guide:view']
+          }
+        }
+      ]
+    },
+    // 信息公开子模块 - 注意这是您将要完善的模块
     {
       path: 'information',
       name: 'InformationDisclosure',
@@ -79,86 +150,128 @@ export default {
             {
               path: 'statistics/:id',
               name: 'NotificationStatistics',
-              component: () => import('../../views/service/information/notification/Statistics.vue'),
+              component: () => import('../../views/service/components/UnderDevelopment.vue'),
               meta: {
                 title: '通知公告统计',
                 icon: 'pie-chart-outlined',
                 permission: ['service:information:notification:statistics'],
                 hidden: true
-              }
+              },
+              props: { title: '通知公告统计' }
             }
           ]
-        }
-        // 其他信息公开页面暂时被注释掉
-        /*
+        },
+        // 其他信息公开页面
         // 政策文件管理
         {
           path: 'policy',
           name: 'PolicyManagement',
-          component: () => import('../../views/service/information/policy/index.vue'),
+          component: () => import('../../views/service/components/UnderDevelopment.vue'),
           meta: {
             title: '政策文件管理',
             icon: 'file-outlined',
             permission: ['service:information:policy:view']
-          }
+          },
+          props: { title: '政策文件管理' }
         },
         // 活动通知管理
         {
           path: 'activity',
           name: 'ActivityManagement',
-          component: () => import('../../views/service/information/activity/index.vue'),
+          component: () => import('../../views/service/components/UnderDevelopment.vue'),
           meta: {
             title: '活动通知管理',
             icon: 'calendar-outlined',
             permission: ['service:information:activity:view']
-          }
+          },
+          props: { title: '活动通知管理' }
         },
         // 问卷调查管理
         {
           path: 'survey',
           name: 'SurveyManagement',
-          component: () => import('../../views/service/information/survey/index.vue'),
+          component: () => import('../../views/service/components/UnderDevelopment.vue'),
           meta: {
             title: '问卷调查管理',
             icon: 'form-outlined',
             permission: ['service:information:survey:view']
-          }
+          },
+          props: { title: '问卷调查管理' }
         },
         // 需求征集管理
         {
           path: 'demand',
           name: 'DemandManagement',
-          component: () => import('../../views/service/information/demand/index.vue'),
+          component: () => import('../../views/service/components/UnderDevelopment.vue'),
           meta: {
             title: '需求征集管理',
             icon: 'inbox-outlined',
             permission: ['service:information:demand:view']
-          }
+          },
+          props: { title: '需求征集管理' }
         }
-        */
       ]
     },
-    // 工单管理子模块
+    // 其他子模块 - 展示为开发中
+    // 会议管理子模块
     {
-      path: 'workorder',
-      name: 'WorkOrderManagement',
-      component: () => import('../../views/service/workorder/index.vue'),
+      path: 'meeting',
+      name: 'MeetingManagement',
+      component: () => import('../../views/service/components/UnderDevelopment.vue'),
       meta: {
-        title: '工单管理',
-        icon: 'solution-outlined',
-        permission: ['service:workorder:view']
-      }
+        title: '会议管理',
+        icon: 'team-outlined',
+        permission: ['service:meeting:view']
+      },
+      props: { title: '会议管理' }
     },
-    // 服务评价子模块
+    // 空调管理子模块
     {
-      path: 'evaluation',
-      name: 'ServiceEvaluation',
-      component: () => import('../../views/service/evaluation/index.vue'),
+      path: 'ac',
+      name: 'AirConditioningManagement',
+      component: () => import('../../views/service/components/UnderDevelopment.vue'),
       meta: {
-        title: '服务评价',
-        icon: 'star-outlined',
-        permission: ['service:evaluation:view']
-      }
+        title: '空调管理',
+        icon: 'thunderbolt-outlined',
+        permission: ['service:ac:view']
+      },
+      props: { title: '空调管理' }
+    },
+    // 门禁管理子模块
+    {
+      path: 'access',
+      name: 'AccessControlManagement',
+      component: () => import('../../views/service/components/UnderDevelopment.vue'),
+      meta: {
+        title: '门禁管理',
+        icon: 'safety-outlined',
+        permission: ['service:access:view']
+      },
+      props: { title: '门禁管理' }
+    },
+    // 停车管理子模块
+    {
+      path: 'parking',
+      name: 'ParkingManagement',
+      component: () => import('../../views/service/components/UnderDevelopment.vue'),
+      meta: {
+        title: '停车管理',
+        icon: 'car-outlined',
+        permission: ['service:parking:view']
+      },
+      props: { title: '停车管理' }
+    },
+    // 服务办理子模块
+    {
+      path: 'service-processing',
+      name: 'ServiceProcessing',
+      component: () => import('../../views/service/components/UnderDevelopment.vue'),
+      meta: {
+        title: '服务办理',
+        icon: 'solution-outlined',
+        permission: ['service:processing:view']
+      },
+      props: { title: '服务办理' }
     }
   ]
 }; 

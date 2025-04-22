@@ -1,5 +1,5 @@
 <template>
-  <div class="notification-detail">
+  <div class="policy-detail">
     <el-card :loading="loading" shadow="hover">
       <template #header>
         <div class="card-header">
@@ -14,33 +14,37 @@
         </div>
       </template>
 
-      <div v-if="!loading" class="notification-content">
-        <h1 class="notification-title">{{ notification.title }}</h1>
+      <div v-if="!loading" class="policy-content">
+        <h1 class="policy-title">{{ policy.title }}</h1>
         
-        <div class="notification-meta">
-          <span class="meta-item">
-            <el-icon><User /></el-icon>
-            <span>发布人：{{ notification.author }}</span>
-          </span>
-          <span class="meta-item">
-            <el-icon><Clock /></el-icon>
-            <span>发布时间：{{ formatDateTime(notification.publishTime) }}</span>
-          </span>
-          <span class="meta-item">
-            <el-icon><View /></el-icon>
-            <span>阅读数：{{ notification.readCount }}</span>
-          </span>
-          <span class="meta-item">
-            <el-icon><CollectionTag /></el-icon>
-            <span>类别：{{ notification.category }}</span>
-          </span>
+        <div class="policy-meta">
+          <div class="meta-row">
+            <span class="meta-item">
+              <el-icon><Document /></el-icon>
+              <span>文号：{{ policy.documentNo }}</span>
+            </span>
+            <span class="meta-item">
+              <el-icon><OfficeBuilding /></el-icon>
+              <span>发布部门：{{ policy.department }}</span>
+            </span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-item">
+              <el-icon><Clock /></el-icon>
+              <span>发布时间：{{ formatDateTime(policy.publishTime) }}</span>
+            </span>
+            <span class="meta-item">
+              <el-icon><CollectionTag /></el-icon>
+              <span>类别：{{ policy.category }}</span>
+            </span>
+          </div>
         </div>
         
-        <div class="notification-body" v-html="notification.content"></div>
+        <div class="policy-body" v-html="policy.content"></div>
         
-        <div v-if="notification.attachments && notification.attachments.length > 0" class="notification-attachments">
+        <div v-if="policy.attachments && policy.attachments.length > 0" class="policy-attachments">
           <h3>附件列表</h3>
-          <el-table :data="notification.attachments" border style="width: 100%">
+          <el-table :data="policy.attachments" border style="width: 100%">
             <el-table-column width="50">
               <template #default>
                 <el-icon><Paperclip /></el-icon>
@@ -78,12 +82,11 @@ import { useRouter, useRoute } from 'vue-router';
 import { 
   ArrowLeft, 
   Edit, 
-  User, 
+  Document, 
   Clock, 
-  View, 
+  OfficeBuilding,
   CollectionTag,
-  Paperclip,
-  Document
+  Paperclip
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 
@@ -91,13 +94,13 @@ const router = useRouter();
 const route = useRoute();
 
 const loading = ref(true);
-const notification = reactive({
+const policy = reactive({
   id: '',
   title: '',
+  documentNo: '',
   content: '',
-  author: '',
+  department: '',
   publishTime: '',
-  readCount: 0,
   category: '',
   attachments: []
 });
@@ -113,42 +116,44 @@ const formatDateTime = (dateTimeStr) => {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 };
 
-// 获取通知详情
-const fetchNotificationDetail = async () => {
+// 获取政策文件详情
+const fetchPolicyDetail = async () => {
   loading.value = true;
   
   try {
     // 这里应该是实际的API调用，以下为模拟数据
-    // const { data } = await api.getNotificationDetail(route.params.id);
+    // const { data } = await api.getPolicyDetail(route.params.id);
     
     // 模拟数据
     const data = {
       id: route.params.id || '1',
-      title: '关于校园智慧系统更新的通知',
-      content: `<p>尊敬的用户：</p>
-                <p>我们将于2023年8月15日凌晨2:00-4:00对校园智慧系统进行更新维护，期间系统将暂停服务。</p>
-                <p>本次更新内容如下：</p>
+      title: '关于园区科技型企业扶持政策',
+      documentNo: '园区[2023]第15号',
+      content: `<p>为促进园区科技型企业发展，经研究决定，现发布以下扶持政策：</p>
+                <h3>一、适用范围</h3>
+                <p>本政策适用于在园区注册并实际经营的科技型中小企业。</p>
+                <h3>二、扶持内容</h3>
                 <ul>
-                  <li>优化用户界面，提升用户体验</li>
-                  <li>新增移动端适配功能</li>
-                  <li>修复已知问题和漏洞</li>
+                  <li>对获得高新技术企业认定的，一次性给予20万元奖励</li>
+                  <li>对获得发明专利的，每项给予5万元资助</li>
+                  <li>对研发投入占营业收入5%以上的企业，按研发投入的10%给予补贴，最高不超过100万元</li>
                 </ul>
-                <p>感谢您的理解与支持！</p>`,
-      author: '系统管理员',
-      publishTime: '2023-08-10T10:30:00',
-      readCount: 1205,
-      category: '系统通知',
+                <h3>三、申请流程</h3>
+                <p>符合条件的企业需在每年3月1日至3月31日期间提交申请材料...</p>`,
+      department: '园区科技创新部',
+      publishTime: '2023-02-15T09:30:00',
+      category: '园区规章',
       attachments: [
-        { id: '1', name: '更新说明.pdf', type: 'application/pdf', url: 'https://example.com/files/update_instruction.pdf', size: 1024 * 1024 },
-        { id: '2', name: '新功能预览.png', type: 'image/png', url: 'https://example.com/files/preview.png', size: 500 * 1024 }
+        { id: '1', name: '政策详细说明.pdf', type: 'application/pdf', url: 'https://example.com/files/policy_details.pdf', size: 2.5 * 1024 * 1024 },
+        { id: '2', name: '申请表.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', url: 'https://example.com/files/application_form.docx', size: 500 * 1024 }
       ]
     };
     
     // 更新数据
-    Object.assign(notification, data);
+    Object.assign(policy, data);
   } catch (error) {
-    console.error('获取通知详情失败:', error);
-    ElMessage.error('获取通知详情失败');
+    console.error('获取政策文件详情失败:', error);
+    ElMessage.error('获取政策文件详情失败');
   } finally {
     loading.value = false;
   }
@@ -156,12 +161,12 @@ const fetchNotificationDetail = async () => {
 
 // 返回列表页
 const backToList = () => {
-  router.push('/service/information/notification');
+  router.push('/service/information/policy');
 };
 
-// 编辑通知
+// 编辑政策文件
 const handleEdit = () => {
-  router.push(`/service/information/notification/edit/${notification.id}`);
+  router.push(`/service/information/policy/edit/${policy.id}`);
 };
 
 // 预览附件
@@ -194,12 +199,12 @@ const isDocument = (fileType) => {
 };
 
 onMounted(() => {
-  fetchNotificationDetail();
+  fetchPolicyDetail();
 });
 </script>
 
 <style scoped>
-.notification-detail {
+.policy-detail {
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -210,20 +215,26 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
-.notification-title {
+.policy-title {
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 16px;
   text-align: center;
 }
 
-.notification-meta {
+.policy-meta {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   margin-bottom: 24px;
   padding: 12px;
   background-color: #f5f5f5;
   border-radius: 4px;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
 }
 
 .meta-item {
@@ -238,12 +249,27 @@ onMounted(() => {
   margin-left: 6px;
 }
 
-.notification-body {
+.policy-body {
   margin-bottom: 24px;
   line-height: 1.8;
 }
 
-.notification-attachments {
+.policy-body h3 {
+  margin-top: 20px;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.policy-body ul {
+  padding-left: 20px;
+}
+
+.policy-body li {
+  margin-bottom: 8px;
+}
+
+.policy-attachments {
   margin-top: 32px;
 }
 

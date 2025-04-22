@@ -211,6 +211,7 @@ import {
   DollarOutlined,
   NotificationOutlined,
 } from '@ant-design/icons-vue';
+import { isAuthenticated, forceAuthenticate, getAuthDiagnostics } from '../../../services/auth';
 
 const router = useRouter();
 const route = useRoute();
@@ -268,6 +269,16 @@ const selectedKeys = ref(['dashboard']);
 // 处理Tab点击
 const handleTabClick = (key) => {
   console.log('Tab点击:', key);
+  
+  // 检查认证状态，如有需要进行认证
+  if (!isAuthenticated()) {
+    console.warn('用户未登录，自动设置认证状态');
+    forceAuthenticate();
+  }
+  
+  // 输出诊断信息
+  console.log('认证状态诊断:', getAuthDiagnostics());
+  
   activeTopTab.value = key;
   
   // 根据不同的Tab重置侧边栏状态
@@ -295,7 +306,7 @@ const handleTabClick = (key) => {
     case 'service':
       openKeys.value = ['information-management'];
       selectedKeys.value = ['notification'];
-      router.push('/comprehensive/service/information/notification');
+      router.push('/service/information/notification');
       break;
     // 更多case分支...
   }
@@ -330,7 +341,7 @@ const handleMenuClick = ({ key }) => {
     case 'service':
       if (key === 'notification' || key === 'policy' || key === 'activity' ||
           key === 'survey' || key === 'demand') {
-        router.push(`/comprehensive/service/information/${key}`);
+        router.push(`/service/information/${key}`);
       } else {
         // 其他服务管理的路由...
         console.log('其他服务管理路由, key:', key);

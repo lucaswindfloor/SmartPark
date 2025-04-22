@@ -75,7 +75,7 @@ SmartCampus/
 │   │   │   │   │   ├── 403.vue             # 403页面 ✅
 │   │   │   │   │   └── 500.vue             # 500页面 ✅
 │   │   │   │   │
-│   │   │   │   ├── investment/             # 招商管理模块
+│   │   │   │   ├── recruitment/             # 招商管理模块
 │   │   │   │   │   ├── index.vue           # 投资管理入口 ✅
 │   │   │   │   │   ├── customer/           # 客户管理 ✅
 │   │   │   │   │   ├── contract/           # 合同签约 ✅
@@ -92,14 +92,59 @@ SmartCampus/
 │   │   │   │   │   └── invoice/            # 开票管理 ⏳
 │   │   │   │   │
 │   │   │   │   ├── service/                # 服务管理模块
-│   │   │   │   │   ├── information/        # 信息发布管理
+│   │   │   │   │   ├── service-items/      # 服务事项 ⏳
+│   │   │   │   │   ├── service-settings/   # 服务设置 ⏳
+│   │   │   │   │   ├── service-mgmt/       # 服务管理
+│   │   │   │   │   │   ├── basic-config/   # 基础配置 ⏳
+│   │   │   │   │   │   ├── evaluation/     # 评价管理 ⏳
+│   │   │   │   │   │   └── guide/          # 服务指南 ⏳
+│   │   │   │   │   ├── information/        # 信息公开
 │   │   │   │   │   │   ├── notification/   # 通知公告 ⏳
 │   │   │   │   │   │   ├── policy/         # 政策文件 ⏳
 │   │   │   │   │   │   ├── activity/       # 园区活动 ⏳
-│   │   │   │   │   │   ├── survey/         # 问卷调查 ⏳
+│   │   │   │   │   │   ├── survey/         # 调查问卷 ⏳
 │   │   │   │   │   │   └── demand/         # 需求发布 ⏳
-│   │   │   │   │   ├── workorder/          # 工单管理 ⏳
-│   │   │   │   │   └── evaluation/         # 服务评价 ⏳
+│   │   │   │   │   ├── meeting/            # 会议管理
+│   │   │   │   │   │   ├── room-mgmt/      # 会议室管理 ⏳
+│   │   │   │   │   │   ├── open-settings/  # 会议开放设置 ⏳
+│   │   │   │   │   │   ├── fee-mode/       # 会议收费模式 ⏳
+│   │   │   │   │   │   ├── room-board/     # 会议室看板 ⏳
+│   │   │   │   │   │   └── reservation/    # 会议室预订管理 ⏳
+│   │   │   │   │   ├── ac/                 # 空调管理
+│   │   │   │   │   │   ├── archives/       # 空调档案 ⏳
+│   │   │   │   │   │   ├── open-cycle/     # 空调开放周期 ⏳
+│   │   │   │   │   │   ├── enterprise-ac/  # 企业空调管理 ⏳
+│   │   │   │   │   │   ├── ac-board/       # 空调看板 ⏳
+│   │   │   │   │   │   ├── extra-time-mgmt/# 空调加时管理 ⏳
+│   │   │   │   │   │   ├── extra-time-apply/# 空调加时申请 ⏳
+│   │   │   │   │   │   └── extra-time-records/# 空调加时记录 ⏳
+│   │   │   │   │   ├── access/             # 门禁管理
+│   │   │   │   │   │   ├── device-mgmt/    # 门禁设备管理 ⏳
+│   │   │   │   │   │   ├── permission/     # 门禁权限管理 ⏳
+│   │   │   │   │   │   ├── apply-records/  # 门禁申请记录 ⏳
+│   │   │   │   │   │   ├── personnel/      # 门禁人员管理 ⏳
+│   │   │   │   │   │   ├── issue-records/  # 门禁下发记录 ⏳
+│   │   │   │   │   │   └── access-records/ # 门禁通行记录 ⏳
+│   │   │   │   │   ├── parking/            # 停车管理
+│   │   │   │   │   │   ├── lot-mgmt/       # 停车场管理 ⏳
+│   │   │   │   │   │   ├── entrance-mgmt/  # 出入口管理 ⏳
+│   │   │   │   │   │   ├── monthly-card/   # 停车月卡管理 ⏳
+│   │   │   │   │   │   ├── card-purchase/  # 月卡购买记录 ⏳
+│   │   │   │   │   │   ├── enterprise-qrcode/# 企业停车二维码管理 ⏳
+│   │   │   │   │   │   ├── vehicle-mgmt/   # 车辆管理 ⏳
+│   │   │   │   │   │   ├── temp-fee-mode/  # 临停收费模式设置 ⏳
+│   │   │   │   │   │   └── entry-exit/     # 车辆出入记录 ⏳
+│   │   │   │   │   └── service-processing/ # 服务办理
+│   │   │   │   │       ├── event-report/   # 事件上报管理 ⏳
+│   │   │   │   │       ├── repair-request/ # 维修申报管理 ⏳
+│   │   │   │   │       ├── enterprise-registration/# 企业注册申请 ⏳
+│   │   │   │   │       ├── financing-service/# 融资服务申请 ⏳
+│   │   │   │   │       ├── enterprise-invoice/# 企业开票申请 ⏳
+│   │   │   │   │       ├── personal-invoice/# 个人开票申请 ⏳
+│   │   │   │   │       ├── enterprise-invoice-info/# 企业开票信息 ⏳
+│   │   │   │   │       ├── personal-invoice-info/# 个人开票信息 ⏳
+│   │   │   │   │       ├── lease-termination/# 退租申请 ⏳
+│   │   │   │   │       └── park-exit/      # 退园申请 ⏳
 │   │   │   │   │
 │   │   │   │   ├── asset/                  # 资产管理模块
 │   │   │   │   │   ├── register/           # 资产登记 ⏳

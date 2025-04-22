@@ -1,5 +1,6 @@
 // 综合管理平台路由配置
 import { createRouter, createWebHistory } from 'vue-router';
+import { isAuthenticated, getAuthDiagnostics, forceAuthenticate } from '../../../services/auth';
 
 // 导入路由模块
 import dashboardRoute from './modules/dashboard';
@@ -71,6 +72,13 @@ const router = createRouter({
   ]
 });
 
+// 开发环境初始化 - 生产环境应移除此代码
+const isDev = process.env.NODE_ENV === 'development';
+if (isDev) {
+  console.warn('开发环境：自动设置认证状态');
+  forceAuthenticate();
+}
+
 // 路由导航守卫 - 记录所有导航
 router.beforeEach((to, from, next) => {
   console.log('综合平台路由守卫触发:', { 
@@ -83,16 +91,29 @@ router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} - 综合管理平台`;
   }
   
-  // 这里可以添加全局路由守卫逻辑
-  // 例如权限检查、用户登录状态验证等
+  // 获取并记录认证状态
+  const authenticated = isAuthenticated();
   
-  // 简单的权限验证示例 (实际项目中会有更复杂的验证逻辑)
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  // 输出认证诊断信息
+  console.log('认证状态:', authenticated);
+  console.log('认证详情:', getAuthDiagnostics());
   
-  if (to.meta.requiresAuth && !isAuthenticated && to.path !== '/comprehensive/login') {
+  // 特殊开发环境处理 - 针对仪表盘和服务模块
+  if (isDev && !authenticated) {
+    if (to.path.includes('/dashboard') || to.path.includes('/service')) {
+      console.warn('开发模式：访问受保护模块，自动设置认证状态');
+      forceAuthenticate();
+    }
+  }
+  
+  // 权限验证逻辑
+  if (to.meta.requiresAuth && !authenticated && to.path !== '/comprehensive/login') {
     // 需要登录但用户未认证，重定向到登录页
+    console.warn('访问受限路径需要登录:', to.fullPath);
     next({ path: '/comprehensive/login' });
   } else {
+    // 用户已认证或路由不需要认证
+    console.log('允许导航继续');
     next();
   }
 });

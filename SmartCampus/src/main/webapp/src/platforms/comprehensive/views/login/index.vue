@@ -1,313 +1,222 @@
 <template>
   <div class="login-container">
-    <a-card class="login-card" title="智慧园区综合管理平台" :bordered="false">
+    <div class="login-form-wrapper">
+      <div class="login-header">
+        <h1 class="login-title">湘江科创基地智慧园区</h1>
+        <p class="login-subtitle">综合管理平台</p>
+      </div>
+      
       <a-form
-        :model="formState"
-        name="login"
-        :label-col="{ span: 24 }"
-        :wrapper-col="{ span: 24 }"
-        autocomplete="off"
-        @finish="handleLogin"
+        :model="loginForm"
+        @finish="handleSubmit"
+        class="login-form"
       >
         <a-form-item
-          label="用户名"
           name="username"
           :rules="[{ required: true, message: '请输入用户名!' }]"
         >
-          <a-input v-model:value="formState.username" placeholder="请输入用户名">
-            <template #prefix>
-              <user-outlined class="site-form-item-icon" />
-            </template>
+          <a-input 
+            v-model:value="loginForm.username"
+            placeholder="用户名" 
+            size="large"
+          >
+            <template #prefix><user-outlined /></template>
           </a-input>
         </a-form-item>
-
+        
         <a-form-item
-          label="密码"
           name="password"
           :rules="[{ required: true, message: '请输入密码!' }]"
         >
-          <a-input-password v-model:value="formState.password" placeholder="请输入密码">
-            <template #prefix>
-              <lock-outlined class="site-form-item-icon" />
-            </template>
+          <a-input-password 
+            v-model:value="loginForm.password"
+            placeholder="密码" 
+            size="large"
+          >
+            <template #prefix><lock-outlined /></template>
           </a-input-password>
         </a-form-item>
-
-        <a-form-item name="remember" :wrapper-col="{ span: 24 }">
-          <div class="login-options">
-            <a-checkbox v-model:checked="formState.remember">记住我</a-checkbox>
-            <a class="login-form-forgot" @click="forgotPassword">忘记密码</a>
-          </div>
+        
+        <a-form-item>
+          <a-checkbox v-model:checked="loginForm.remember">
+            记住密码
+          </a-checkbox>
+          <a class="login-form-forgot" href="">
+            忘记密码
+          </a>
         </a-form-item>
-
-        <a-form-item :wrapper-col="{ span: 24 }">
-          <a-button type="primary" html-type="submit" class="login-button">
+        
+        <a-form-item>
+          <a-button 
+            type="primary" 
+            html-type="submit" 
+            class="login-form-button"
+            :loading="loading"
+            size="large"
+          >
             登录
           </a-button>
         </a-form-item>
       </a-form>
-
-      <!-- 测试面板 -->
-      <div class="test-panel">
-        <h3>架构测试面板</h3>
-        <div class="test-actions">
-          <button @click="runTest">运行测试</button>
-          <button @click="testAddNotification">添加通知</button>
-          <button @click="syncToShared">同步到共享状态</button>
-          <button @click="clearLogs">清空日志</button>
-        </div>
-        
-        <div class="test-section">
-          <h4>状态信息</h4>
-          <div v-if="testStore">计数值: {{ testStore.counter }}</div>
-          <div>Pinia是否可用: {{ isPiniaAvailable ? '✅' : '❌' }}</div>
-          <div>Shared Store是否可用: {{ isSharedAvailable ? '✅' : '❌' }}</div>
-          <div v-if="isSharedAvailable">通知数量: {{ notificationCount }}</div>
-        </div>
-        
-        <div class="test-section">
-          <h4>测试日志</h4>
-          <div class="logs">
-            <div v-for="(log, index) in logs" :key="index" :class="{'log-error': log.includes('错误')}">
-              {{ log }}
-            </div>
+      
+      <!-- 测试功能区 -->
+      <div class="quick-login">
+        <a-space direction="vertical" style="width: 100%">
+          <a-button type="link" @click="quickLogin">快速登录(测试用)</a-button>
+          <a-divider style="margin: 8px 0" />
+          <div class="debug-buttons">
+            <a-button type="link" size="small" @click="checkAuthStatus">检查登录状态</a-button>
+            <a-button type="link" size="small" @click="forceLogin">强制登录</a-button>
+            <a-button type="link" size="small" @click="clearLogin">清除登录</a-button>
           </div>
-        </div>
+        </a-space>
       </div>
-    </a-card>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, reactive } from 'vue';
+import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { defineStore } from 'pinia';
-import { createPinia } from 'pinia';
-import { message } from 'ant-design-vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import { message } from 'ant-design-vue';
+import { 
+  setAuthenticated, 
+  clearAuthentication,
+  getAuthDiagnostics
+} from '../../../../services/auth';
 
 const router = useRouter();
+const loading = ref(false);
 
-// 登录表单状态
-const formState = reactive({
-  username: 'admin',  // 默认值方便测试
-  password: 'admin123',  // 默认值方便测试
-  remember: true
+const loginForm = reactive({
+  username: '',
+  password: '',
+  remember: false
 });
 
-// 简化的登录处理逻辑
-const handleLogin = () => {
-  if (!formState.username || !formState.password) {
-    message.error('请输入用户名和密码');
-    return;
-  }
+const handleSubmit = (values) => {
+  loading.value = true;
   
-  console.log('登录信息:', {
-    username: formState.username,
-    password: formState.password,
-    remember: formState.remember
-  });
-  
-  // 模拟登录成功，设置认证状态
-  localStorage.setItem('isAuthenticated', 'true');
-  if (formState.remember) {
-    localStorage.setItem('username', formState.username);
-  }
-  
-  message.success('登录成功');
-  router.push('/comprehensive/dashboard');
+  // 模拟登录请求
+  setTimeout(() => {
+    if (values.username && values.password) {
+      // 登录成功，设置认证状态
+      setAuthenticated(values.username, 'admin');
+      
+      message.success('登录成功');
+      
+      // 登录成功后跳转到工作门户
+      router.push('/comprehensive/dashboard');
+    } else {
+      message.error('登录失败，请检查用户名和密码');
+    }
+    loading.value = false;
+  }, 1000);
 };
 
-const forgotPassword = () => {
-  message.info('忘记密码功能暂未实现');
+// 快速测试登录功能
+const quickLogin = () => {
+  loading.value = true;
+  
+  setTimeout(() => {
+    // 设置登录状态
+    setAuthenticated('admin', 'admin');
+    
+    message.success('测试登录成功');
+    
+    // 跳转到工作门户
+    router.push('/comprehensive/dashboard');
+    
+    loading.value = false;
+  }, 500);
 };
 
-// ===================== 测试功能 =====================
-// 测试状态存储
-const useTestStore = defineStore('test', {
-  state: () => ({
-    counter: 0,
-    lastUpdated: null
-  }),
-  actions: {
-    increment() {
-      this.counter++;
-      this.lastUpdated = new Date().toISOString();
-    }
-  }
-});
+// 调试功能
+const checkAuthStatus = () => {
+  const status = getAuthDiagnostics();
+  console.log('认证状态诊断:', status);
+  message.info(`当前登录状态: ${status.isAuthenticated ? '已登录' : '未登录'}`);
+};
 
-// 测试相关的变量
-const logs = ref([]);
-const isPiniaAvailable = ref(false);
-const isSharedAvailable = ref(false);
-const notificationCount = ref(0);
+const forceLogin = () => {
+  setAuthenticated();
+  message.success('已强制设置为登录状态');
+};
 
-// 创建本地测试存储，确保测试能正常工作
-const localPinia = createPinia();
-const testStore = useTestStore(localPinia);
-
-// 添加日志
-function addLog(message) {
-  const timestamp = new Date().toLocaleTimeString();
-  logs.value.unshift(`${timestamp}: ${message}`);
-}
-
-// 测试逻辑
-function runTest() {
-  addLog('开始测试...');
-  
-  // 测试Pinia
-  try {
-    isPiniaAvailable.value = window.__pinia !== undefined;
-    addLog(`Pinia全局实例: ${isPiniaAvailable.value ? '可用' : '不可用'}`);
-    
-    // 检查本地测试存储
-    testStore.increment();
-    addLog(`测试存储更新成功，当前计数: ${testStore.counter}`);
-    
-    // 测试localStorage
-    localStorage.setItem('test-timestamp', Date.now().toString());
-    const savedTime = localStorage.getItem('test-timestamp');
-    addLog(`localStorage测试: ${savedTime ? '成功' : '失败'}`);
-    
-    // 尝试访问共享状态
-    try {
-      // 首先尝试从全局Pinia获取
-      if (window.__pinia) {
-        const sharedStore = window.__pinia._s.get('shared');
-        if (sharedStore) {
-          isSharedAvailable.value = true;
-          notificationCount.value = sharedStore.globalNotifications.length;
-          addLog(`共享状态存在，通知数量: ${notificationCount.value}`);
-        } else {
-          addLog('全局Pinia中未找到shared状态');
-        }
-      }
-      
-      // 尝试引入模块方式获取
-      import('../../../../stores/shared.js').then(module => {
-        const useSharedStore = module.useSharedStore;
-        const store = useSharedStore();
-        isSharedAvailable.value = true;
-        notificationCount.value = store.globalNotifications.length;
-        addLog(`通过导入获取共享状态成功，通知数量: ${notificationCount.value}`);
-      }).catch(error => {
-        addLog(`尝试导入shared.js失败: ${error.message}`);
-      });
-    } catch (error) {
-      addLog(`获取共享状态出错: ${error.message}`);
-    }
-  } catch (error) {
-    addLog(`测试过程发生错误: ${error.message}`);
-  }
-}
-
-// 测试添加通知
-function testAddNotification() {
-  try {
-    import('../../../../stores/shared.js').then(module => {
-      const useSharedStore = module.useSharedStore;
-      const store = useSharedStore();
-      
-      store.addGlobalNotification({
-        title: '测试通知',
-        message: '这是从登录页添加的测试通知',
-        type: 'info'
-      });
-      
-      notificationCount.value = store.globalNotifications.length;
-      addLog(`成功添加通知，当前数量: ${notificationCount.value}`);
-    }).catch(error => {
-      addLog(`添加通知时导入shared.js失败: ${error.message}`);
-    });
-  } catch (error) {
-    addLog(`添加通知过程发生错误: ${error.message}`);
-  }
-}
-
-// 同步到共享状态
-function syncToShared() {
-  try {
-    import('../../../../stores/shared.js').then(module => {
-      const useSharedStore = module.useSharedStore;
-      const store = useSharedStore();
-      
-      // 添加通知，包含测试存储的信息
-      store.addGlobalNotification({
-        title: '本地状态同步',
-        message: `从登录页同步 - 当前计数: ${testStore.counter}`,
-        type: 'success'
-      });
-      
-      // 更新平台状态
-      store.updatePlatformStatus('comprehensive', 'test-sync');
-      
-      // 获取更新后的数据
-      notificationCount.value = store.globalNotifications.length;
-      
-      // 保存同步时间
-      localStorage.setItem('last-sync', new Date().toISOString());
-      
-      addLog(`状态已同步，通知数量: ${notificationCount.value}`);
-      
-      // 在控制台展示更多数据
-      console.log('共享状态完整数据:', {
-        platforms: store.platformStatuses,
-        notifications: store.globalNotifications,
-        metaData: {
-          syncTime: new Date().toISOString(),
-          source: 'login-page-test'
-        }
-      });
-    }).catch(error => {
-      addLog(`同步过程中导入shared.js失败: ${error.message}`);
-    });
-  } catch (error) {
-    addLog(`同步过程发生错误: ${error.message}`);
-  }
-}
-
-// 清空日志
-function clearLogs() {
-  logs.value = [];
-  addLog('日志已清空');
-}
-
-// 加载时自动运行一次测试
-onMounted(() => {
-  addLog('测试面板已加载');
-  setTimeout(runTest, 1000);
-});
+const clearLogin = () => {
+  clearAuthentication();
+  message.warning('已清除登录状态');
+};
 </script>
 
 <style scoped>
 .login-container {
+  width: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  background: linear-gradient(135deg, #0F2645 0%, #1A3A67 100%);
+  background-size: 100% 100%;
+  position: relative;
+  overflow: hidden;
 }
 
-.login-card {
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1000px;
+  height: 1000px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(46, 106, 230, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.login-container::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(76, 187, 255, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  transform: translate(30%, 30%);
+  pointer-events: none;
+}
+
+.login-form-wrapper {
   width: 400px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 1;
+  animation: fadeIn 0.5s ease;
 }
 
-.login-card :deep(.ant-card-head) {
+.login-header {
   text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-title {
+  color: #0F2645;
   font-size: 24px;
-  font-weight: bold;
+  margin-bottom: 8px;
 }
 
-.login-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.login-subtitle {
+  color: #4A4A4A;
+  font-size: 16px;
 }
 
-.login-button {
+.login-form {
   width: 100%;
 }
 
@@ -315,60 +224,28 @@ onMounted(() => {
   float: right;
 }
 
-/* 测试面板样式 */
-.test-panel {
-  margin-top: 30px;
-  border-top: 1px solid #eee;
-  padding-top: 20px;
+.login-form-button {
+  width: 100%;
+  height: 50px;
+  font-size: 16px;
+  margin-top: 20px;
 }
 
-.test-panel h3 {
-  margin-bottom: 10px;
-  color: #333;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.test-actions {
+.quick-login {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.debug-buttons {
   display: flex;
+  justify-content: center;
   gap: 10px;
-  margin-bottom: 15px;
-}
-
-.test-actions button {
-  background: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.test-actions button:hover {
-  background: #e6e6e6;
-}
-
-.test-section {
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  padding: 10px;
-  margin-bottom: 15px;
-}
-
-.test-section h4 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  color: #555;
-}
-
-.logs {
-  max-height: 200px;
-  overflow-y: auto;
-  font-family: monospace;
+  margin-top: 5px;
   font-size: 12px;
-  line-height: 1.5;
-}
-
-.log-error {
-  color: #ff4d4f;
 }
 </style> 
