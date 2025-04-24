@@ -1,4 +1,3 @@
-
 # 智慧园区后端项目架构
 > 最后更新: 2023-10-20
 
@@ -75,6 +74,9 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │   │   │   ├── NotificationAuditController.java  # 通知审核 ⏳
 │   │   │   │   │   ├── NotificationStatsController.java  # 通知统计 ⏳
 │   │   │   │   │   ├── NotificationSearchController.java  # 通知搜索 ⏳
+│   │   │   │   │   ├── NotificationRecycleBinController.java  # 回收站管理 ⏳
+│   │   │   │   │   ├── NotificationPermissionController.java  # 通知权限管理 ⏳
+│   │   │   │   │   ├── NotificationConfirmationController.java  # 通知确认管理 ⏳
 │   │   │   │   │   ├── PolicyController.java  # 政策文件 ⏳
 │   │   │   │   │   ├── ActivityController.java  # 园区活动 ⏳
 │   │   │   │   │   └── SurveyController.java  # 调查问卷 ⏳
@@ -107,6 +109,9 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │       │   ├── NotificationAuditService.java  # ⏳
 │   │   │       │   ├── NotificationStatsService.java  # ⏳
 │   │   │       │   ├── NotificationSearchService.java  # ⏳
+│   │   │       │   ├── NotificationRecycleBinService.java  # 回收站服务 ⏳
+│   │   │       │   ├── NotificationPermissionService.java  # 权限管理服务 ⏳
+│   │   │       │   ├── NotificationConfirmationService.java  # 确认管理服务 ⏳
 │   │   │       │   ├── PolicyService.java  # ⏳
 │   │   │       │   └── ActivityService.java  # ⏳
 │   │   │       ├── meeting/              # 会议管理服务
@@ -210,6 +215,9 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │   ├── Notification.java         # 通知公告 ✅
 │   │   │   ├── NotificationAudit.java    # 通知审核记录 ⏳
 │   │   │   ├── NotificationRead.java     # 通知阅读记录 ⏳
+│   │   │   ├── NotificationConfirmation.java  # 通知确认记录 ⏳
+│   │   │   ├── NotificationRecycleBin.java    # 回收站记录 ⏳
+│   │   │   ├── NotificationPermission.java    # 通知权限记录 ⏳
 │   │   │   ├── Attachment.java           # 通知附件 ⏳
 │   │   │   ├── Policy.java               # 政策文件 ⏳
 │   │   │   ├── Activity.java             # 园区活动 ⏳
@@ -218,7 +226,9 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │   ├── NotificationRepository.java  # ✅
 │   │   │   ├── NotificationAuditRepository.java  # ⏳
 │   │   │   ├── NotificationReadRepository.java  # ⏳
-│   │   │   ├── AttachmentRepository.java  # ⏳
+│   │   │   ├── NotificationConfirmationRepository.java  # 确认记录仓储 ⏳
+│   │   │   ├── NotificationRecycleBinRepository.java    # 回收站仓储 ⏳
+│   │   │   ├── NotificationPermissionRepository.java    # 权限仓储 ⏳
 │   │   │   ├── PolicyRepository.java  # ⏳
 │   │   │   └── ActivityRepository.java  # ⏳
 │   │   ├── service/                      # 领域服务
@@ -226,10 +236,16 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │   ├── NotificationStateMachine.java  # 状态机服务 ⏳
 │   │   │   ├── NotificationStatsService.java  # 统计分析服务 ⏳
 │   │   │   ├── NotificationSearchDomainService.java  # 通知搜索领域服务 ⏳
-│   │   │   └── PolicyDomainService.java  # ⏳
+│   │   │   ├── NotificationPermissionService.java  # 权限管理领域服务 ⏳
+│   │   │   ├── NotificationConfirmationService.java  # 确认管理领域服务 ⏳
+│   │   │   ├── NotificationRecycleBinService.java    # 回收站领域服务 ⏳
 │   │   └── event/                        # 领域事件
 │   │       ├── NotificationCreatedEvent.java  # 通知创建事件 ⏳
 │   │       ├── NotificationAuditedEvent.java  # 通知审核事件 ⏳
+│   │       ├── NotificationPublishedEvent.java  # 通知发布事件 ⏳
+│   │       ├── NotificationExpiredEvent.java     # 通知过期事件 ⏳
+│   │       ├── NotificationArchivedEvent.java    # 通知归档事件 ⏳
+│   │       ├── NotificationConfirmedEvent.java   # 通知确认事件 ⏳
 │   │       └── NotificationPublishedEvent.java  # 通知发布事件 ⏳
 │   │
 │   ├── resource/                         # 资源管理领域
@@ -282,6 +298,9 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │       ├── NotificationMapper.java  # ✅
 │   │   │       ├── NotificationAuditMapper.java  # ⏳
 │   │   │       ├── NotificationReadMapper.java  # ⏳
+│   │   │       ├── NotificationConfirmationMapper.java  # 确认记录映射 ⏳
+│   │   │       ├── NotificationRecycleBinMapper.java    # 回收站映射 ⏳
+│   │   │       ├── NotificationPermissionMapper.java    # 权限映射 ⏳
 │   │   │       ├── AttachmentMapper.java  # ⏳
 │   │   │       ├── PolicyMapper.java  # ⏳
 │   │   │       └── ActivityMapper.java  # ⏳
@@ -296,7 +315,9 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │       ├── NotificationRepositoryImpl.java  # ✅
 │   │   │       ├── NotificationAuditRepositoryImpl.java  # ⏳
 │   │   │       ├── NotificationReadRepositoryImpl.java  # ⏳
-│   │   │       ├── AttachmentRepositoryImpl.java  # ⏳
+│   │   │       ├── NotificationConfirmationRepositoryImpl.java  # 确认记录仓储实现 ⏳
+│   │   │       ├── NotificationRecycleBinRepositoryImpl.java    # 回收站仓储实现 ⏳
+│   │   │       ├── NotificationPermissionRepositoryImpl.java    # 权限仓储实现 ⏳
 │   │   │       └── PolicyRepositoryImpl.java  # ⏳
 │   │   └── partition/                    # 数据分区策略 ⏳
 │   │       ├── PartitionStrategy.java    # 分区策略接口
@@ -467,6 +488,9 @@ SmartCampus/src/main/resources/
 │       ├── NotificationMapper.xml  # ✅
 │       ├── NotificationAuditMapper.xml  # ⏳
 │       ├── NotificationReadMapper.xml  # ⏳
+│       ├── NotificationConfirmationMapper.xml  # 确认记录映射XML ⏳
+│       ├── NotificationRecycleBinMapper.xml    # 回收站映射XML ⏳
+│       ├── NotificationPermissionMapper.xml    # 权限映射XML ⏳
 │       ├── AttachmentMapper.xml  # ⏳
 │       ├── PolicyMapper.xml  # ⏳
 │       └── ActivityMapper.xml  # ⏳
