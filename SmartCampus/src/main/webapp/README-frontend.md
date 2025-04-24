@@ -99,10 +99,21 @@ SmartCampus/
 │   │   │   │   │   │   ├── evaluation/     # 评价管理 ⏳
 │   │   │   │   │   │   └── guide/          # 服务指南 ⏳
 │   │   │   │   │   ├── information/        # 信息公开
-│   │   │   │   │   │   ├── notification/   # 通知公告 ⏳
-│   │   │   │   │   │   ├── policy/         # 政策文件 ⏳
-│   │   │   │   │   │   ├── activity/       # 园区活动 ⏳
-│   │   │   │   │   │   ├── survey/         # 调查问卷 ⏳
+│   │   │   │   │   │   ├── notification/   # 通知公告 
+│   │   │   │   │   │   │   ├── list/              # 公告列表页 ⏳
+│   │   │   │   │   │   │   ├── detail/            # 公告详情页 ⏳
+│   │   │   │   │   │   │   ├── draft/             # 公告起草页 ⏳
+│   │   │   │   │   │   │   ├── audit/             # 公告审核页 ⏳
+│   │   │   │   │   │   │   ├── publish/           # 公告发布页 ⏳
+│   │   │   │   │   │   │   ├── manage/            # 公告管理页 ⏳
+│   │   │   │   │   │   │   ├── archive/           # 公告归档页 ⏳
+│   │   │   │   │   │   │   ├── recycle-bin/       # 回收站页面 ⏳
+│   │   │   │   │   │   │   └── components/        # 通知公告组件
+│   │   │   │   │   │   │       ├── StatusComponent.vue    # 状态组件 ⏳
+│   │   │   │   │   │   │       ├── OperationComponent.vue # 操作组件 ⏳
+│   │   │   │   │   │   │       ├── NotificationWidget.vue # 通知组件 ⏳
+│   │   │   │   │   │   │       └── StatisticsComponent.vue # 统计组件 ⏳
+│   │   │   │   │   │   │
 │   │   │   │   │   │   └── demand/         # 需求发布 ⏳
 │   │   │   │   │   ├── meeting/            # 会议管理
 │   │   │   │   │   │   ├── room-mgmt/      # 会议室管理 ⏳
@@ -158,9 +169,17 @@ SmartCampus/
 │   │   │   │   └── statistics/             # 综合统计模块 ⏳
 │   │   │   │
 │   │   │   ├── components/                 # 平台特定组件 ⏳
-│   │   │   ├── api/                        # API接口 ⏳
+│   │   │   ├── api/                        # API接口 
+│   │   │   │   ├── service/                # 服务管理API ⏳
+│   │   │   │   │   └── notification.js     # 通知公告API接口 ⏳
+│   │   │   │   └── other-modules/          # 其他模块API ⏳
+│   │   │   │
 │   │   │   ├── error/                      # 错误页面组件 ✅
 │   │   │   ├── stores/                     # Pinia状态管理 ✅
+│   │   │   │   ├── service/                # 服务管理状态 ⏳
+│   │   │   │   │   └── notification.js     # 通知公告状态管理 ⏳
+│   │   │   │   └── other-modules/          # 其他模块状态 ⏳
+│   │   │   │
 │   │   │   └── App.vue                     # 综合管理平台主应用 ✅
 │   │   │
 │   │   ├── public-service/                 # 公共服务平台
@@ -168,10 +187,12 @@ SmartCampus/
 │   │   │   ├── views/                      # 页面组件
 │   │   │   │   ├── home/                   # 首页 ⏳
 │   │   │   │   ├── information/            # 信息公开
-│   │   │   │   │   ├── notification/       # 通知公告 ⏳
-│   │   │   │   │   ├── policy/             # 政策文件 ⏳
-│   │   │   │   │   ├── activity/           # 园区活动 ⏳
-│   │   │   │   │   ├── survey/             # 问卷调查 ⏳
+│   │   │   │   │   ├── notification/       # 通知公告
+│   │   │   │   │   │   ├── list/           # 列表页 ⏳
+│   │   │   │   │   │   ├── detail/         # 详情页 ⏳
+│   │   │   │   │   │   └── components/     # 组件
+│   │   │   │   │   │       ├── NotificationCard.vue     # 通知卡片 ⏳
+│   │   │   │   │   │       └── ConfirmationDialog.vue   # 确认对话框 ⏳
 │   │   │   │   │   └── demand/             # 需求浏览 ⏳
 │   │   │   │   │
 │   │   │   │   ├── service-hall/           # 服务大厅
@@ -253,7 +274,9 @@ SmartCampus/
 │   │
 │   ├── services/                           # 服务层
 │   │   ├── auth/                           # 认证服务 ⏳
-│   │   ├── information/                    # 信息服务 ⏳
+│   │   ├── information/                    # 信息服务 
+│   │   │   ├── notification-service.js     # 通知公告业务服务 ⏳
+│   │   │   └── other-info-services.js      # 其他信息服务 ⏳
 │   │   ├── system/                         # 系统服务 ⏳
 │   │   ├── workflow/                       # 工作流服务 ⏳
 │   │   ├── notification/                   # 通知服务(事件通知机制) ⏳
