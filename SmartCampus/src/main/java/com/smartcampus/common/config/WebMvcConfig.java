@@ -29,7 +29,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 静态资源
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
+                
+        // Swagger UI资源 - 解决与Spring Boot 2.7.x的兼容性问题
+        registry.addResourceHandler("/swagger-ui.html**")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 } 

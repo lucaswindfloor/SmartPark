@@ -1,508 +1,524 @@
 <template>
-  <div class="notification-container">
-    <!-- 搜索和筛选区域 -->
-    <div class="search-filter-container">
-      <el-form :inline="true" class="search-form">
-        <el-form-item>
-          <el-input
-            v-model="searchParams.keyword"
-            placeholder="请输入标题关键词"
-            clearable
-            @keyup.enter="handleSearch"
-          >
-            <template #append>
-              <el-button @click="handleSearch">
-                <el-icon><Search /></el-icon>
-              </el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-        
-        <el-form-item>
-          <el-select 
-            v-model="searchParams.status" 
-            placeholder="公告状态"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option label="已发布" value="PUBLISHED" />
-            <el-option label="草稿" value="DRAFT" />
-            <el-option label="已下架" value="ARCHIVED" />
-          </el-select>
-        </el-form-item>
-        
-        <el-form-item>
-          <el-select 
-            v-model="searchParams.category" 
-            placeholder="公告类型"
-            clearable
-            @change="handleSearch"
-          >
-            <el-option 
-              v-for="category in categoryOptions" 
-              :key="category.value" 
-              :label="category.label" 
-              :value="category.value" 
-            />
-          </el-select>
-        </el-form-item>
-        
-        <el-form-item>
-          <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            value-format="YYYY-MM-DD"
-            @change="handleDateRangeChange"
+  <div class="notification-page">
+    <a-card :bordered="false" class="card-container">
+      <!-- 顶部操作区 -->
+      <div class="table-operations">
+        <a-space>
+          <a-input-search
+            v-model="searchParams.keywords"
+            placeholder="标题/内容"
+            style="width: 200px"
+            @search="handleSearch"
           />
-        </el-form-item>
-      </el-form>
-      
-      <div class="action-buttons">
-        <el-button type="primary" @click="openCreateModal">
-          <el-icon><Plus /></el-icon>新建公告
-        </el-button>
-        <el-button @click="exportNotifications">
-          <el-icon><Download /></el-icon>导出
-        </el-button>
-      </div>
+          <a-select
+            v-model="searchParams.noticeType"
+            placeholder="选择通知类型"
+            style="width: 150px"
+            allowClear
+            @change="handleSearch"
+          >
+            <a-select-option v-for="item in noticeTypeOptions" :key="item.value" :value="item.value">
+              {{ item.label }}
+            </a-select-option>
+          </a-select>
+          <a-select
+            v-model="searchParams.status"
+            placeholder="选择状态"
+            style="width: 120px"
+            allowClear
+            @change="handleSearch"
+          >
+            <a-select-option v-for="item in statusOptions" :key="item.value" :value="item.value">
+              {{ item.label }}
+            </a-select-option>
+          </a-select>
+          <a-button type="primary" @click="handleAdd">
+            <a-icon type="plus" />新增
+          </a-button>
+          <a-button @click="handleRefresh">
+            <a-icon type="reload" />刷新
+          </a-button>
+        </a-space>
     </div>
     
-    <!-- 数据表格 -->
-    <el-table
-      v-loading="loading"
-      :data="notificationList"
-      border
-      style="width: 100%"
-      @selection-change="handleSelectionChange"
+      <!-- 表格 -->
+      <a-table
+        :columns="columns"
+        :data-source="dataSource"
+        :loading="loading"
+        :pagination="pagination"
+        :rowKey="record => record.id"
+        @change="handleTableChange"
     >
-      <el-table-column type="selection" width="55" />
-      <el-table-column prop="title" label="标题" min-width="200">
-        <template #default="{ row }">
-          <div class="notification-title">
-            <el-tag v-if="row.isSticky" type="danger" size="small" class="mr-2">置顶</el-tag>
-            <span @click="viewNotificationDetail(row)" class="link-text">{{ row.title }}</span>
-          </div>
+        <template #noticeTypeSlot="text">
+          <a-tag :color="getNoticeTypeColor(text)">{{ getNoticeTypeName(text) }}</a-tag>
         </template>
-      </el-table-column>
-      <el-table-column prop="category" label="公告类型" width="120">
-        <template #default="{ row }">
-          {{ getCategoryLabel(row.category) }}
+        
+        <template #statusSlot="text">
+          <a-badge :status="getStatusBadge(text)" :text="getStatusName(text)" />
         </template>
-      </el-table-column>
-      <el-table-column prop="publishTime" label="发布时间" width="180" />
-      <el-table-column prop="author" label="发布人" width="120" />
-      <el-table-column prop="readCount" label="阅读量" width="100" sortable />
-      <el-table-column prop="status" label="状态" width="100">
-        <template #default="{ row }">
-          <el-tag :type="getStatusTagType(row.status)">
-            {{ getStatusLabel(row.status) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200" fixed="right">
-        <template #default="{ row }">
-          <el-button size="small" @click="viewNotificationDetail(row)">查看</el-button>
-          <el-button 
+        
+        <template #actionSlot="text, record">
+          <a-space>
+            <a-button type="link" size="small" @click="handleView(record)">查看</a-button>
+            <a-button 
+              type="link" 
+              size="small" 
+              @click="handleEdit(record)"
+              v-if="record.status !== 'PUBLISHED'"
+            >编辑</a-button>
+            <a-button 
+              type="link" 
+              size="small" 
+              @click="handlePublish(record)"
+              v-if="record.status === 'DRAFT'"
+            >发布</a-button>
+            <a-button 
+              type="link" 
+              size="small" 
+              @click="handleOffline(record)"
+              v-if="record.status === 'PUBLISHED'"
+            >下线</a-button>
+            <a-popconfirm
+              title="确定要删除此通知吗?"
+              ok-text="确定"
+              cancel-text="取消"
+              @confirm="handleDelete(record)"
+            >
+              <a-button 
+                type="link" 
             size="small" 
-            type="primary" 
-            @click="editNotification(row)"
-            v-if="row.status !== 'ARCHIVED'"
-          >编辑</el-button>
-          <el-dropdown trigger="click" @command="(cmd) => handleMoreActions(cmd, row)">
-            <el-button size="small">
-              更多<el-icon class="el-icon--right"><ArrowDown /></el-icon>
-            </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item 
-                  v-if="row.status === 'DRAFT'" 
-                  command="publish"
-                >发布</el-dropdown-item>
-                <el-dropdown-item 
-                  v-if="row.status === 'PUBLISHED'" 
-                  command="archive"
-                >下架</el-dropdown-item>
-                <el-dropdown-item 
-                  v-if="row.status === 'PUBLISHED'" 
-                  :command="row.isSticky ? 'unsticky' : 'sticky'"
-                >{{ row.isSticky ? '取消置顶' : '置顶' }}</el-dropdown-item>
-                <el-dropdown-item 
-                  command="delete" 
-                  divided 
-                  style="color: #F56C6C;"
-                >删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+                danger
+                v-if="record.status !== 'PUBLISHED'"
+              >删除</a-button>
+            </a-popconfirm>
+          </a-space>
         </template>
-      </el-table-column>
-    </el-table>
+      </a-table>
+    </a-card>
     
-    <!-- 分页 -->
-    <div class="pagination-container">
-      <el-pagination
-        v-model:current-page="pagination.currentPage"
-        v-model:page-size="pagination.pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        :total="pagination.total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
-    
-    <!-- 创建/编辑公告对话框 -->
-    <el-dialog
-      v-model="noticeFormVisible"
-      :title="formMode === 'create' ? '创建公告' : '编辑公告'"
-      width="800px"
-      destroy-on-close
+    <!-- 添加/编辑对话框 -->
+    <a-modal
+      :title="modalTitle"
+      :visible="modalVisible"
+      :width="900"
+      :footer="null"
+      @cancel="handleModalCancel"
     >
-      <Form 
+      <notification-form
+        ref="notificationForm"
         :form-data="formData" 
-        :mode="formMode"
+        :edit-mode="editMode"
         @submit="handleFormSubmit"
-        @cancel="noticeFormVisible = false"
+        @cancel="handleModalCancel"
       />
-    </el-dialog>
+    </a-modal>
     
-    <!-- 查看公告详情对话框 -->
-    <el-dialog
-      v-model="noticeDetailVisible"
-      title="公告详情"
-      width="800px"
-      destroy-on-close
+    <!-- 查看详情对话框 -->
+    <a-modal
+      title="通知详情"
+      :visible="detailVisible"
+      :width="800"
+      :footer="null"
+      @cancel="handleDetailCancel"
     >
-      <Detail 
-        v-if="selectedNotification" 
-        :notification="selectedNotification" 
-      />
-    </el-dialog>
+      <a-spin :spinning="detailLoading">
+        <a-descriptions bordered :column="1">
+          <a-descriptions-item label="标题">{{ detail.title }}</a-descriptions-item>
+          <a-descriptions-item label="通知类型">
+            <a-tag :color="getNoticeTypeColor(detail.noticeType)">
+              {{ getNoticeTypeName(detail.noticeType) }}
+            </a-tag>
+          </a-descriptions-item>
+          <a-descriptions-item label="来源">{{ detail.source }}</a-descriptions-item>
+          <a-descriptions-item label="发布时间">{{ detail.publishTime }}</a-descriptions-item>
+          <a-descriptions-item label="截止有效期">{{ detail.validityEndTime }}</a-descriptions-item>
+          <a-descriptions-item label="状态">
+            <a-badge :status="getStatusBadge(detail.status)" :text="getStatusName(detail.status)" />
+          </a-descriptions-item>
+          <a-descriptions-item label="内容">
+            <div class="notification-content" v-html="detail.content"></div>
+          </a-descriptions-item>
+          <a-descriptions-item label="附件" v-if="detail.attachments && detail.attachments.length > 0">
+            <a-list size="small" :data-source="detail.attachments" item-layout="horizontal">
+              <a-list-item slot="renderItem" slot-scope="item">
+                <a-list-item-meta>
+                  <a slot="title" @click="handleDownload(item)">
+                    <a-icon type="paper-clip" /> {{ item.name }}
+                  </a>
+                </a-list-item-meta>
+              </a-list-item>
+            </a-list>
+          </a-descriptions-item>
+        </a-descriptions>
+      </a-spin>
+    </a-modal>
   </div>
 </template>
 
-<script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
-import { Search, Plus, Download, ArrowDown } from '@element-plus/icons-vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import Form from './Form.vue';
-import Detail from './Detail.vue';
+<script>
+import NotificationForm from './components/NotificationForm.vue'
 
-// 模拟数据
-const categoryOptions = [
-  { label: '通知', value: 'NOTICE' },
-  { label: '公告', value: 'ANNOUNCEMENT' },
-  { label: '新闻', value: 'NEWS' },
-  { label: '活动', value: 'EVENT' }
-];
-
-// 状态
-const loading = ref(false);
-const notificationList = ref([]);
-const selectedNotifications = ref([]);
-const noticeFormVisible = ref(false);
-const noticeDetailVisible = ref(false);
-const formMode = ref('create');
-const formData = ref({});
-const selectedNotification = ref(null);
-const dateRange = ref([]);
-
-// 搜索参数
-const searchParams = reactive({
-  keyword: '',
-  status: '',
-  category: '',
-  startDate: '',
-  endDate: ''
-});
-
-// 分页
-const pagination = reactive({
-  currentPage: 1,
-  pageSize: 10,
-  total: 0
-});
-
-// 获取状态显示文本
-const getStatusLabel = (status) => {
-  const statusMap = {
-    'PUBLISHED': '已发布',
-    'DRAFT': '草稿',
-    'ARCHIVED': '已下架'
-  };
-  return statusMap[status] || status;
-};
-
-// 获取状态标签类型
-const getStatusTagType = (status) => {
-  const typeMap = {
-    'PUBLISHED': 'success',
-    'DRAFT': 'info',
-    'ARCHIVED': 'warning'
-  };
-  return typeMap[status] || '';
-};
-
-// 获取类别显示文本
-const getCategoryLabel = (category) => {
-  const option = categoryOptions.find(opt => opt.value === category);
-  return option ? option.label : category;
-};
-
-// 加载通知列表
-const loadNotifications = async () => {
-  try {
-    loading.value = true;
-    // 这里应该是实际的 API 调用
-    // const response = await api.getNotifications({
-    //   ...searchParams,
-    //   page: pagination.currentPage,
-    //   size: pagination.pageSize
-    // });
-    
-    // 模拟后端返回数据
-    setTimeout(() => {
-      const mockData = Array(pagination.pageSize).fill(0).map((_, index) => ({
-        id: `notice-${index}`,
-        title: `公告标题 ${index + 1}`,
-        category: ['NOTICE', 'ANNOUNCEMENT', 'NEWS', 'EVENT'][Math.floor(Math.random() * 4)],
-        publishTime: new Date().toLocaleString(),
-        author: '管理员',
-        readCount: Math.floor(Math.random() * 1000),
-        status: ['PUBLISHED', 'DRAFT', 'ARCHIVED'][Math.floor(Math.random() * 3)],
-        isSticky: Math.random() > 0.8,
-        content: '这是公告内容...'
-      }));
+export default {
+  name: 'NotificationPage',
+  components: {
+    NotificationForm
+  },
+  data() {
+    return {
+      // 搜索参数
+      searchParams: {
+        keywords: '',
+        noticeType: undefined,
+        status: undefined,
+        pageNum: 1,
+        pageSize: 10
+      },
+      // 表格列配置
+      columns: [
+        {
+          title: '标题',
+          dataIndex: 'title',
+          key: 'title',
+          ellipsis: true,
+          width: 250,
+        },
+        {
+          title: '通知类型',
+          dataIndex: 'noticeType',
+          key: 'noticeType',
+          width: 120,
+          scopedSlots: { customRender: 'noticeTypeSlot' }
+        },
+        {
+          title: '来源',
+          dataIndex: 'source',
+          key: 'source',
+          width: 120
+        },
+        {
+          title: '发布时间',
+          dataIndex: 'publishTime',
+          key: 'publishTime',
+          width: 180,
+          sorter: true
+        },
+        {
+          title: '截止有效期',
+          dataIndex: 'validityEndTime',
+          key: 'validityEndTime',
+          width: 180
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          key: 'status',
+          width: 100,
+          scopedSlots: { customRender: 'statusSlot' }
+        },
+        {
+          title: '操作',
+          key: 'action',
+          width: 240,
+          fixed: 'right',
+          scopedSlots: { customRender: 'actionSlot' }
+        }
+      ],
+      // 表格数据
+      dataSource: [],
+      // 加载状态
+      loading: false,
+      // 分页配置
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        showTotal: total => `共 ${total} 条`
+      },
+      // 表单弹窗配置
+      modalVisible: false,
+      modalTitle: '新增通知',
+      editMode: false,
+      formData: {},
       
-      notificationList.value = mockData;
-      pagination.total = 100; // 模拟总数
-      loading.value = false;
-    }, 500);
+      // 详情弹窗配置
+      detailVisible: false,
+      detailLoading: false,
+      detail: {},
+      
+      // 通知类型选项
+      noticeTypeOptions: [
+        { label: '普通通知', value: 'NORMAL' },
+        { label: '重要通知', value: 'IMPORTANT' },
+        { label: '紧急通知', value: 'URGENT' }
+      ],
+      // 状态选项
+      statusOptions: [
+        { label: '草稿', value: 'DRAFT' },
+        { label: '已发布', value: 'PUBLISHED' },
+        { label: '已下线', value: 'OFFLINE' }
+      ]
+    }
+  },
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    // 获取通知类型名称
+    getNoticeTypeName(type) {
+      const option = this.noticeTypeOptions.find(item => item.value === type)
+      return option ? option.label : type
+    },
     
-  } catch (error) {
-    console.error('Failed to load notifications:', error);
-    ElMessage.error('加载公告列表失败');
-    loading.value = false;
+    // 获取通知类型颜色
+    getNoticeTypeColor(type) {
+      const colorMap = {
+        'NORMAL': 'blue',
+        'IMPORTANT': 'orange',
+        'URGENT': 'red'
+      }
+      return colorMap[type] || 'blue'
+    },
+    
+    // 获取状态名称
+    getStatusName(status) {
+      const option = this.statusOptions.find(item => item.value === status)
+      return option ? option.label : status
+    },
+    
+    // 获取状态徽章样式
+    getStatusBadge(status) {
+  const statusMap = {
+        'DRAFT': 'default',
+    'PUBLISHED': 'success',
+        'OFFLINE': 'warning'
+      }
+      return statusMap[status] || 'default'
+    },
+    
+    // 获取数据
+    fetchData() {
+      this.loading = true
+      
+      // 模拟API调用
+      setTimeout(() => {
+        // 此处应替换为实际API调用
+        const mockData = this.generateMockData()
+        
+        this.dataSource = mockData.list
+        this.pagination.total = mockData.total
+        this.pagination.current = this.searchParams.pageNum
+        this.pagination.pageSize = this.searchParams.pageSize
+        
+        this.loading = false
+      }, 500)
+    },
+    
+    // 模拟数据（仅用于演示，应替换为实际API调用）
+    generateMockData() {
+      const total = 35
+      const { pageNum, pageSize, keywords, noticeType, status } = this.searchParams
+      
+      // 生成随机数据
+      let list = []
+      for (let i = 0; i < pageSize && (pageNum - 1) * pageSize + i < total; i++) {
+        const id = (pageNum - 1) * pageSize + i + 1
+        const item = {
+          id: `${id}`,
+          title: `通知标题 ${id}`,
+          noticeType: ['NORMAL', 'IMPORTANT', 'URGENT'][Math.floor(Math.random() * 3)],
+          source: '信息中心',
+          publishTime: '2023-07-15 10:00:00',
+          validityEndTime: '2023-12-31 23:59:59',
+          status: ['DRAFT', 'PUBLISHED', 'OFFLINE'][Math.floor(Math.random() * 3)],
+          content: '<p>这是通知内容...</p>',
+          attachments: [
+            { id: '1', name: '附件1.docx', url: '#' },
+            { id: '2', name: '附件2.pdf', url: '#' }
+          ]
+        }
+        
+        // 根据搜索条件过滤
+        if (keywords && !item.title.includes(keywords)) {
+          continue
+        }
+        if (noticeType && item.noticeType !== noticeType) {
+          continue
+        }
+        if (status && item.status !== status) {
+          continue
+        }
+        
+        list.push(item)
+      }
+      
+      return {
+        list,
+        total: list.length // 实际项目中应返回满足条件的总数
   }
-};
-
-// 处理搜索
-const handleSearch = () => {
-  pagination.currentPage = 1;
-  loadNotifications();
-};
-
-// 处理日期范围变化
-const handleDateRangeChange = (val) => {
-  if (val) {
-    searchParams.startDate = val[0];
-    searchParams.endDate = val[1];
-  } else {
-    searchParams.startDate = '';
-    searchParams.endDate = '';
-  }
-  handleSearch();
-};
-
-// 处理表格选择变化
-const handleSelectionChange = (selection) => {
-  selectedNotifications.value = selection;
-};
-
-// 处理分页大小变化
-const handleSizeChange = (size) => {
-  pagination.pageSize = size;
-  loadNotifications();
-};
-
-// 处理页码变化
-const handleCurrentChange = (page) => {
-  pagination.currentPage = page;
-  loadNotifications();
-};
-
-// 打开创建模态框
-const openCreateModal = () => {
-  formMode.value = 'create';
-  formData.value = {
+    },
+    
+    // 搜索
+    handleSearch() {
+      this.searchParams.pageNum = 1
+      this.fetchData()
+    },
+    
+    // 刷新
+    handleRefresh() {
+      this.fetchData()
+    },
+    
+    // 表格变化（分页、排序）
+    handleTableChange(pagination, filters, sorter) {
+      this.searchParams.pageNum = pagination.current
+      this.searchParams.pageSize = pagination.pageSize
+      
+      // 处理排序
+      if (sorter.field && sorter.order) {
+        this.searchParams.sortField = sorter.field
+        this.searchParams.sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc'
+      } else {
+        this.searchParams.sortField = undefined
+        this.searchParams.sortOrder = undefined
+      }
+      
+      this.fetchData()
+    },
+    
+    // 新增
+    handleAdd() {
+      this.modalTitle = '新增通知'
+      this.editMode = false
+      this.formData = {
     title: '',
-    category: '',
+        noticeType: 'NORMAL',
+        source: '信息中心',
+        validityEndTime: '',
     content: '',
-    isSticky: false,
-    status: 'DRAFT'
-  };
-  noticeFormVisible.value = true;
-};
-
-// 编辑公告
-const editNotification = (row) => {
-  formMode.value = 'edit';
-  formData.value = { ...row };
-  noticeFormVisible.value = true;
-};
-
-// 查看公告详情
-const viewNotificationDetail = (row) => {
-  selectedNotification.value = row;
-  noticeDetailVisible.value = true;
-};
-
-// 处理表单提交
-const handleFormSubmit = async (formValues) => {
-  try {
-    loading.value = true;
-    // 这里应该是实际的 API 调用
-    // if (formMode.value === 'create') {
-    //   await api.createNotification(formValues);
-    // } else {
-    //   await api.updateNotification(formValues.id, formValues);
-    // }
+        attachments: [],
+        status: 'DRAFT',
+        editRemarks: ''
+      }
+      this.modalVisible = true
+    },
     
-    // 模拟 API 调用
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // 编辑
+    handleEdit(record) {
+      this.modalTitle = '编辑通知'
+      this.editMode = true
+      // 深拷贝记录数据
+      this.formData = JSON.parse(JSON.stringify(record))
+      this.modalVisible = true
+    },
     
-    ElMessage.success(formMode.value === 'create' ? '创建成功' : '更新成功');
-    noticeFormVisible.value = false;
-    loadNotifications();
-  } catch (error) {
-    console.error('Failed to submit form:', error);
-    ElMessage.error(formMode.value === 'create' ? '创建失败' : '更新失败');
-  } finally {
-    loading.value = false;
-  }
-};
-
-// 处理更多操作
-const handleMoreActions = async (command, row) => {
-  try {
-    switch (command) {
-      case 'publish':
-        await changeNotificationStatus(row.id, 'PUBLISHED');
-        ElMessage.success('发布成功');
-        break;
-      case 'archive':
-        await changeNotificationStatus(row.id, 'ARCHIVED');
-        ElMessage.success('下架成功');
-        break;
-      case 'sticky':
-        await toggleStickyStatus(row.id, true);
-        ElMessage.success('置顶成功');
-        break;
-      case 'unsticky':
-        await toggleStickyStatus(row.id, false);
-        ElMessage.success('取消置顶成功');
-        break;
-      case 'delete':
-        await deleteNotification(row.id);
-        ElMessage.success('删除成功');
-        break;
-      default:
-        break;
-    }
-    loadNotifications();
-  } catch (error) {
-    console.error('Failed to perform action:', error);
-    ElMessage.error('操作失败');
-  }
-};
-
-// 更改公告状态
-const changeNotificationStatus = async (id, status) => {
-  // 这里应该是实际的 API 调用
-  // await api.updateNotificationStatus(id, status);
-  
-  // 模拟 API 调用
-  return new Promise(resolve => setTimeout(resolve, 300));
-};
-
-// 切换置顶状态
-const toggleStickyStatus = async (id, isSticky) => {
-  // 这里应该是实际的 API 调用
-  // await api.updateNotificationSticky(id, isSticky);
-  
-  // 模拟 API 调用
-  return new Promise(resolve => setTimeout(resolve, 300));
-};
-
-// 删除公告
-const deleteNotification = async (id) => {
-  try {
-    await ElMessageBox.confirm('确定要删除这条公告吗？', '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    });
+    // 查看详情
+    handleView(record) {
+      this.detailLoading = true
+      this.detailVisible = true
+      
+      // 模拟加载详情
+      setTimeout(() => {
+        this.detail = JSON.parse(JSON.stringify(record))
+        this.detailLoading = false
+      }, 300)
+    },
     
-    // 这里应该是实际的 API 调用
-    // await api.deleteNotification(id);
+    // 关闭详情弹窗
+    handleDetailCancel() {
+      this.detailVisible = false
+    },
     
-    // 模拟 API 调用
-    return new Promise(resolve => setTimeout(resolve, 300));
-  } catch (error) {
-    if (error !== 'cancel') {
-      throw error;
+    // 表单提交
+    handleFormSubmit(formData) {
+      console.log('提交表单数据:', formData)
+      
+      // 模拟提交
+      this.loading = true
+      setTimeout(() => {
+        this.$message.success(this.editMode ? '更新通知成功!' : '创建通知成功!')
+        this.modalVisible = false
+        this.fetchData()
+      }, 500)
+    },
+    
+    // 关闭表单弹窗
+    handleModalCancel() {
+      this.modalVisible = false
+    },
+    
+    // 发布通知
+    handlePublish(record) {
+      this.$confirm({
+        title: '确认发布',
+        content: `确定要发布"${record.title}"吗?`,
+        onOk: () => {
+          // 模拟API调用
+          this.loading = true
+          setTimeout(() => {
+            this.$message.success('通知发布成功!')
+            this.fetchData()
+          }, 500)
+        }
+      })
+    },
+    
+    // 下线通知
+    handleOffline(record) {
+      this.$confirm({
+        title: '确认下线',
+        content: `确定要下线"${record.title}"吗?`,
+        onOk: () => {
+          // 模拟API调用
+          this.loading = true
+          setTimeout(() => {
+            this.$message.success('通知已下线!')
+            this.fetchData()
+          }, 500)
+        }
+      })
+    },
+    
+    // 删除通知
+    handleDelete(record) {
+      // 模拟API调用
+      this.loading = true
+      setTimeout(() => {
+        this.$message.success('删除通知成功!')
+        this.fetchData()
+      }, 500)
+    },
+    
+    // 下载附件
+    handleDownload(file) {
+      this.$message.info(`下载附件: ${file.name}`)
+      // 实际项目中应调用文件下载API
     }
   }
-};
-
-// 导出公告
-const exportNotifications = () => {
-  ElMessage.info('导出功能待实现');
-};
-
-// 页面加载时获取数据
-onMounted(() => {
-  loadNotifications();
-});
+}
 </script>
 
-<style scoped>
-.notification-container {
-  width: 100%;
+<style lang="less" scoped>
+.notification-page {
+  background-color: #f0f2f5;
+  padding: 20px;
+  height: 100%;
+  
+  .card-container {
+    height: 100%;
 }
 
-.search-filter-container {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  .table-operations {
+    margin-bottom: 16px;
 }
 
-.search-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.notification-title {
-  display: flex;
-  align-items: center;
-}
-
-.mr-2 {
-  margin-right: 8px;
-}
-
-.link-text {
-  color: #409EFF;
-  cursor: pointer;
-}
-
-.link-text:hover {
-  text-decoration: underline;
+  .notification-content {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 12px;
+    background-color: #fafafa;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+  }
 }
 </style> 

@@ -1,47 +1,69 @@
 package com.smartcampus.common.enums.information;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
- * 通知状态枚举
+ * 通知公告状态枚举
  */
-@Getter
-@AllArgsConstructor
 public enum NotificationStatusEnum {
+    /**
+     * 草稿
+     */
+    DRAFT("draft", "草稿"),
     
     /**
-     * 待发送
+     * 待审核
      */
-    PENDING(1, "待发送"),
+    PENDING_AUDIT("pending_audit", "待审核"),
     
     /**
-     * 已发送
+     * 待发布
      */
-    SENT(2, "已发送"),
+    PENDING_PUBLISH("pending_publish", "待发布"),
     
     /**
-     * 已读
+     * 已发布
      */
-    READ(3, "已读"),
+    PUBLISHED("published", "已发布"),
     
     /**
-     * 发送失败
+     * 已过期
      */
-    FAILED(4, "发送失败"),
+    EXPIRED("expired", "已过期"),
     
     /**
-     * 已取消
+     * 已取消发布
      */
-    CANCELLED(5, "已取消");
-    
-    private final Integer code;
-    private final String description;
+    CANCELED("canceled", "已取消发布"),
     
     /**
-     * 根据code获取枚举
+     * 已归档
      */
-    public static NotificationStatusEnum getByCode(Integer code) {
+    ARCHIVED("archived", "已归档"),
+    
+    /**
+     * 已删除（回收站）
+     */
+    DELETED("deleted", "已删除");
+    
+    private final String code;
+    private final String desc;
+    
+    NotificationStatusEnum(String code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+    
+    public String getDesc() {
+        return desc;
+    }
+    
+    /**
+     * 根据code获取状态枚举
+     */
+    public static NotificationStatusEnum getByCode(String code) {
         for (NotificationStatusEnum status : values()) {
             if (status.getCode().equals(code)) {
                 return status;

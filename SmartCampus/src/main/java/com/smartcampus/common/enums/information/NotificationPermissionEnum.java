@@ -1,47 +1,47 @@
 package com.smartcampus.common.enums.information;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
- * 通知权限枚举
+ * 通知公告权限枚举
  */
-@Getter
-@AllArgsConstructor
 public enum NotificationPermissionEnum {
+    /**
+     * 起草权限
+     */
+    DRAFT("draft", "起草权限"),
     
     /**
-     * 公开 - 所有人可见
+     * 审核权限
      */
-    PUBLIC(1, "公开"),
+    AUDIT("audit", "审核权限"),
     
     /**
-     * 部门内 - 仅部门内可见
+     * 发布权限
      */
-    DEPARTMENT(2, "部门内"),
+    PUBLISH("publish", "发布权限"),
     
     /**
-     * 角色内 - 仅指定角色可见
+     * 管理权限
      */
-    ROLE(3, "角色内"),
+    MANAGE("manage", "管理权限"),
     
     /**
-     * 个人 - 仅指定个人可见
+     * 归档权限
      */
-    PERSONAL(4, "个人");
+    ARCHIVE("archive", "归档权限");
     
-    private final Integer code;
-    private final String description;
+    private final String code;
+    private final String desc;
     
-    /**
-     * 根据code获取枚举
-     */
-    public static NotificationPermissionEnum getByCode(Integer code) {
-        for (NotificationPermissionEnum permission : values()) {
-            if (permission.getCode().equals(code)) {
-                return permission;
-            }
-        }
-        return null;
+    NotificationPermissionEnum(String code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
+    
+    public String getCode() {
+        return code;
+    }
+    
+    public String getDesc() {
+        return desc;
     }
 } 

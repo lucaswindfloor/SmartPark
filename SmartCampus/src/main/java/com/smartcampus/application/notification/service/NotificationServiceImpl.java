@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Implementation of the NotificationService
  */
-@Service
+@Service("systemNotificationService")
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {

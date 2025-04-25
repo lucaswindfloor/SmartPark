@@ -24,17 +24,17 @@ public interface NotificationService {
     /**
      * 分页查询通知
      */
-    Page<Notification> getNotifications(String recipient, Integer status, Integer type, Integer importance, Pageable pageable);
+    Page<Notification> getNotifications(String scope, Integer status, Integer type, Integer importance, Pageable pageable);
     
     /**
      * 获取未读通知
      */
-    List<Notification> getUnreadNotifications(String recipient);
+    List<Notification> getUnreadNotifications(String scope);
     
     /**
      * 统计未读通知数量
      */
-    long countUnreadNotifications(String recipient);
+    long countUnreadNotifications(String scope);
     
     /**
      * 标记通知为已读

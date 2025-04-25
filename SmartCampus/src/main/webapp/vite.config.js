@@ -24,15 +24,20 @@ export default defineConfig({
             return;
           }
           
+          // 允许访问综合管理平台的服务管理下的路径
+          if (req.url.startsWith('/service/information/notification') || 
+              req.url.startsWith('/comprehensive/service/information/notification')) {
+            console.log('允许访问通知公告页面');
+            next();
+            return;
+          }
+          
           // 如果是/comprehensive/路径，检查是否是直接访问
           if (req.url.startsWith('/comprehensive/') && req.headers.referer) {
             const referer = new URL(req.headers.referer);
-            if (referer.pathname === '/') {
-              console.log('检测到从根路径的自动重定向，重定向到selector.html');
-              res.writeHead(302, {
-                'Location': '/selector.html'
-              });
-              res.end();
+            if (referer.pathname === '/' || referer.pathname === '/selector.html') {
+              console.log('来自选择器的请求，放行通过');
+              next();
               return;
             }
           }

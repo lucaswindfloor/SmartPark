@@ -1,107 +1,187 @@
 package com.smartcampus.domain.information.entity;
 
-import com.smartcampus.common.enums.information.NotificationImportanceEnum;
-import com.smartcampus.common.enums.information.NotificationPermissionEnum;
 import com.smartcampus.common.enums.information.NotificationStatusEnum;
-import com.smartcampus.common.enums.information.NotificationTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
- * 通知推送记录实体类
+ * 通知公告实体类
  */
-@Entity
-@Table(name = "t_notifications")
 @Data
+@Entity
+@Table(name = "notices")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notification {
 
+    /**
+     * 主键ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     /**
-     * 公告ID
+     * 标题
      */
-    @NotNull(message = "公告ID不能为空")
-    @Column(name = "notice_id", nullable = false)
-    private Long noticeId;
-    
+    @Column(nullable = false, length = 100)
+    private String title;
+
     /**
-     * 接收人ID
+     * 内容
      */
-    @NotNull(message = "接收人ID不能为空")
-    @Column(name = "recipient_id", nullable = false)
-    private Long recipientId;
-    
-    /**
-     * 通知类型（inbox、app、sms）
-     */
-    @NotBlank(message = "通知类型不能为空")
-    @Column(name = "type", nullable = false, length = 20)
-    private String type;
-    
-    /**
-     * 通知内容
-     */
-    @NotBlank(message = "通知内容不能为空")
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
-    
+
     /**
-     * 发送时间
+     * 状态
      */
-    @Column(name = "sent_at")
-    private LocalDateTime sentAt;
-    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NotificationStatusEnum status;
+
     /**
-     * 是否已读
+     * 创建人ID
      */
-    @Column(name = "is_read", nullable = false)
-    private Boolean isRead;
-    
+    @Column(nullable = false)
+    private String creatorId;
+
     /**
-     * 阅读时间
+     * 公开范围 (all, enterprise, role)
      */
-    @Column(name = "read_at")
-    private LocalDateTime readAt;
-    
+    @Column(nullable = false)
+    private String scope;
+
+    /**
+     * 范围详情 (企业ID, 角色ID列表)
+     */
+    @Column(columnDefinition = "JSON")
+    private String scopeDetails;
+
+    /**
+     * 类型 (normal, policy, event, emergency)
+     */
+    @Column(nullable = false)
+    private String type;
+
+    /**
+     * 重要性 (normal, important, emergency)
+     */
+    @Column(nullable = false)
+    private String importance;
+
+    /**
+     * 是否需要确认
+     */
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    private Boolean requireConfirmation;
+
+    /**
+     * 确认截止时间
+     */
+    private LocalDateTime confirmationDeadline;
+
+    /**
+     * 查看次数
+     */
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer viewCount;
+
     /**
      * 创建时间
      */
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createTime;
+
+    /**
+     * 更新时间
+     */
+    @Column(nullable = false)
+    private LocalDateTime updateTime;
+
+    /**
+     * 发布时间
+     */
+    private LocalDateTime publishTime;
+
+    /**
+     * 定时发布时间
+     */
+    private LocalDateTime scheduledPublishTime;
+
+    /**
+     * 过期时间
+     */
+    private LocalDateTime expireTime;
+
+    /**
+     * 是否置顶
+     */
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    private Boolean isPinned;
+
+    /**
+     * 有效期(天)
+     */
+    @Column(columnDefinition = "INT DEFAULT 7")
+    private Integer validityPeriod;
+
+    /**
+     * 归档时间
+     */
+    private LocalDateTime archiveTime;
+
+    /**
+     * 附件信息
+     */
+    @Column(columnDefinition = "JSON")
+    private String attachments;
     
+    /**
+     * 扩展数据
+     */
+    @Column(columnDefinition = "JSON")
+    private String extraData;
+    
+    /**
+     * 预处理方法
+     */
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        if (this.isRead == null) {
-            this.isRead = false;
+        if (createTime == null) {
+            createTime = LocalDateTime.now();
+        }
+        if (updateTime == null) {
+            updateTime = LocalDateTime.now();
+        }
+        if (status == null) {
+            status = NotificationStatusEnum.DRAFT;
+        }
+        if (viewCount == null) {
+            viewCount = 0;
+        }
+        if (isPinned == null) {
+            isPinned = false;
+        }
+        if (requireConfirmation == null) {
+            requireConfirmation = false;
+        }
+        if (validityPeriod == null) {
+            validityPeriod = 7; // 默认7天有效期
         }
     }
     
     /**
-     * 标记为已发送
+     * 更新预处理
      */
-    public void markAsSent() {
-        this.sentAt = LocalDateTime.now();
-    }
-    
-    /**
-     * 标记为已读
-     */
-    public void markAsRead() {
-        this.isRead = true;
-        this.readAt = LocalDateTime.now();
+    @PreUpdate
+    public void preUpdate() {
+        updateTime = LocalDateTime.now();
     }
 } 

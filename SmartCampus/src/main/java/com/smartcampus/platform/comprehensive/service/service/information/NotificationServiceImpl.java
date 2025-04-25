@@ -1,7 +1,7 @@
 package com.smartcampus.platform.comprehensive.service.service.information;
 
 import com.smartcampus.domain.information.entity.Notification;
-import com.smartcampus.domain.information.repository.NotificationRepository;
+import com.smartcampus.domain.information.repository.AnnouncementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
-    private final NotificationRepository notificationRepository;
+    private final AnnouncementRepository notificationRepository;
 
     @Override
     @Transactional
@@ -37,32 +37,32 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Notification> getNotifications(String recipient, Integer status, Integer type, Integer importance, Pageable pageable) {
-        log.info("查询通知列表, 接收者: {}, 状态: {}, 类型: {}, 重要性: {}", recipient, status, type, importance);
+    public Page<Notification> getNotifications(String scope, Integer status, Integer type, Integer importance, Pageable pageable) {
+        log.info("查询通知列表, 目标范围: {}, 状态: {}, 类型: {}, 重要性: {}", scope, status, type, importance);
         
         if (status != null) {
-            return notificationRepository.findByRecipientAndStatus(recipient, status, pageable);
+            return notificationRepository.findByScopeAndStatus(scope, status, pageable);
         } else if (type != null) {
-            return notificationRepository.findByRecipientAndType(recipient, type, pageable);
+            return notificationRepository.findByScopeAndType(scope, type, pageable);
         } else if (importance != null) {
-            return notificationRepository.findByRecipientAndImportance(recipient, importance, pageable);
+            return notificationRepository.findByScopeAndImportance(scope, importance, pageable);
         } else {
-            return notificationRepository.findByRecipient(recipient, pageable);
+            return notificationRepository.findByScope(scope, pageable);
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Notification> getUnreadNotifications(String recipient) {
-        log.info("获取未读通知, 接收者: {}", recipient);
-        return notificationRepository.findByRecipientAndStatusNot(recipient, 1);
+    public List<Notification> getUnreadNotifications(String scope) {
+        log.info("获取未读通知, 目标范围: {}", scope);
+        return notificationRepository.findByScopeAndStatusNot(scope, 1);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public long countUnreadNotifications(String recipient) {
-        log.info("统计未读通知数量, 接收者: {}", recipient);
-        return notificationRepository.countByRecipientAndStatusNot(recipient, 1);
+    public long countUnreadNotifications(String scope) {
+        log.info("统计未读通知数量, 目标范围: {}", scope);
+        return notificationRepository.countByScopeAndStatusNot(scope, 1);
     }
 
     @Override

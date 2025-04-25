@@ -3,6 +3,7 @@ package com.smartcampus.infrastructure.persistence.mapper.information;
 import com.smartcampus.domain.information.entity.Notification;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,12 @@ public interface NotificationMapper {
     Notification selectById(Long id);
     
     /**
+     * 查询所有通知
+     */
+    @Select("SELECT * FROM t_notifications")
+    List<Notification> selectAll();
+    
+    /**
      * 统计总行数
      */
     long count();
@@ -39,6 +46,12 @@ public interface NotificationMapper {
      * 查询接收者的通知
      */
     List<Notification> selectByRecipient(@Param("recipient") String recipient);
+    
+    /**
+     * 查询指定范围的通知
+     */
+    @Select("SELECT * FROM t_notifications WHERE scope = #{scope}")
+    List<Notification> selectByScope(@Param("scope") String scope);
     
     /**
      * 查询接收者的指定状态的通知
