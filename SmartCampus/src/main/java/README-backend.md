@@ -70,16 +70,20 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │   │   │   ├── ServiceProcessController.java # 服务流程 ⏳
 │   │   │   │   │   └── ServiceEvaluationController.java # 服务评价 ⏳
 │   │   │   │   ├── information/               # 信息公开
-│   │   │   │   │   ├── AnnouncementController.java  # 通知公告 ✅
-│   │   │   │   │   ├── AnnouncementAuditController.java  # 通知审核 ⏳
-│   │   │   │   │   ├── AnnouncementStatsController.java  # 通知统计 ⏳
-│   │   │   │   │   ├── AnnouncementSearchController.java  # 通知搜索 ⏳
-│   │   │   │   │   ├── AnnouncementRecycleBinController.java  # 回收站管理 ⏳
-│   │   │   │   │   ├── AnnouncementPermissionController.java  # 通知权限管理 ⏳
-│   │   │   │   │   ├── AnnouncementConfirmationController.java  # 通知确认管理 ⏳
-│   │   │   │   │   ├── PolicyController.java  # 政策文件 ⏳
-│   │   │   │   │   ├── ActivityController.java  # 园区活动 ⏳
-│   │   │   │   │   └── SurveyController.java  # 调查问卷 ⏳
+│   │   │   │   │   ├── announcement/          # 通知公告
+│   │   │   │   │   │   ├── AnnouncementController.java  # 通知公告基本操作 ✅
+│   │   │   │   │   │   ├── AnnouncementAuditController.java  # 通知审核 ⏳
+│   │   │   │   │   │   ├── AnnouncementStatsController.java  # 通知统计 ⏳
+│   │   │   │   │   │   ├── AnnouncementSearchController.java  # 通知搜索 ⏳
+│   │   │   │   │   │   ├── AnnouncementRecycleBinController.java  # 回收站管理 ⏳
+│   │   │   │   │   │   ├── AnnouncementPermissionController.java  # 通知权限管理 ⏳
+│   │   │   │   │   │   └── AnnouncementConfirmationController.java  # 通知确认管理 ⏳
+│   │   │   │   │   ├── policy/                # 政策文件
+│   │   │   │   │   │   └── PolicyController.java  # 政策文件 ⏳
+│   │   │   │   │   ├── activity/              # 园区活动
+│   │   │   │   │   │   └── ActivityController.java  # 园区活动 ⏳
+│   │   │   │   │   └── survey/                # 调查问卷
+│   │   │   │   │       └── SurveyController.java  # 调查问卷 ⏳
 │   │   │   │   ├── meeting/                   # 会议管理 ⏳
 │   │   │   │   │   ├── MeetingRoomController.java    # 会议室管理
 │   │   │   │   │   └── MeetingBookingController.java # 会议预订管理
@@ -105,15 +109,18 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │       │   ├── ServiceProcessService.java       # ⏳
 │   │   │       │   └── ServiceEvaluationService.java    # ⏳
 │   │   │       ├── information/         # 信息公开模块服务
-│   │   │       │   ├── AnnouncementService.java  # ✅
-│   │   │       │   ├── AnnouncementAuditService.java  # ⏳
-│   │   │       │   ├── AnnouncementStatsService.java  # ⏳
-│   │   │       │   ├── AnnouncementSearchService.java  # ⏳
-│   │   │       │   ├── AnnouncementRecycleBinService.java  # 回收站服务 ⏳
-│   │   │       │   ├── AnnouncementPermissionService.java  # 权限管理服务 ⏳
-│   │   │       │   ├── AnnouncementConfirmationService.java  # 确认管理服务 ⏳
-│   │   │       │   ├── PolicyService.java  # ⏳
-│   │   │       │   └── ActivityService.java  # ⏳
+│   │   │       │   ├── announcement/    # 通知公告服务
+│   │   │       │   │   ├── AnnouncementService.java  # ✅
+│   │   │       │   │   ├── AnnouncementAuditService.java  # ⏳
+│   │   │       │   │   ├── AnnouncementStatsService.java  # ⏳
+│   │   │       │   │   ├── AnnouncementSearchService.java  # ⏳
+│   │   │       │   │   ├── AnnouncementRecycleBinService.java  # 回收站服务 ⏳
+│   │   │       │   │   ├── AnnouncementPermissionService.java  # 权限管理服务 ⏳
+│   │   │       │   │   └── AnnouncementConfirmationService.java  # 确认管理服务 ⏳
+│   │   │       │   ├── policy/          # 政策文件服务
+│   │   │       │   │   └── PolicyService.java  # ⏳
+│   │   │       │   └── activity/        # 园区活动服务
+│   │   │       │       └── ActivityService.java  # ⏳
 │   │   │       ├── meeting/              # 会议管理服务
 │   │   │       │   ├── MeetingRoomService.java    # ⏳
 │   │   │       │   └── MeetingBookingService.java # ⏳
@@ -148,13 +155,19 @@ SmartCampus/src/main/java/com/smartcampus/
 │   ├── public/                           # 公共服务平台
 │   │   ├── information/                  # 信息公开
 │   │   │   ├── controller/                # 控制器 ⏳
-│   │   │   │   ├── AnnouncementViewController.java  # 通知查看 ⏳
-│   │   │   │   ├── AnnouncementSubscriptionController.java  # 通知订阅 ⏳
-│   │   │   │   └── MobileAnnouncementController.java  # 移动端通知控制器 ⏳
+│   │   │   │   ├── announcement/           # 通知公告控制器
+│   │   │   │   │   ├── AnnouncementViewController.java  # 通知查看 ⏳
+│   │   │   │   │   ├── AnnouncementSubscriptionController.java  # 通知订阅 ⏳
+│   │   │   │   │   └── MobileAnnouncementController.java  # 移动端通知控制器 ⏳
+│   │   │   │   ├── policy/                 # 政策文件控制器
+│   │   │   │   └── activity/               # 园区活动控制器
 │   │   │   └── service/                   # 服务层 ⏳
-│   │   │       ├── AnnouncementViewService.java  # 通知查看服务 ⏳
-│   │   │       ├── SubscriptionService.java  # 订阅服务 ⏳
-│   │   │       └── MobileAnnouncementService.java  # 移动端通知服务 ⏳
+│   │   │       ├── announcement/           # 通知公告服务
+│   │   │       │   ├── AnnouncementViewService.java  # 通知查看服务 ⏳
+│   │   │       │   ├── SubscriptionService.java  # 订阅服务 ⏳
+│   │   │       │   └── MobileAnnouncementService.java  # 移动端通知服务 ⏳
+│   │   │       ├── policy/                 # 政策文件服务
+│   │   │       └── activity/               # 园区活动服务
 │   │   │
 │   │   ├── servicehall/                  # 服务大厅
 │   │   │   ├── controller/                # 控制器 ⏳
@@ -220,41 +233,54 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │
 │   │   ├── information/                      # 信息公开领域
 │   │   │   ├── entity/                       # 领域实体
-│   │   │   │   ├── Announcement.java         # 通知公告 ✅
-│   │   │   │   ├── AnnouncementAudit.java    # 通知审核记录 ⏳
-│   │   │   │   ├── AnnouncementRead.java     # 通知阅读记录 ⏳
-│   │   │   │   ├── AnnouncementConfirmation.java  # 通知确认记录 ⏳
-│   │   │   │   ├── AnnouncementRecycleBin.java    # 回收站记录 ⏳
-│   │   │   │   ├── AnnouncementPermission.java    # 通知权限记录 ⏳
-│   │   │   │   ├── Attachment.java           # 通知附件 ⏳
-│   │   │   │   ├── Policy.java               # 政策文件 ⏳
-│   │   │   │   ├── Activity.java             # 园区活动 ⏳
-│   │   │   │   └── Survey.java               # 调查问卷 ⏳
+│   │   │   │   ├── announcement/             # 通知公告实体
+│   │   │   │   │   ├── Announcement.java         # 通知公告 ✅
+│   │   │   │   │   ├── AnnouncementAudit.java    # 通知审核记录 ⏳
+│   │   │   │   │   ├── AnnouncementRead.java     # 通知阅读记录 ⏳
+│   │   │   │   │   ├── AnnouncementConfirmation.java  # 通知确认记录 ⏳
+│   │   │   │   │   ├── AnnouncementRecycleBin.java    # 回收站记录 ⏳
+│   │   │   │   │   └── AnnouncementPermission.java    # 通知权限记录 ⏳
+│   │   │   │   ├── common/                   # 公共实体
+│   │   │   │   │   └── Attachment.java       # 附件 ⏳
+│   │   │   │   ├── policy/                   # 政策文件实体
+│   │   │   │   │   └── Policy.java           # 政策文件 ⏳
+│   │   │   │   ├── activity/                 # 园区活动实体
+│   │   │   │   │   └── Activity.java         # 园区活动 ⏳
+│   │   │   │   └── survey/                   # 调查问卷实体
+│   │   │   │       └── Survey.java           # 调查问卷 ⏳
 │   │   │   ├── repository/                   # 仓储接口
-│   │   │   │   ├── AnnouncementRepository.java  # ✅
-│   │   │   │   ├── AnnouncementAuditRepository.java  # ⏳
-│   │   │   │   ├── AnnouncementReadRepository.java  # ⏳
-│   │   │   │   ├── AnnouncementConfirmationRepository.java  # 确认记录仓储 ⏳
-│   │   │   │   ├── AnnouncementRecycleBinRepository.java    # 回收站仓储 ⏳
-│   │   │   │   ├── AnnouncementPermissionRepository.java    # 权限仓储 ⏳
-│   │   │   │   ├── PolicyRepository.java  # ⏳
-│   │   │   │   └── ActivityRepository.java  # ⏳
+│   │   │   │   ├── announcement/             # 通知公告仓储
+│   │   │   │   │   ├── AnnouncementRepository.java  # ✅
+│   │   │   │   │   ├── AnnouncementAuditRepository.java  # ⏳
+│   │   │   │   │   ├── AnnouncementReadRepository.java  # ⏳
+│   │   │   │   │   ├── AnnouncementConfirmationRepository.java  # 确认记录仓储 ⏳
+│   │   │   │   │   ├── AnnouncementRecycleBinRepository.java    # 回收站仓储 ⏳
+│   │   │   │   │   └── AnnouncementPermissionRepository.java    # 权限仓储 ⏳
+│   │   │   │   ├── policy/                   # 政策文件仓储
+│   │   │   │   │   └── PolicyRepository.java  # ⏳
+│   │   │   │   └── activity/                 # 园区活动仓储
+│   │   │   │       └── ActivityRepository.java  # ⏳
 │   │   │   ├── service/                      # 领域服务
-│   │   │   │   ├── AnnouncementDomainService.java  # ✅
-│   │   │   │   ├── AnnouncementStateMachine.java  # 状态机服务 ⏳
-│   │   │   │   ├── AnnouncementStatsService.java  # 统计分析服务 ⏳
-│   │   │   │   ├── AnnouncementSearchDomainService.java  # 通知搜索领域服务 ⏳
-│   │   │   │   ├── AnnouncementPermissionService.java  # 权限管理领域服务 ⏳
-│   │   │   │   ├── AnnouncementConfirmationService.java  # 确认管理领域服务 ⏳
-│   │   │   │   ├── AnnouncementRecycleBinService.java    # 回收站领域服务 ⏳
+│   │   │   │   ├── announcement/             # 通知公告领域服务
+│   │   │   │   │   ├── AnnouncementDomainService.java  # ✅
+│   │   │   │   │   ├── AnnouncementStateMachine.java  # 状态机服务 ⏳
+│   │   │   │   │   ├── AnnouncementStatsService.java  # 统计分析服务 ⏳
+│   │   │   │   │   ├── AnnouncementSearchDomainService.java  # 通知搜索领域服务 ⏳
+│   │   │   │   │   ├── AnnouncementPermissionService.java  # 权限管理领域服务 ⏳
+│   │   │   │   │   ├── AnnouncementConfirmationService.java  # 确认管理领域服务 ⏳
+│   │   │   │   │   └── AnnouncementRecycleBinService.java    # 回收站领域服务 ⏳
+│   │   │   │   ├── policy/                   # 政策文件领域服务
+│   │   │   │   └── activity/                 # 园区活动领域服务
 │   │   │   └── event/                        # 领域事件
-│   │   │       ├── AnnouncementCreatedEvent.java  # 通知创建事件 ⏳
-│   │   │       ├── AnnouncementAuditedEvent.java  # 通知审核事件 ⏳
-│   │   │       ├── AnnouncementPublishedEvent.java  # 通知发布事件 ⏳
-│   │   │       ├── AnnouncementExpiredEvent.java     # 通知过期事件 ⏳
-│   │   │       ├── AnnouncementArchivedEvent.java    # 通知归档事件 ⏳
-│   │   │       ├── AnnouncementConfirmedEvent.java   # 通知确认事件 ⏳
-│   │   │       └── AnnouncementPublishedEvent.java  # 通知发布事件 ⏳
+│   │   │       ├── announcement/             # 通知公告事件
+│   │   │       │   ├── AnnouncementCreatedEvent.java  # 通知创建事件 ⏳
+│   │   │       │   ├── AnnouncementAuditedEvent.java  # 通知审核事件 ⏳
+│   │   │       │   ├── AnnouncementPublishedEvent.java  # 通知发布事件 ⏳
+│   │   │       │   ├── AnnouncementExpiredEvent.java     # 通知过期事件 ⏳
+│   │   │       │   ├── AnnouncementArchivedEvent.java    # 通知归档事件 ⏳
+│   │   │       │   └── AnnouncementConfirmedEvent.java   # 通知确认事件 ⏳
+│   │   │       ├── policy/                   # 政策文件事件
+│   │   │       └── activity/                 # 园区活动事件
 │   │   │
 │   │   ├── resource/                         # 资源管理领域
 │   │   │   ├── entity/                       # 实体
@@ -283,17 +309,28 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │
 │   │   ├── subscription/                     # 订阅领域
 │   │   │   ├── entity/                       # 订阅实体
-│   │   │   │   ├── AnnouncementSubscription.java  # 通知订阅 ⏳
-│   │   │   │   ├── SystemMessageSubscription.java  # 系统消息订阅 ⏳
-│   │   │   │   └── UserMessageSubscription.java  # 用户消息订阅 ⏳
+│   │   │   │   ├── announcement/             # 通知公告订阅实体
+│   │   │   │   │   └── AnnouncementSubscription.java  # 通知订阅 ⏳
+│   │   │   │   ├── message/                  # 消息订阅实体
+│   │   │   │   │   ├── SystemMessageSubscription.java  # 系统消息订阅 ⏳
+│   │   │   │   │   └── UserMessageSubscription.java  # 用户消息订阅 ⏳
+│   │   │   │   └── common/                   # 公共订阅实体
 │   │   │   ├── repository/                   # 订阅仓储
-│   │   │   │   ├── SubscriptionRepository.java  # ⏳
-│   │   │   │   ├── SystemMessageSubscriptionRepository.java  # ⏳
-│   │   │   │   └── UserMessageSubscriptionRepository.java  # ⏳
+│   │   │   │   ├── announcement/             # 通知订阅仓储
+│   │   │   │   │   └── AnnouncementSubscriptionRepository.java  # ⏳
+│   │   │   │   ├── message/                  # 消息订阅仓储
+│   │   │   │   │   ├── SystemMessageSubscriptionRepository.java  # ⏳
+│   │   │   │   │   └── UserMessageSubscriptionRepository.java  # ⏳
+│   │   │   │   └── common/                   # 公共订阅仓储
+│   │   │   │       └── SubscriptionRepository.java  # ⏳
 │   │   │   └── service/                      # 订阅服务
-│   │   │       ├── SubscriptionDomainService.java  # ⏳
-│   │   │       ├── SystemMessageSubscriptionService.java  # ⏳
-│   │   │       └── UserMessageSubscriptionService.java  # ⏳
+│   │   │       ├── announcement/             # 通知订阅服务
+│   │   │       │   └── AnnouncementSubscriptionService.java  # ⏳
+│   │   │       ├── message/                  # 消息订阅服务
+│   │   │       │   ├── SystemMessageSubscriptionService.java  # ⏳
+│   │   │       │   └── UserMessageSubscriptionService.java  # ⏳
+│   │   │       └── common/                   # 公共订阅服务
+│   │   │           └── SubscriptionDomainService.java  # ⏳
 │   │   │
 │   │   ├── message/                          # 消息领域
 │   │   │   ├── entity/                       # 消息实体
@@ -327,33 +364,31 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │   │   │   ├── MeetingRoomMapper.java        # ⏳
 │   │   │   │   │   └── ResourceBookingMapper.java    # ⏳
 │   │   │   │   └── information/              # 信息管理映射
-│   │   │   │   │   ├── AnnouncementMapper.java  # ✅
-│   │   │   │   │   ├── AnnouncementAuditMapper.java  # ⏳
-│   │   │   │   │   ├── AnnouncementReadMapper.java  # ⏳
-│   │   │   │   │   ├── AnnouncementConfirmationMapper.java  # 确认记录映射 ⏳
-│   │   │   │   │   ├── AnnouncementRecycleBinMapper.java    # 回收站映射 ⏳
-│   │   │   │   │   ├── AnnouncementPermissionMapper.java    # 权限映射 ⏳
-│   │   │   │   │   ├── AttachmentMapper.java  # ⏳
-│   │   │   │   │   ├── PolicyMapper.java  # ⏳
-│   │   │   │   │   └── ActivityMapper.java  # ⏳
-│   │   │   │   │   ├── message/                  # 消息管理映射
-│   │   │   │   │   │   ├── MessageMapper.java  # ⏳
-│   │   │   │   │   │   └── SystemMessageMapper.java  # ⏳
-│   │   │   │   └── repository/                   # 仓储实现
-│   │   │   │       ├── service/                  # 服务管理仓储实现
-│   │   │   │       │   ├── ServiceItemRepositoryImpl.java    # ⏳
-│   │   │   │       │   └── ServiceEvaluationRepositoryImpl.java # ⏳
-│   │   │   │       ├── resource/                 # 资源管理仓储实现
-│   │   │   │       │   ├── MeetingRoomRepositoryImpl.java    # ⏳
-│   │   │   │       │   └── BookingRepositoryImpl.java        # ⏳
+│   │   │   │   │   ├── announcement/         # 通知公告映射
+│   │   │   │   │   │   ├── AnnouncementMapper.java  # ✅
+│   │   │   │   │   │   ├── AnnouncementAuditMapper.java  # ⏳
+│   │   │   │   │   │   ├── AnnouncementReadMapper.java  # ⏳
+│   │   │   │   │   │   ├── AnnouncementConfirmationMapper.java  # 确认记录映射 ⏳
+│   │   │   │   │   │   ├── AnnouncementRecycleBinMapper.java    # 回收站映射 ⏳
+│   │   │   │   │   │   └── AnnouncementPermissionMapper.java    # 权限映射 ⏳
+│   │   │   │   │   ├── common/               # 公共映射
+│   │   │   │   │   │   └── AttachmentMapper.java  # ⏳
+│   │   │   │   │   ├── policy/               # 政策文件映射
+│   │   │   │   │   │   └── PolicyMapper.java  # ⏳
+│   │   │   │   │   └── activity/             # 园区活动映射
+│   │   │   │   │       └── ActivityMapper.java  # ⏳
+│   │   │   │   └── information/              # 信息管理仓储实现
 │   │   │   │       └── information/              # 信息管理仓储实现
-│   │   │   │           ├── AnnouncementRepositoryImpl.java  # ✅
-│   │   │   │           ├── AnnouncementAuditRepositoryImpl.java  # ⏳
-│   │   │   │           ├── AnnouncementReadRepositoryImpl.java  # ⏳
-│   │   │   │           ├── AnnouncementConfirmationRepositoryImpl.java  # 确认记录仓储实现 ⏳
-│   │   │   │           ├── AnnouncementRecycleBinRepositoryImpl.java    # 回收站仓储实现 ⏳
-│   │   │   │           ├── AnnouncementPermissionRepositoryImpl.java    # 权限仓储实现 ⏳
-│   │   │   │           └── PolicyRepositoryImpl.java  # ⏳
+│   │   │   │           ├── announcement/         # 通知公告仓储实现
+│   │   │   │           │   ├── AnnouncementRepositoryImpl.java  # ✅
+│   │   │   │           │   ├── AnnouncementAuditRepositoryImpl.java  # ⏳
+│   │   │   │           │   ├── AnnouncementReadRepositoryImpl.java  # ⏳
+│   │   │   │           │   ├── AnnouncementConfirmationRepositoryImpl.java  # 确认记录仓储实现 ⏳
+│   │   │   │           │   ├── AnnouncementRecycleBinRepositoryImpl.java    # 回收站仓储实现 ⏳
+│   │   │   │           │   └── AnnouncementPermissionRepositoryImpl.java    # 权限仓储实现 ⏳
+│   │   │   │           ├── policy/               # 政策文件仓储实现
+│   │   │   │           │   └── PolicyRepositoryImpl.java  # ⏳
+│   │   │   │           └── activity/             # 园区活动仓储实现
 │   │   │   └── partition/                    # 数据分区策略 ⏳
 │   │   │       ├── PartitionStrategy.java    # 分区策略接口
 │   │   │       └── TimeBasedPartitionStrategy.java  # 基于时间的分区策略
@@ -422,10 +457,14 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │
 │   │   ├── mobile/                           # 移动端支持
 │   │   │   ├── service/                      # 服务定义
-│   │   │   │   ├── PushSystemMessageService.java  # 推送系统消息服务 ⏳
-│   │   │   │   └── MobileAdaptationService.java  # 移动适配服务 ⏳
+│   │   │   │   ├── message/                  # 消息推送服务
+│   │   │   │   │   └── PushSystemMessageService.java  # 推送系统消息服务 ⏳
+│   │   │   │   └── common/                   # 公共服务
+│   │   │   │       └── MobileAdaptationService.java  # 移动适配服务 ⏳
 │   │   │   └── impl/                         # 服务实现
-│   │   │       └── PushSystemMessageServiceImpl.java  # ⏳
+│   │   │       ├── message/                  # 消息推送服务实现
+│   │   │       │   └── PushSystemMessageServiceImpl.java  # ⏳
+│   │   │       └── common/                   # 公共服务实现
 │   │   │
 │   │   ├── integration/                      # 外部系统集成
 │   │   │   ├── payment/                      # 支付集成
@@ -474,39 +513,49 @@ SmartCampus/src/main/java/com/smartcampus/
 │       │   │       ├── BookingRequest.java  # ⏳
 │       │   │       └── AcExtensionRequest.java  # ⏳
 │       │   └── information/                  # 信息公开DTO
-│       │       ├── AnnouncementDTO.java  # ✅
-│       │       ├── AnnouncementAuditDTO.java  # ⏳
-│       │       ├── AnnouncementStatsDTO.java  # ⏳
-│       │       ├── AttachmentDTO.java  # ⏳
-│       │       ├── PolicyDTO.java  # ⏳
-│       │       └── request/
-│       │           ├── AnnouncementRequest.java  # ✅
-│       │           ├── AnnouncementAuditRequest.java  # ⏳
-│       │           └── PolicyRequest.java  # ⏳
+│       │       ├── announcement/             # 通知公告DTO
+│       │       │   ├── AnnouncementDTO.java  # ✅
+│       │       │   ├── AnnouncementAuditDTO.java  # ⏳
+│       │       │   ├── AnnouncementStatsDTO.java  # ⏳
+│       │       │   └── request/
+│       │       │       ├── AnnouncementRequest.java  # ✅
+│       │       │       └── AnnouncementAuditRequest.java  # ⏳
+│       │       ├── common/                   # 公共DTO
+│       │       │   └── AttachmentDTO.java  # ⏳
+│       │       ├── policy/                   # 政策文件DTO
+│       │       │   ├── PolicyDTO.java  # ⏳
+│       │       │   └── request/
+│       │       │       └── PolicyRequest.java  # ⏳
+│       │       └── activity/                 # 园区活动DTO
 │       ├── response/                         # 统一响应
-│       │   ├── Result.java  # ✅
-│       │   └── PageResult.java  # ✅
-│       ├── enums/                            # 枚举定义
-│       │   ├── service/                      # 服务管理枚举
-│       │   │   ├── ServiceItemStatusEnum.java  # ⏳
-│       │   │   ├── ServicePriorityEnum.java  # ⏳
-│       │   │   ├── ServiceTypeEnum.java  # ⏳
-│       │   │   └── EvaluationDimensionEnum.java  # ⏳
-│       │   ├── resource/                     # 资源管理枚举
-│       │   │   ├── ResourceTypeEnum.java  # ⏳
-│       │   │   ├── BookingStatusEnum.java  # ⏳
-│       │   │   └── ResourceAvailabilityEnum.java  # ⏳
-│       │   └── information/                  # 信息管理枚举
-│       │       ├── AnnouncementStatusEnum.java  # ✅
-│       │       ├── AuditStatusEnum.java  # ⏳
-│       │       ├── AttachmentTypeEnum.java  # ⏳
-│       │       └── AnnouncementTypeEnum.java  # ⏳
-│       ├── constant/                         # 常量定义
-│       │   ├── SystemConstants.java  # ⏳
-│       │   └── SecurityConstants.java  # ⏳
-│       └── utils/                            # 工具类
-│           ├── DateUtils.java  # ✅
-│           └── StringUtils.java  # ✅
+│   │   ├── Result.java  # ✅
+│   │   └── PageResult.java  # ✅
+│   │
+│   ├── enums/                            # 枚举定义
+│   │   ├── service/                      # 服务管理枚举
+│   │   │   ├── ServiceItemStatusEnum.java  # ⏳
+│   │   │   ├── ServicePriorityEnum.java  # ⏳
+│   │   │   ├── ServiceTypeEnum.java  # ⏳
+│   │   │   └── EvaluationDimensionEnum.java  # ⏳
+│   │   ├── resource/                     # 资源管理枚举
+│   │   │   ├── ResourceTypeEnum.java  # ⏳
+│   │   │   ├── BookingStatusEnum.java  # ⏳
+│   │   │   └── ResourceAvailabilityEnum.java  # ⏳
+│   │   └── information/                  # 信息管理枚举
+│   │       ├── announcement/             # 通知公告枚举
+│   │       │   ├── AnnouncementStatusEnum.java  # ✅
+│   │       │   ├── AuditStatusEnum.java  # ⏳
+│   │       │   └── AnnouncementTypeEnum.java  # ⏳
+│   │       ├── common/                   # 公共枚举
+│   │       │   └── AttachmentTypeEnum.java  # ⏳
+│   │       ├── policy/                   # 政策文件枚举
+│   │       └── activity/                 # 园区活动枚举
+│   ├── constant/                         # 常量定义
+│   │   ├── SystemConstants.java  # ⏳
+│   │   └── SecurityConstants.java  # ⏳
+│   └── utils/                            # 工具类
+│       ├── DateUtils.java  # ✅
+│       └── StringUtils.java  # ✅
 
 SmartCampus/src/main/resources/
 ├── application.yml                       # 应用配置 ✅
@@ -520,15 +569,19 @@ SmartCampus/src/main/resources/
 │   │   ├── MeetingRoomMapper.xml  # ⏳
 │   │   └── ResourceBookingMapper.xml  # ⏳
 │   └── information/                      # 信息管理XML映射
-│       ├── AnnouncementMapper.xml  # ✅
-│       ├── AnnouncementAuditMapper.xml  # ⏳
-│       ├── AnnouncementReadMapper.xml  # ⏳
-│       ├── AnnouncementConfirmationMapper.xml  # 确认记录映射XML ⏳
-│       ├── AnnouncementRecycleBinMapper.xml    # 回收站映射XML ⏳
-│       ├── AnnouncementPermissionMapper.xml    # 权限映射XML ⏳
-│       ├── AttachmentMapper.xml  # ⏳
-│       ├── PolicyMapper.xml  # ⏳
-│       └── ActivityMapper.xml  # ⏳
+│       ├── announcement/
+│       │   ├── AnnouncementMapper.xml  # ✅
+│       │   ├── AnnouncementAuditMapper.xml  # ⏳
+│       │   ├── AnnouncementReadMapper.xml  # ⏳
+│       │   ├── AnnouncementConfirmationMapper.xml  # 确认记录映射XML ⏳
+│       │   ├── AnnouncementRecycleBinMapper.xml    # 回收站映射XML ⏳
+│       │   └── AnnouncementPermissionMapper.xml    # 权限映射XML ⏳
+│       ├── common/
+│       │   └── AttachmentMapper.xml  # ⏳
+│       ├── policy/
+│       │   └── PolicyMapper.xml  # ⏳
+│       └── activity/
+│           └── ActivityMapper.xml  # ⏳
 ├── db/                                   # 数据库脚本
 │   ├── schema.sql                        # 表结构定义 ⏳
 │   └── data.sql                          # 初始数据 ⏳

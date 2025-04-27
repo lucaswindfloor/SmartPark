@@ -170,14 +170,25 @@ SmartCampus/
 │   │   │   │
 │   │   │   ├── components/                 # 平台特定组件 ⏳
 │   │   │   ├── api/                        # API接口 
-│   │   │   │   ├── service/                # 服务管理API -> 需调整，当前有information.js ⏳
-│   │   │   │   │   └── announcement.js     # 通知公告API接口 -> 需从information.js中分离 ⏳
+│   │   │   │   ├── service/                # 服务管理API
+│   │   │   │   │   ├── information/        # 信息公开API
+│   │   │   │   │   │   ├── announcement.js # 通知公告API接口 ⏳
+│   │   │   │   │   │   ├── policy.js       # 政策文件API接口 ⏳
+│   │   │   │   │   │   └── activity.js     # 园区活动API接口 ⏳
+│   │   │   │   │   ├── meeting/            # 会议管理API ⏳
+│   │   │   │   │   ├── parking/            # 停车管理API ⏳
+│   │   │   │   │   └── other-services/     # 其他服务API ⏳
 │   │   │   │   └── other-modules/          # 其他模块API ⏳
 │   │   │   │
 │   │   │   ├── error/                      # 错误页面组件 ✅
 │   │   │   ├── stores/                     # Pinia状态管理 ✅
-│   │   │   │   ├── service/                # 服务管理状态 -> 需创建目录 ⏳
-│   │   │   │   │   └── announcement.js     # 通知公告状态管理 -> 需新增 ⏳
+│   │   │   │   ├── service/                # 服务管理状态
+│   │   │   │   │   ├── information/        # 信息公开状态
+│   │   │   │   │   │   ├── announcement.js # 通知公告状态管理 ⏳
+│   │   │   │   │   │   ├── policy.js       # 政策文件状态管理 ⏳
+│   │   │   │   │   │   └── activity.js     # 园区活动状态管理 ⏳
+│   │   │   │   │   ├── meeting/            # 会议管理状态 ⏳
+│   │   │   │   │   └── other-services/     # 其他服务状态 ⏳
 │   │   │   │   └── other-modules/          # 其他模块状态 ⏳
 │   │   │   │
 │   │   │   └── App.vue                     # 综合管理平台主应用 ✅
@@ -275,8 +286,13 @@ SmartCampus/
 │   ├── services/                           # 服务层
 │   │   ├── auth/                           # 认证服务 ✅
 │   │   ├── information/                    # 信息服务 ✅
-│   │   │   ├── announcement-service.js     # 通知公告业务服务 -> 调整为/services/announcement/index.js ✅
-│   │   │   └── other-info-services.js      # 其他信息服务 ⏳
+│   │   │   ├── announcement/               # 通知公告服务
+│   │   │   │   └── index.js                # 通知公告业务服务 ✅
+│   │   │   ├── policy/                     # 政策文件服务 
+│   │   │   │   └── index.js                # 政策文件业务服务 ⏳
+│   │   │   ├── activity/                   # 园区活动服务
+│   │   │   │   └── index.js                # 园区活动业务服务 ⏳
+│   │   │   └── common/                     # 信息公开公共服务 ⏳
 │   │   ├── system/                         # 系统服务 ⏳
 │   │   ├── workflow/                       # 工作流服务 ⏳
 │   │   ├── system-message/                 # 系统消息服务(事件通知机制) ⏳
