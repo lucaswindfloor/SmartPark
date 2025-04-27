@@ -126,13 +126,13 @@
         <a-descriptions bordered :column="1">
           <a-descriptions-item label="标题">{{ detail.title }}</a-descriptions-item>
           <a-descriptions-item label="通知类型">
-            <a-tag :color="getNoticeTypeColor(detail.noticeType)">
-              {{ getNoticeTypeName(detail.noticeType) }}
+            <a-tag :color="getNoticeTypeColor(detail.type)">
+              {{ getNoticeTypeName(detail.type) }}
             </a-tag>
           </a-descriptions-item>
           <a-descriptions-item label="来源">{{ detail.source }}</a-descriptions-item>
-          <a-descriptions-item label="发布时间">{{ detail.publishTime }}</a-descriptions-item>
-          <a-descriptions-item label="截止有效期">{{ detail.validityEndTime }}</a-descriptions-item>
+          <a-descriptions-item label="发布时间">{{ detail.published_at }}</a-descriptions-item>
+          <a-descriptions-item label="截止有效期">{{ detail.expired_at }}</a-descriptions-item>
           <a-descriptions-item label="状态">
             <a-badge :status="getStatusBadge(detail.status)" :text="getStatusName(detail.status)" />
           </a-descriptions-item>
@@ -158,6 +158,7 @@
 
 <script>
 import NotificationForm from './components/NotificationForm.vue'
+import axios from 'axios'
 
 export default {
   name: 'NotificationPage',
@@ -185,8 +186,8 @@ export default {
         },
         {
           title: '通知类型',
-          dataIndex: 'noticeType',
-          key: 'noticeType',
+          dataIndex: 'type',
+          key: 'type',
           width: 120,
           scopedSlots: { customRender: 'noticeTypeSlot' }
         },
@@ -198,15 +199,15 @@ export default {
         },
         {
           title: '发布时间',
-          dataIndex: 'publishTime',
-          key: 'publishTime',
+          dataIndex: 'published_at',
+          key: 'published_at',
           width: 180,
           sorter: true
         },
         {
           title: '截止有效期',
-          dataIndex: 'validityEndTime',
-          key: 'validityEndTime',
+          dataIndex: 'expired_at',
+          key: 'expired_at',
           width: 180
         },
         {
@@ -248,15 +249,20 @@ export default {
       
       // 通知类型选项
       noticeTypeOptions: [
-        { label: '普通通知', value: 'NORMAL' },
-        { label: '重要通知', value: 'IMPORTANT' },
-        { label: '紧急通知', value: 'URGENT' }
+        { label: '普通通知', value: 1 },
+        { label: '政策通知', value: 2 },
+        { label: '活动通知', value: 3 },
+        { label: '紧急通知', value: 4 }
       ],
       // 状态选项
       statusOptions: [
-        { label: '草稿', value: 'DRAFT' },
-        { label: '已发布', value: 'PUBLISHED' },
-        { label: '已下线', value: 'OFFLINE' }
+        { label: '草稿', value: 1 },
+        { label: '待审核', value: 2 },
+        { label: '待发布', value: 3 },
+        { label: '已发布', value: 4 },
+        { label: '已过期', value: 5 },
+        { label: '已取消发布', value: 6 },
+        { label: '档案', value: 7 }
       ]
     }
   },
@@ -273,9 +279,10 @@ export default {
     // 获取通知类型颜色
     getNoticeTypeColor(type) {
       const colorMap = {
-        'NORMAL': 'blue',
-        'IMPORTANT': 'orange',
-        'URGENT': 'red'
+        1: 'blue',    // 普通
+        2: 'purple',  // 政策
+        3: 'green',   // 活动
+        4: 'red'      // 紧急
       }
       return colorMap[type] || 'blue'
     },
@@ -289,9 +296,13 @@ export default {
     // 获取状态徽章样式
     getStatusBadge(status) {
   const statusMap = {
-        'DRAFT': 'default',
-    'PUBLISHED': 'success',
-        'OFFLINE': 'warning'
+        1: 'default',    // 草稿
+        2: 'processing', // 待审核
+        3: 'warning',    // 待发布
+        4: 'success',    // 已发布
+        5: 'error',      // 已过期
+        6: 'warning',    // 已取消发布
+        7: 'default'     // 档案
       }
       return statusMap[status] || 'default'
     },
@@ -300,62 +311,101 @@ export default {
     fetchData() {
       this.loading = true
       
-      // 模拟API调用
-      setTimeout(() => {
-        // 此处应替换为实际API调用
-        const mockData = this.generateMockData()
+      // 尝试使用不同的API路径
+      axios.get('/api/announcements', { 
+        params: {
+          keywords: this.searchParams.keywords,
+          type: this.searchParams.noticeType,
+          status: this.searchParams.status,
+          pageNum: this.searchParams.pageNum,
+          pageSize: this.searchParams.pageSize,
+          sortField: this.searchParams.sortField,
+          sortOrder: this.searchParams.sortOrder
+        }
+      })
+      .then(response => {
+        const { data } = response
+        if (data && data.success) {
+          this.dataSource = data.data.list || []
+          this.pagination.total = data.data.total || 0
+          this.pagination.current = this.searchParams.pageNum
+          this.pagination.pageSize = this.searchParams.pageSize
+        } else {
+          this.$message.error(data?.message || '获取通知列表失败')
+        }
+      })
+      .catch(error => {
+        console.error('获取通知列表失败:', error)
+        this.$message.error('获取通知列表失败：' + (error.response?.status ? `${error.response.status}错误` : error.message))
         
-        this.dataSource = mockData.list
-        this.pagination.total = mockData.total
-        this.pagination.current = this.searchParams.pageNum
-        this.pagination.pageSize = this.searchParams.pageSize
-        
+        // 开发阶段：API失败时使用模拟数据
+        console.log('使用模拟数据')
+        this.useMockData()
+      })
+      .finally(() => {
         this.loading = false
-      }, 500)
+      })
     },
     
-    // 模拟数据（仅用于演示，应替换为实际API调用）
-    generateMockData() {
-      const total = 35
-      const { pageNum, pageSize, keywords, noticeType, status } = this.searchParams
+    // 使用模拟数据
+    useMockData() {
+      // 模拟数据
+      const mockData = [
+        {
+          id: 1,
+          title: '关于园区安全检查的通知',
+          type: 1, // 普通通知
+          source: '物业管理部',
+          published_at: '2023-12-01 09:00:00',
+          expired_at: '2023-12-10 23:59:59',
+          status: 4, // 已发布
+          content: '<p>尊敬的园区企业：</p><p>为确保园区安全，定于2023年12月5日进行安全检查，请各企业做好配合工作。</p>'
+        },
+        {
+          id: 2,
+          title: '关于调整办公时间的通知',
+          type: 2, // 政策通知
+          source: '行政部',
+          published_at: '2023-11-25 15:30:00',
+          expired_at: '2023-12-25 23:59:59',
+          status: 4, // 已发布
+          content: '<p>根据最新工作安排，自2024年1月1日起，园区办公时间调整为9:00-18:00。</p>'
+        },
+        {
+          id: 3,
+          title: '园区年终联谊会邀请函',
+          type: 3, // 活动通知
+          source: '企划部',
+          published_at: '2023-12-02 10:15:00',
+          expired_at: '2023-12-20 23:59:59',
+          status: 4, // 已发布
+          content: '<p>诚邀各企业参加2023年12月30日举办的园区年终联谊会。</p>'
+        },
+        {
+          id: 4,
+          title: '停电通知',
+          type: 4, // 紧急通知
+          source: '运维部',
+          published_at: '2023-12-03 08:00:00',
+          expired_at: '2023-12-04 23:59:59',
+          status: 4, // 已发布
+          content: '<p>因电力设备维护，2023年12月4日上午9:00-12:00园区将进行停电维护。</p>'
+        },
+        {
+          id: 5,
+          title: '年度财务报表提交通知',
+          type: 2, // 政策通知
+          source: '财务部',
+          published_at: '2023-11-30 14:20:00',
+          expired_at: '2023-12-15 23:59:59',
+          status: 4, // 已发布
+          content: '<p>请各企业于2023年12月15日前提交年度财务报表。</p>'
+        }
+      ];
       
-      // 生成随机数据
-      let list = []
-      for (let i = 0; i < pageSize && (pageNum - 1) * pageSize + i < total; i++) {
-        const id = (pageNum - 1) * pageSize + i + 1
-        const item = {
-          id: `${id}`,
-          title: `通知标题 ${id}`,
-          noticeType: ['NORMAL', 'IMPORTANT', 'URGENT'][Math.floor(Math.random() * 3)],
-          source: '信息中心',
-          publishTime: '2023-07-15 10:00:00',
-          validityEndTime: '2023-12-31 23:59:59',
-          status: ['DRAFT', 'PUBLISHED', 'OFFLINE'][Math.floor(Math.random() * 3)],
-          content: '<p>这是通知内容...</p>',
-          attachments: [
-            { id: '1', name: '附件1.docx', url: '#' },
-            { id: '2', name: '附件2.pdf', url: '#' }
-          ]
-        }
-        
-        // 根据搜索条件过滤
-        if (keywords && !item.title.includes(keywords)) {
-          continue
-        }
-        if (noticeType && item.noticeType !== noticeType) {
-          continue
-        }
-        if (status && item.status !== status) {
-          continue
-        }
-        
-        list.push(item)
-      }
-      
-      return {
-        list,
-        total: list.length // 实际项目中应返回满足条件的总数
-  }
+      // 更新数据源
+      this.dataSource = mockData;
+      this.pagination.total = mockData.length;
     },
     
     // 搜索
@@ -378,7 +428,7 @@ export default {
       if (sorter.field && sorter.order) {
         this.searchParams.sortField = sorter.field
         this.searchParams.sortOrder = sorter.order === 'ascend' ? 'asc' : 'desc'
-      } else {
+  } else {
         this.searchParams.sortField = undefined
         this.searchParams.sortOrder = undefined
       }
@@ -392,23 +442,15 @@ export default {
       this.editMode = false
       this.formData = {
     title: '',
-        noticeType: 'NORMAL',
+        type: 1, // 普通通知
         source: '信息中心',
-        validityEndTime: '',
+        validity_period: 7,
     content: '',
         attachments: [],
-        status: 'DRAFT',
-        editRemarks: ''
+        status: 1, // 草稿
+        importance: 1, // 普通
+        require_confirmation: false
       }
-      this.modalVisible = true
-    },
-    
-    // 编辑
-    handleEdit(record) {
-      this.modalTitle = '编辑通知'
-      this.editMode = true
-      // 深拷贝记录数据
-      this.formData = JSON.parse(JSON.stringify(record))
       this.modalVisible = true
     },
     
@@ -417,11 +459,48 @@ export default {
       this.detailLoading = true
       this.detailVisible = true
       
-      // 模拟加载详情
-      setTimeout(() => {
-        this.detail = JSON.parse(JSON.stringify(record))
-        this.detailLoading = false
-      }, 300)
+      axios.get(`/api/announcements/${record.id}`)
+        .then(response => {
+          const { data } = response
+          if (data && data.data) {
+            this.detail = data.data
+          } else {
+            this.$message.error('获取通知详情失败!')
+          }
+        })
+        .catch(error => {
+          console.error('获取通知详情失败:', error)
+          this.$message.error('获取通知详情失败!')
+        })
+        .finally(() => {
+          this.detailLoading = false
+        })
+    },
+    
+    // 编辑
+    handleEdit(record) {
+      this.modalTitle = '编辑通知'
+      this.editMode = true
+      // 加载详细数据
+      this.detailLoading = true
+      
+      axios.get(`/api/announcements/${record.id}`)
+        .then(response => {
+          const { data } = response
+          if (data && data.data) {
+            this.formData = data.data
+            this.modalVisible = true
+          } else {
+            this.$message.error('获取通知详情失败!')
+          }
+        })
+        .catch(error => {
+          console.error('获取通知详情失败:', error)
+          this.$message.error('获取通知详情失败!')
+        })
+        .finally(() => {
+          this.detailLoading = false
+        })
     },
     
     // 关闭详情弹窗
@@ -433,13 +512,33 @@ export default {
     handleFormSubmit(formData) {
       console.log('提交表单数据:', formData)
       
-      // 模拟提交
       this.loading = true
-      setTimeout(() => {
-        this.$message.success(this.editMode ? '更新通知成功!' : '创建通知成功!')
-        this.modalVisible = false
-        this.fetchData()
-      }, 500)
+      
+      const submitData = { ...formData }
+      
+      // 创建或更新通知
+      const apiCall = this.editMode 
+        ? axios.put(`/api/announcements/${formData.id}`, submitData)
+        : axios.post('/api/announcements', submitData)
+        
+      apiCall
+        .then(response => {
+          const { data } = response
+          if (data && data.success) {
+            this.$message.success(this.editMode ? '更新通知成功!' : '创建通知成功!')
+            this.modalVisible = false
+            this.fetchData()
+          } else {
+            this.$message.error(data?.message || (this.editMode ? '更新通知失败!' : '创建通知失败!'))
+          }
+        })
+        .catch(error => {
+          console.error(this.editMode ? '更新通知失败:' : '创建通知失败:', error)
+          this.$message.error(this.editMode ? '更新通知失败!' : '创建通知失败!')
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     
     // 关闭表单弹窗
@@ -453,12 +552,25 @@ export default {
         title: '确认发布',
         content: `确定要发布"${record.title}"吗?`,
         onOk: () => {
-          // 模拟API调用
           this.loading = true
-          setTimeout(() => {
-            this.$message.success('通知发布成功!')
-            this.fetchData()
-          }, 500)
+          
+          axios.put(`/api/announcements/${record.id}/publish`)
+            .then(response => {
+              const { data } = response
+              if (data && data.success) {
+                this.$message.success('通知发布成功!')
+                this.fetchData()
+              } else {
+                this.$message.error(data?.message || '通知发布失败!')
+              }
+            })
+            .catch(error => {
+              console.error('发布通知失败:', error)
+              this.$message.error('通知发布失败!')
+            })
+            .finally(() => {
+              this.loading = false
+            })
         }
       })
     },
@@ -469,30 +581,59 @@ export default {
         title: '确认下线',
         content: `确定要下线"${record.title}"吗?`,
         onOk: () => {
-          // 模拟API调用
           this.loading = true
-          setTimeout(() => {
-            this.$message.success('通知已下线!')
-            this.fetchData()
-          }, 500)
+          
+          axios.put(`/api/announcements/${record.id}/cancel`)
+            .then(response => {
+              const { data } = response
+              if (data && data.success) {
+                this.$message.success('通知已下线!')
+                this.fetchData()
+              } else {
+                this.$message.error(data?.message || '通知下线失败!')
+              }
+            })
+            .catch(error => {
+              console.error('下线通知失败:', error)
+              this.$message.error('通知下线失败!')
+            })
+            .finally(() => {
+              this.loading = false
+            })
         }
       })
     },
     
     // 删除通知
     handleDelete(record) {
-      // 模拟API调用
       this.loading = true
-      setTimeout(() => {
-        this.$message.success('删除通知成功!')
-        this.fetchData()
-      }, 500)
+      
+      axios.delete(`/api/announcements/${record.id}`)
+        .then(response => {
+          const { data } = response
+          if (data && data.success) {
+            this.$message.success('删除通知成功!')
+            this.fetchData()
+          } else {
+            this.$message.error(data?.message || '删除通知失败!')
+          }
+        })
+        .catch(error => {
+          console.error('删除通知失败:', error)
+          this.$message.error('删除通知失败!')
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     
     // 下载附件
     handleDownload(file) {
-      this.$message.info(`下载附件: ${file.name}`)
-      // 实际项目中应调用文件下载API
+      if (file && file.url) {
+        window.open(file.url, '_blank')
+      } else {
+        this.$message.info(`附件"${file.name}"链接不可用`)
+      }
     }
   }
 }

@@ -6,21 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * 通知确认记录实体类
+ * 公告操作日志实体类
  */
 @Entity
-@Table(name = "t_notice_confirmations", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"notice_id", "user_id"})
-})
+@Table(name = "t_announcement_logs")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoticeConfirmation {
+public class AnnouncementLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,24 +29,31 @@ public class NoticeConfirmation {
      * 公告ID
      */
     @NotNull(message = "公告ID不能为空")
-    @Column(name = "notice_id", nullable = false)
-    private Long noticeId;
+    @Column(name = "announcement_id", nullable = false)
+    private Long announcementId;
     
     /**
-     * 确认用户ID
+     * 操作类型（如提交审核、发布）
      */
-    @NotNull(message = "用户ID不能为空")
+    @NotBlank(message = "操作类型不能为空")
+    @Column(name = "operation", nullable = false, length = 50)
+    private String operation;
+    
+    /**
+     * 操作人ID
+     */
+    @NotNull(message = "操作人ID不能为空")
     @Column(name = "user_id", nullable = false)
     private Long userId;
     
     /**
-     * 确认时间
+     * 备注（如驳回原因）
      */
-    @Column(name = "confirmed_at")
-    private LocalDateTime confirmedAt;
+    @Column(name = "comment", columnDefinition = "TEXT")
+    private String comment;
     
     /**
-     * 创建时间
+     * 操作时间
      */
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -55,20 +61,5 @@ public class NoticeConfirmation {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-    }
-    
-    /**
-     * 是否已确认
-     */
-    @Transient
-    public boolean isConfirmed() {
-        return confirmedAt != null;
-    }
-    
-    /**
-     * 确认
-     */
-    public void confirm() {
-        this.confirmedAt = LocalDateTime.now();
     }
 } 

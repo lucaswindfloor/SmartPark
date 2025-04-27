@@ -1,9 +1,9 @@
 package com.smartcampus.common.enums.information;
 
 /**
- * 通知公告状态枚举
+ * 公告状态枚举
  */
-public enum NotificationStatusEnum {
+public enum AnnouncementStatusEnum {
     /**
      * 草稿
      */
@@ -47,7 +47,7 @@ public enum NotificationStatusEnum {
     private final String code;
     private final String desc;
     
-    NotificationStatusEnum(String code, String desc) {
+    AnnouncementStatusEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -63,8 +63,8 @@ public enum NotificationStatusEnum {
     /**
      * 根据code获取状态枚举
      */
-    public static NotificationStatusEnum getByCode(String code) {
-        for (NotificationStatusEnum status : values()) {
+    public static AnnouncementStatusEnum getByCode(String code) {
+        for (AnnouncementStatusEnum status : values()) {
             if (status.getCode().equals(code)) {
                 return status;
             }

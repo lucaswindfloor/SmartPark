@@ -12,15 +12,15 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 /**
- * System Notification entity
+ * System Message entity
  */
-@Entity(name = "SystemNotification")
-@Table(name = "t_notification")
+@Entity(name = "SystemMessage")
+@Table(name = "t_system_messages")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SystemNotification {
+public class SystemMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

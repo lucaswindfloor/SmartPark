@@ -20,12 +20,12 @@ import java.time.LocalDateTime;
  * 通知公告实体
  */
 @Entity
-@Table(name = "t_notices")
+@Table(name = "t_announcements")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notice {
+public class Announcement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

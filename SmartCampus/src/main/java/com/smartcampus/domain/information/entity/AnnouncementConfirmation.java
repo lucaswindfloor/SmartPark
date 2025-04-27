@@ -6,20 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * 通知操作日志实体类
+ * 公告确认记录实体类
  */
 @Entity
-@Table(name = "t_notice_logs")
+@Table(name = "t_announcement_confirmations", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"announcement_id", "user_id"})
+})
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoticeLog {
+public class AnnouncementConfirmation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,31 +30,24 @@ public class NoticeLog {
      * 公告ID
      */
     @NotNull(message = "公告ID不能为空")
-    @Column(name = "notice_id", nullable = false)
-    private Long noticeId;
+    @Column(name = "announcement_id", nullable = false)
+    private Long announcementId;
     
     /**
-     * 操作类型（如提交审核、发布）
+     * 确认用户ID
      */
-    @NotBlank(message = "操作类型不能为空")
-    @Column(name = "operation", nullable = false, length = 50)
-    private String operation;
-    
-    /**
-     * 操作人ID
-     */
-    @NotNull(message = "操作人ID不能为空")
+    @NotNull(message = "用户ID不能为空")
     @Column(name = "user_id", nullable = false)
     private Long userId;
     
     /**
-     * 备注（如驳回原因）
+     * 确认时间
      */
-    @Column(name = "comment", columnDefinition = "TEXT")
-    private String comment;
+    @Column(name = "confirmed_at")
+    private LocalDateTime confirmedAt;
     
     /**
-     * 操作时间
+     * 创建时间
      */
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -61,5 +55,20 @@ public class NoticeLog {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+    }
+    
+    /**
+     * 是否已确认
+     */
+    @Transient
+    public boolean isConfirmed() {
+        return confirmedAt != null;
+    }
+    
+    /**
+     * 确认
+     */
+    public void confirm() {
+        this.confirmedAt = LocalDateTime.now();
     }
 } 

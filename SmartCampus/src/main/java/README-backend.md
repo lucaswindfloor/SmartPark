@@ -70,13 +70,13 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │   │   │   ├── ServiceProcessController.java # 服务流程 ⏳
 │   │   │   │   │   └── ServiceEvaluationController.java # 服务评价 ⏳
 │   │   │   │   ├── information/               # 信息公开
-│   │   │   │   │   ├── NotificationController.java  # 通知公告 ✅
-│   │   │   │   │   ├── NotificationAuditController.java  # 通知审核 ⏳
-│   │   │   │   │   ├── NotificationStatsController.java  # 通知统计 ⏳
-│   │   │   │   │   ├── NotificationSearchController.java  # 通知搜索 ⏳
-│   │   │   │   │   ├── NotificationRecycleBinController.java  # 回收站管理 ⏳
-│   │   │   │   │   ├── NotificationPermissionController.java  # 通知权限管理 ⏳
-│   │   │   │   │   ├── NotificationConfirmationController.java  # 通知确认管理 ⏳
+│   │   │   │   │   ├── AnnouncementController.java  # 通知公告 ✅
+│   │   │   │   │   ├── AnnouncementAuditController.java  # 通知审核 ⏳
+│   │   │   │   │   ├── AnnouncementStatsController.java  # 通知统计 ⏳
+│   │   │   │   │   ├── AnnouncementSearchController.java  # 通知搜索 ⏳
+│   │   │   │   │   ├── AnnouncementRecycleBinController.java  # 回收站管理 ⏳
+│   │   │   │   │   ├── AnnouncementPermissionController.java  # 通知权限管理 ⏳
+│   │   │   │   │   ├── AnnouncementConfirmationController.java  # 通知确认管理 ⏳
 │   │   │   │   │   ├── PolicyController.java  # 政策文件 ⏳
 │   │   │   │   │   ├── ActivityController.java  # 园区活动 ⏳
 │   │   │   │   │   └── SurveyController.java  # 调查问卷 ⏳
@@ -105,13 +105,13 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │       │   ├── ServiceProcessService.java       # ⏳
 │   │   │       │   └── ServiceEvaluationService.java    # ⏳
 │   │   │       ├── information/         # 信息公开模块服务
-│   │   │       │   ├── NotificationService.java  # ✅
-│   │   │       │   ├── NotificationAuditService.java  # ⏳
-│   │   │       │   ├── NotificationStatsService.java  # ⏳
-│   │   │       │   ├── NotificationSearchService.java  # ⏳
-│   │   │       │   ├── NotificationRecycleBinService.java  # 回收站服务 ⏳
-│   │   │       │   ├── NotificationPermissionService.java  # 权限管理服务 ⏳
-│   │   │       │   ├── NotificationConfirmationService.java  # 确认管理服务 ⏳
+│   │   │       │   ├── AnnouncementService.java  # ✅
+│   │   │       │   ├── AnnouncementAuditService.java  # ⏳
+│   │   │       │   ├── AnnouncementStatsService.java  # ⏳
+│   │   │       │   ├── AnnouncementSearchService.java  # ⏳
+│   │   │       │   ├── AnnouncementRecycleBinService.java  # 回收站服务 ⏳
+│   │   │       │   ├── AnnouncementPermissionService.java  # 权限管理服务 ⏳
+│   │   │       │   ├── AnnouncementConfirmationService.java  # 确认管理服务 ⏳
 │   │   │       │   ├── PolicyService.java  # ⏳
 │   │   │       │   └── ActivityService.java  # ⏳
 │   │   │       ├── meeting/              # 会议管理服务
@@ -148,13 +148,13 @@ SmartCampus/src/main/java/com/smartcampus/
 │   ├── public/                           # 公共服务平台
 │   │   ├── information/                  # 信息公开
 │   │   │   ├── controller/                # 控制器 ⏳
-│   │   │   │   ├── NotificationViewController.java  # 通知查看 ⏳
-│   │   │   │   ├── NotificationSubscriptionController.java  # 通知订阅 ⏳
-│   │   │   │   └── MobileNotificationController.java  # 移动端通知控制器 ⏳
+│   │   │   │   ├── AnnouncementViewController.java  # 通知查看 ⏳
+│   │   │   │   ├── AnnouncementSubscriptionController.java  # 通知订阅 ⏳
+│   │   │   │   └── MobileAnnouncementController.java  # 移动端通知控制器 ⏳
 │   │   │   └── service/                   # 服务层 ⏳
-│   │   │       ├── NotificationViewService.java  # 通知查看服务 ⏳
+│   │   │       ├── AnnouncementViewService.java  # 通知查看服务 ⏳
 │   │   │       ├── SubscriptionService.java  # 订阅服务 ⏳
-│   │   │       └── MobileNotificationService.java  # 移动端通知服务 ⏳
+│   │   │       └── MobileAnnouncementService.java  # 移动端通知服务 ⏳
 │   │   │
 │   │   ├── servicehall/                  # 服务大厅
 │   │   │   ├── controller/                # 控制器 ⏳
@@ -162,316 +162,351 @@ SmartCampus/src/main/java/com/smartcampus/
 │   │   │
 │   │   ├── usercenter/                   # 用户中心
 │   │   │   ├── controller/                # 控制器 ⏳
+│   │   │   │   ├── MessageController.java # 消息控制器 ⏳
+│   │   │   │   ├── SystemMessageController.java # 系统消息控制器 ⏳
+│   │   │   │   ├── UserMessageController.java # 用户消息控制器 ⏳
+│   │   │   │   └── ProfileController.java # 个人资料控制器 ⏳
+│   │   │   └── service/                   # 服务层 ⏳
+│   │   │       ├── MessageService.java    # 消息服务 ⏳
+│   │   │       ├── SystemMessageService.java # 系统消息服务 ⏳
+│   │   │       ├── UserMessageService.java # 用户消息服务 ⏳
+│   │   │       └── ProfileService.java    # 个人资料服务 ⏳
+│   │   │
+│   │   ├── enterprisemanage/             # 企业管理
+│   │   │   ├── controller/                # 控制器 ⏳
 │   │   │   └── service/                   # 服务层 ⏳
 │   │   │
-│   │   └── enterprisemanage/             # 企业管理
-│   │       ├── controller/                # 控制器 ⏳
-│   │       └── service/                   # 服务层 ⏳
+│   │   └── admin/                            # 系统管理员平台
+│   │       ├── configuration/                # 系统配置管理
+│   │       │   ├── controller/                # 控制器 ⏳
+│   │       │   └── service/                   # 服务层 ⏳
+│   │       │
+│   │       ├── authorization/                # 权限与角色管理
+│   │       │   ├── controller/                # 控制器 ⏳
+│   │       │   └── service/                   # 服务层 ⏳
+│   │       │
+│   │       ├── workflow/                     # 流程引擎管理
+│   │       │   ├── controller/                # 控制器 ⏳
+│   │       │   └── service/                   # 服务层 ⏳
+│   │       │
+│   │       ├── monitoring/                   # 系统监控中心
+│   │       │   ├── controller/                # 控制器 ⏳
+│   │       │   └── service/                   # 服务层 ⏳
+│   │       │
+│   │       └── integration/                  # 系统集成管理
+│   │           ├── controller/                # 控制器 ⏳
+│   │           └── service/                   # 服务层 ⏳
 │   │
-│   └── admin/                            # 系统管理员平台
-│       ├── configuration/                # 系统配置管理
-│       │   ├── controller/                # 控制器 ⏳
-│       │   └── service/                   # 服务层 ⏳
-│       │
-│       ├── authorization/                # 权限与角色管理
-│       │   ├── controller/                # 控制器 ⏳
-│       │   └── service/                   # 服务层 ⏳
-│       │
-│       ├── workflow/                     # 流程引擎管理
-│       │   ├── controller/                # 控制器 ⏳
-│       │   └── service/                   # 服务层 ⏳
-│       │
-│       ├── monitoring/                   # 系统监控中心
-│       │   ├── controller/                # 控制器 ⏳
-│       │   └── service/                   # 服务层 ⏳
-│       │
-│       └── integration/                  # 系统集成管理
-│           ├── controller/                # 控制器 ⏳
-│           └── service/                   # 服务层 ⏳
-│
-├── domain/                               # 领域层
-│   ├── user/                             # 用户领域
-│   │   ├── entity/                       # 实体 ⏳
-│   │   ├── repository/                   # 仓储接口 ⏳
-│   │   └── service/                      # 领域服务 ⏳
+│   ├── domain/                               # 领域层
+│   │   ├── user/                             # 用户领域
+│   │   │   ├── entity/                       # 实体 ⏳
+│   │   │   ├── repository/                   # 仓储接口 ⏳
+│   │   │   └── service/                      # 领域服务 ⏳
+│   │   │
+│   │   ├── service/                          # 服务管理领域
+│   │   │   ├── entity/                       # 实体
+│   │   │   │   ├── ServiceItem.java          # 服务事项实体 ⏳
+│   │   │   │   ├── ServiceProcess.java       # 服务流程实体 ⏳
+│   │   │   │   ├── ServiceForm.java          # 服务表单实体 ⏳
+│   │   │   │   └── ServiceEvaluation.java    # 服务评价实体 ⏳
+│   │   │   ├── repository/                   # 仓储接口 ⏳
+│   │   │   │   ├── ServiceItemRepository.java        # ⏳
+│   │   │   │   ├── ServiceProcessRepository.java     # ⏳
+│   │   │   │   └── ServiceEvaluationRepository.java  # ⏳
+│   │   │   └── service/                      # 领域服务
+│   │   │       ├── ServiceItemDomainService.java     # ⏳
+│   │   │       ├── ServiceProcessDomainService.java  # ⏳
+│   │   │       └── ServiceEvaluationDomainService.java # ⏳
+│   │   │
+│   │   ├── information/                      # 信息公开领域
+│   │   │   ├── entity/                       # 领域实体
+│   │   │   │   ├── Announcement.java         # 通知公告 ✅
+│   │   │   │   ├── AnnouncementAudit.java    # 通知审核记录 ⏳
+│   │   │   │   ├── AnnouncementRead.java     # 通知阅读记录 ⏳
+│   │   │   │   ├── AnnouncementConfirmation.java  # 通知确认记录 ⏳
+│   │   │   │   ├── AnnouncementRecycleBin.java    # 回收站记录 ⏳
+│   │   │   │   ├── AnnouncementPermission.java    # 通知权限记录 ⏳
+│   │   │   │   ├── Attachment.java           # 通知附件 ⏳
+│   │   │   │   ├── Policy.java               # 政策文件 ⏳
+│   │   │   │   ├── Activity.java             # 园区活动 ⏳
+│   │   │   │   └── Survey.java               # 调查问卷 ⏳
+│   │   │   ├── repository/                   # 仓储接口
+│   │   │   │   ├── AnnouncementRepository.java  # ✅
+│   │   │   │   ├── AnnouncementAuditRepository.java  # ⏳
+│   │   │   │   ├── AnnouncementReadRepository.java  # ⏳
+│   │   │   │   ├── AnnouncementConfirmationRepository.java  # 确认记录仓储 ⏳
+│   │   │   │   ├── AnnouncementRecycleBinRepository.java    # 回收站仓储 ⏳
+│   │   │   │   ├── AnnouncementPermissionRepository.java    # 权限仓储 ⏳
+│   │   │   │   ├── PolicyRepository.java  # ⏳
+│   │   │   │   └── ActivityRepository.java  # ⏳
+│   │   │   ├── service/                      # 领域服务
+│   │   │   │   ├── AnnouncementDomainService.java  # ✅
+│   │   │   │   ├── AnnouncementStateMachine.java  # 状态机服务 ⏳
+│   │   │   │   ├── AnnouncementStatsService.java  # 统计分析服务 ⏳
+│   │   │   │   ├── AnnouncementSearchDomainService.java  # 通知搜索领域服务 ⏳
+│   │   │   │   ├── AnnouncementPermissionService.java  # 权限管理领域服务 ⏳
+│   │   │   │   ├── AnnouncementConfirmationService.java  # 确认管理领域服务 ⏳
+│   │   │   │   ├── AnnouncementRecycleBinService.java    # 回收站领域服务 ⏳
+│   │   │   └── event/                        # 领域事件
+│   │   │       ├── AnnouncementCreatedEvent.java  # 通知创建事件 ⏳
+│   │   │       ├── AnnouncementAuditedEvent.java  # 通知审核事件 ⏳
+│   │   │       ├── AnnouncementPublishedEvent.java  # 通知发布事件 ⏳
+│   │   │       ├── AnnouncementExpiredEvent.java     # 通知过期事件 ⏳
+│   │   │       ├── AnnouncementArchivedEvent.java    # 通知归档事件 ⏳
+│   │   │       ├── AnnouncementConfirmedEvent.java   # 通知确认事件 ⏳
+│   │   │       └── AnnouncementPublishedEvent.java  # 通知发布事件 ⏳
+│   │   │
+│   │   ├── resource/                         # 资源管理领域
+│   │   │   ├── entity/                       # 实体
+│   │   │   │   ├── MeetingRoom.java          # 会议室实体 ⏳
+│   │   │   │   ├── AirConditioner.java       # 空调实体 ⏳
+│   │   │   │   ├── AccessControl.java        # 门禁实体 ⏳
+│   │   │   │   └── ParkingLot.java           # 停车场实体 ⏳
+│   │   │   ├── booking/                      # 资源预订
+│   │   │   │   ├── entity/                   # 预订实体
+│   │   │   │   │   ├── ResourceBooking.java  # 资源预订基类 ⏳
+│   │   │   │   │   ├── MeetingBooking.java   # 会议室预订 ⏳
+│   │   │   │   │   └── AcExtensionBooking.java # 空调加时预订 ⏳
+│   │   │   │   ├── repository/               # 预订仓储
+│   │   │   │   │   ├── BookingRepository.java    # ⏳
+│   │   │   │   │   └── MeetingBookingRepository.java # ⏳
+│   │   │   │   └── service/                  # 预订服务
+│   │   │   │       ├── BookingDomainService.java    # ⏳
+│   │   │   │       └── BookingConflictService.java  # ⏳
+│   │   │   ├── repository/                   # 资源仓储
+│   │   │   │   ├── ResourceRepository.java       # ⏳
+│   │   │   │   ├── MeetingRoomRepository.java    # ⏳
+│   │   │   │   └── AirConditionerRepository.java # ⏳
+│   │   │   └── service/                      # 资源服务
+│   │   │       ├── ResourceDomainService.java        # ⏳
+│   │   │       └── ResourceAvailabilityService.java  # ⏳
+│   │   │
+│   │   ├── subscription/                     # 订阅领域
+│   │   │   ├── entity/                       # 订阅实体
+│   │   │   │   ├── AnnouncementSubscription.java  # 通知订阅 ⏳
+│   │   │   │   ├── SystemMessageSubscription.java  # 系统消息订阅 ⏳
+│   │   │   │   └── UserMessageSubscription.java  # 用户消息订阅 ⏳
+│   │   │   ├── repository/                   # 订阅仓储
+│   │   │   │   ├── SubscriptionRepository.java  # ⏳
+│   │   │   │   ├── SystemMessageSubscriptionRepository.java  # ⏳
+│   │   │   │   └── UserMessageSubscriptionRepository.java  # ⏳
+│   │   │   └── service/                      # 订阅服务
+│   │   │       ├── SubscriptionDomainService.java  # ⏳
+│   │   │       ├── SystemMessageSubscriptionService.java  # ⏳
+│   │   │       └── UserMessageSubscriptionService.java  # ⏳
+│   │   │
+│   │   ├── message/                          # 消息领域
+│   │   │   ├── entity/                       # 消息实体
+│   │   │   │   ├── Message.java              # 消息基类 ⏳
+│   │   │   │   ├── SystemMessage.java        # 系统消息 ⏳
+│   │   │   │   └── UserMessage.java          # 用户消息 ⏳
+│   │   │   ├── repository/                   # 消息仓储
+│   │   │   │   ├── MessageRepository.java    # 消息仓储接口 ⏳
+│   │   │   │   ├── SystemMessageRepository.java # 系统消息仓储 ⏳
+│   │   │   │   └── UserMessageRepository.java   # 用户消息仓储 ⏳
+│   │   │   ├── service/                      # 消息服务
+│   │   │   │   ├── MessageDomainService.java # 消息领域服务 ⏳
+│   │   │   │   ├── SystemMessageService.java # 系统消息服务 ⏳
+│   │   │   │   └── UserMessageService.java   # 用户消息服务 ⏳
+│   │   │   └── event/                        # 消息事件
+│   │   │       ├── MessageCreatedEvent.java  # 消息创建事件 ⏳
+│   │   │       ├── MessageReadEvent.java     # 消息已读事件 ⏳
+│   │   │       └── MessageDeletedEvent.java  # 消息删除事件 ⏳
+│   │   │
+│   │   └── common/                           # 公共领域对象
+│   │       └── entity/                       # 公共实体
+│   │           └── BaseEntity.java           # 基础实体 ✅
 │   │
-│   ├── service/                          # 服务管理领域
-│   │   ├── entity/                       # 实体
-│   │   │   ├── ServiceItem.java          # 服务事项实体 ⏳
-│   │   │   ├── ServiceProcess.java       # 服务流程实体 ⏳
-│   │   │   ├── ServiceForm.java          # 服务表单实体 ⏳
-│   │   │   └── ServiceEvaluation.java    # 服务评价实体 ⏳
-│   │   ├── repository/                   # 仓储接口 ⏳
-│   │   │   ├── ServiceItemRepository.java        # ⏳
-│   │   │   ├── ServiceProcessRepository.java     # ⏳
-│   │   │   └── ServiceEvaluationRepository.java  # ⏳
-│   │   └── service/                      # 领域服务
-│   │       ├── ServiceItemDomainService.java     # ⏳
-│   │       ├── ServiceProcessDomainService.java  # ⏳
-│   │       └── ServiceEvaluationDomainService.java # ⏳
+│   ├── infrastructure/                       # 基础设施层
+│   │   ├── persistence/                      # 持久化实现
+│   │   │   ├── mapper/                       # MyBatis映射接口
+│   │   │   │   ├── service/                  # 服务管理映射
+│   │   │   │   │   ├── ServiceItemMapper.java      # ⏳
+│   │   │   │   │   └── ServiceEvaluationMapper.java # ⏳
+│   │   │   │   ├── resource/                 # 资源管理映射
+│   │   │   │   │   ├── MeetingRoomMapper.java        # ⏳
+│   │   │   │   │   └── ResourceBookingMapper.java    # ⏳
+│   │   │   │   └── information/              # 信息管理映射
+│   │   │   │   │   ├── AnnouncementMapper.java  # ✅
+│   │   │   │   │   ├── AnnouncementAuditMapper.java  # ⏳
+│   │   │   │   │   ├── AnnouncementReadMapper.java  # ⏳
+│   │   │   │   │   ├── AnnouncementConfirmationMapper.java  # 确认记录映射 ⏳
+│   │   │   │   │   ├── AnnouncementRecycleBinMapper.java    # 回收站映射 ⏳
+│   │   │   │   │   ├── AnnouncementPermissionMapper.java    # 权限映射 ⏳
+│   │   │   │   │   ├── AttachmentMapper.java  # ⏳
+│   │   │   │   │   ├── PolicyMapper.java  # ⏳
+│   │   │   │   │   └── ActivityMapper.java  # ⏳
+│   │   │   │   │   ├── message/                  # 消息管理映射
+│   │   │   │   │   │   ├── MessageMapper.java  # ⏳
+│   │   │   │   │   │   └── SystemMessageMapper.java  # ⏳
+│   │   │   │   └── repository/                   # 仓储实现
+│   │   │   │       ├── service/                  # 服务管理仓储实现
+│   │   │   │       │   ├── ServiceItemRepositoryImpl.java    # ⏳
+│   │   │   │       │   └── ServiceEvaluationRepositoryImpl.java # ⏳
+│   │   │   │       ├── resource/                 # 资源管理仓储实现
+│   │   │   │       │   ├── MeetingRoomRepositoryImpl.java    # ⏳
+│   │   │   │       │   └── BookingRepositoryImpl.java        # ⏳
+│   │   │   │       └── information/              # 信息管理仓储实现
+│   │   │   │           ├── AnnouncementRepositoryImpl.java  # ✅
+│   │   │   │           ├── AnnouncementAuditRepositoryImpl.java  # ⏳
+│   │   │   │           ├── AnnouncementReadRepositoryImpl.java  # ⏳
+│   │   │   │           ├── AnnouncementConfirmationRepositoryImpl.java  # 确认记录仓储实现 ⏳
+│   │   │   │           ├── AnnouncementRecycleBinRepositoryImpl.java    # 回收站仓储实现 ⏳
+│   │   │   │           ├── AnnouncementPermissionRepositoryImpl.java    # 权限仓储实现 ⏳
+│   │   │   │           └── PolicyRepositoryImpl.java  # ⏳
+│   │   │   └── partition/                    # 数据分区策略 ⏳
+│   │   │       ├── PartitionStrategy.java    # 分区策略接口
+│   │   │       └── TimeBasedPartitionStrategy.java  # 基于时间的分区策略
+│   │   │
+│   │   ├── booking/                          # 资源预订基础设施
+│   │   │   ├── service/                      # 预订服务
+│   │   │   │   ├── BookingConflictDetector.java # 预订冲突检测 ⏳
+│   │   │   │   └── ResourceLockService.java     # 资源锁定服务 ⏳
+│   │   │   └── impl/                         # 服务实现
+│   │   │       └── RedisResourceLockServiceImpl.java  # ⏳
+│   │   │
+│   │   ├── file/                             # 文件存储
+│   │   │   ├── service/                      # 服务定义
+│   │   │   │   ├── FileService.java          # 文件服务 ⏳
+│   │   │   │   └── AttachmentService.java    # 附件服务 ⏳
+│   │   │   └── impl/                         # 服务实现
+│   │   │       ├── FileServiceImpl.java      # ⏳
+│   │   │       └── AttachmentServiceImpl.java  # ⏳
+│   │   │
+│   │   ├── content/                          # 内容处理
+│   │   │   ├── service/                      # 服务定义
+│   │   │   │   ├── ContentSecurityService.java  # 内容安全服务 ⏳
+│   │   │   │   └── SensitiveWordFilter.java  # 敏感词过滤 ⏳
+│   │   │   └── impl/                         # 服务实现
+│   │   │       ├── ContentSecurityServiceImpl.java  # ⏳
+│   │   │       └── SensitiveWordFilterImpl.java  # ⏳
+│   │   │
+│   │   ├── workflow/                         # 工作流引擎
+│   │   │   ├── service/                      # 服务定义
+│   │   │   │   ├── WorkflowService.java      # 工作流服务 ⏳
+│   │   │   │   ├── WorkflowFormService.java         # 工作流表单服务 ⏳
+│   │   │   │   └── WorkflowTaskAssignService.java   # 任务分配服务 ⏳
+│   │   │   ├── definition/                   # 工作流定义
+│   │   │   │   ├── ProcessDefinitionService.java  # 流程定义服务 ⏳
+│   │   │   │   └── FormDefinitionService.java     # 表单定义服务 ⏳
+│   │   │   ├── rule/                         # 业务规则
+│   │   │   │   ├── ServicePriorityRule.java       # 服务优先级规则 ⏳
+│   │   │   │   ├── ServiceAssignmentRule.java     # 服务分配规则 ⏳
+│   │   │   │   └── RuleEngineService.java         # 规则引擎服务 ⏳
+│   │   │   ├── execution/                    # 工作流执行
+│   │   │   │   ├── ProcessExecutionService.java   # 流程执行服务 ⏳
+│   │   │   │   └── TaskService.java               # 任务服务 ⏳
+│   │   │   ├── monitor/                      # 工作流监控
+│   │   │   │   └── ProcessMonitorService.java     # 流程监控服务 ⏳
+│   │   │   └── impl/                         # 服务实现
+│   │   │       └── WorkflowServiceImpl.java  # ⏳
+│   │   │
+│   │   ├── evaluation/                       # 评价服务
+│   │   │   ├── service/                      # 服务定义
+│   │   │   │   ├── EvaluationCalculator.java  # 评价计算服务 ⏳
+│   │   │   │   └── EvaluationAnalyzer.java    # 评价分析服务 ⏳
+│   │   │   └── impl/                         # 服务实现
+│   │   │       └── EvaluationCalculatorImpl.java  # ⏳
+│   │   │
+│   │   ├── search/                           # 搜索实现
+│   │   │   ├── repository/                   # 搜索仓储
+│   │   │   │   └── ElasticsearchRepository.java  # ⏳
+│   │   │   └── service/                      # 搜索服务
+│   │   │       └── ElasticsearchService.java  # ⏳
+│   │   │
+│   │   ├── message/                          # 消息队列
+│   │   │   ├── producer/                     # 消息生产者
+│   │   │   │   └── RocketMQProducer.java  # ⏳
+│   │   │   └── consumer/                     # 消息消费者
+│   │   │       └── RocketMQConsumer.java  # ⏳
+│   │   │
+│   │   ├── mobile/                           # 移动端支持
+│   │   │   ├── service/                      # 服务定义
+│   │   │   │   ├── PushSystemMessageService.java  # 推送系统消息服务 ⏳
+│   │   │   │   └── MobileAdaptationService.java  # 移动适配服务 ⏳
+│   │   │   └── impl/                         # 服务实现
+│   │   │       └── PushSystemMessageServiceImpl.java  # ⏳
+│   │   │
+│   │   ├── integration/                      # 外部系统集成
+│   │   │   ├── payment/                      # 支付集成
+│   │   │   │   └── PaymentGatewayService.java  # ⏳
+│   │   │   ├── sms/                          # 短信集成
+│   │   │   │   └── SmsService.java  # ⏳
+│   │   │   └── weather/                      # 天气服务集成
+│   │   │       └── WeatherService.java  # ⏳
+│   │   │
+│   │   ├── cache/                            # 缓存服务
+│   │   │   ├── service/                      # 服务定义 ⏳
+│   │   │   └── impl/                         # 服务实现 ⏳
+│   │   │
+│   │   ├── lock/                             # 分布式锁服务
+│   │   │   ├── DistributedLockService.java   # 分布式锁服务 ⏳
+│   │   │   └── RedisLockServiceImpl.java     # Redis实现 ⏳
+│   │   │
+│   │   ├── metrics/                          # 业务监控与度量
+│   │   │   ├── MetricsService.java           # 度量服务 ⏳
+│   │   │   └── AnnouncementMetricsCollector.java  # 通知度量收集器 ⏳
+│   │   │
+│   │   ├── event/                            # 事件机制
+│   │   │   ├── publisher/                    # 事件发布
+│   │   │   │   └── EventPublisherImpl.java    # ⏳
+│   │   │   └── listener/                     # 事件监听
+│   │   │       └── AnnouncementEventListener.java  # ⏳
+│   │   │
+│   │   └── security/                         # 安全实现
+│   │       ├── service/                      # 服务定义 ⏳
+│   │       └── impl/                         # 服务实现 ⏳
 │   │
-│   ├── information/                      # 信息公开领域
-│   │   ├── entity/                       # 领域实体
-│   │   │   ├── Notification.java         # 通知公告 ✅
-│   │   │   ├── NotificationAudit.java    # 通知审核记录 ⏳
-│   │   │   ├── NotificationRead.java     # 通知阅读记录 ⏳
-│   │   │   ├── NotificationConfirmation.java  # 通知确认记录 ⏳
-│   │   │   ├── NotificationRecycleBin.java    # 回收站记录 ⏳
-│   │   │   ├── NotificationPermission.java    # 通知权限记录 ⏳
-│   │   │   ├── Attachment.java           # 通知附件 ⏳
-│   │   │   ├── Policy.java               # 政策文件 ⏳
-│   │   │   ├── Activity.java             # 园区活动 ⏳
-│   │   │   └── Survey.java               # 调查问卷 ⏳
-│   │   ├── repository/                   # 仓储接口
-│   │   │   ├── NotificationRepository.java  # ✅
-│   │   │   ├── NotificationAuditRepository.java  # ⏳
-│   │   │   ├── NotificationReadRepository.java  # ⏳
-│   │   │   ├── NotificationConfirmationRepository.java  # 确认记录仓储 ⏳
-│   │   │   ├── NotificationRecycleBinRepository.java    # 回收站仓储 ⏳
-│   │   │   ├── NotificationPermissionRepository.java    # 权限仓储 ⏳
-│   │   │   ├── PolicyRepository.java  # ⏳
-│   │   │   └── ActivityRepository.java  # ⏳
-│   │   ├── service/                      # 领域服务
-│   │   │   ├── NotificationDomainService.java  # ✅
-│   │   │   ├── NotificationStateMachine.java  # 状态机服务 ⏳
-│   │   │   ├── NotificationStatsService.java  # 统计分析服务 ⏳
-│   │   │   ├── NotificationSearchDomainService.java  # 通知搜索领域服务 ⏳
-│   │   │   ├── NotificationPermissionService.java  # 权限管理领域服务 ⏳
-│   │   │   ├── NotificationConfirmationService.java  # 确认管理领域服务 ⏳
-│   │   │   ├── NotificationRecycleBinService.java    # 回收站领域服务 ⏳
-│   │   └── event/                        # 领域事件
-│   │       ├── NotificationCreatedEvent.java  # 通知创建事件 ⏳
-│   │       ├── NotificationAuditedEvent.java  # 通知审核事件 ⏳
-│   │       ├── NotificationPublishedEvent.java  # 通知发布事件 ⏳
-│   │       ├── NotificationExpiredEvent.java     # 通知过期事件 ⏳
-│   │       ├── NotificationArchivedEvent.java    # 通知归档事件 ⏳
-│   │       ├── NotificationConfirmedEvent.java   # 通知确认事件 ⏳
-│   │       └── NotificationPublishedEvent.java  # 通知发布事件 ⏳
-│   │
-│   ├── resource/                         # 资源管理领域
-│   │   ├── entity/                       # 实体
-│   │   │   ├── MeetingRoom.java          # 会议室实体 ⏳
-│   │   │   ├── AirConditioner.java       # 空调实体 ⏳
-│   │   │   ├── AccessControl.java        # 门禁实体 ⏳
-│   │   │   └── ParkingLot.java           # 停车场实体 ⏳
-│   │   ├── booking/                      # 资源预订
-│   │   │   ├── entity/                   # 预订实体
-│   │   │   │   ├── ResourceBooking.java  # 资源预订基类 ⏳
-│   │   │   │   ├── MeetingBooking.java   # 会议室预订 ⏳
-│   │   │   │   └── AcExtensionBooking.java # 空调加时预订 ⏳
-│   │   │   ├── repository/               # 预订仓储
-│   │   │   │   ├── BookingRepository.java    # ⏳
-│   │   │   │   └── MeetingBookingRepository.java # ⏳
-│   │   │   └── service/                  # 预订服务
-│   │   │       ├── BookingDomainService.java    # ⏳
-│   │   │       └── BookingConflictService.java  # ⏳
-│   │   ├── repository/                   # 资源仓储
-│   │   │   ├── ResourceRepository.java       # ⏳
-│   │   │   ├── MeetingRoomRepository.java    # ⏳
-│   │   │   └── AirConditionerRepository.java # ⏳
-│   │   └── service/                      # 资源服务
-│   │       ├── ResourceDomainService.java        # ⏳
-│   │       └── ResourceAvailabilityService.java  # ⏳
-│   │
-│   ├── subscription/                     # 订阅领域
-│   │   ├── entity/                       # 订阅实体
-│   │   │   └── NotificationSubscription.java  # 通知订阅 ⏳
-│   │   ├── repository/                   # 订阅仓储
-│   │   │   └── SubscriptionRepository.java  # ⏳
-│   │   └── service/                      # 订阅服务
-│   │       └── SubscriptionDomainService.java  # ⏳
-│   │
-│   └── common/                           # 公共领域对象
-│       └── entity/                       # 公共实体
-│           └── BaseEntity.java           # 基础实体 ✅
-│
-├── infrastructure/                       # 基础设施层
-│   ├── persistence/                      # 持久化实现
-│   │   ├── mapper/                       # MyBatis映射接口
-│   │   │   ├── service/                  # 服务管理映射
-│   │   │   │   ├── ServiceItemMapper.java      # ⏳
-│   │   │   │   └── ServiceEvaluationMapper.java # ⏳
-│   │   │   ├── resource/                 # 资源管理映射
-│   │   │   │   ├── MeetingRoomMapper.java        # ⏳
-│   │   │   │   └── ResourceBookingMapper.java    # ⏳
-│   │   │   └── information/              # 信息管理映射
-│   │   │       ├── NotificationMapper.java  # ✅
-│   │   │       ├── NotificationAuditMapper.java  # ⏳
-│   │   │       ├── NotificationReadMapper.java  # ⏳
-│   │   │       ├── NotificationConfirmationMapper.java  # 确认记录映射 ⏳
-│   │   │       ├── NotificationRecycleBinMapper.java    # 回收站映射 ⏳
-│   │   │       ├── NotificationPermissionMapper.java    # 权限映射 ⏳
-│   │   │       ├── AttachmentMapper.java  # ⏳
-│   │   │       ├── PolicyMapper.java  # ⏳
-│   │   │       └── ActivityMapper.java  # ⏳
-│   │   ├── repository/                   # 仓储实现
-│   │   │   ├── service/                  # 服务管理仓储实现
-│   │   │   │   ├── ServiceItemRepositoryImpl.java    # ⏳
-│   │   │   │   └── ServiceEvaluationRepositoryImpl.java # ⏳
-│   │   │   ├── resource/                 # 资源管理仓储实现
-│   │   │   │   ├── MeetingRoomRepositoryImpl.java    # ⏳
-│   │   │   │   └── BookingRepositoryImpl.java        # ⏳
-│   │   │   └── information/              # 信息管理仓储实现
-│   │   │       ├── NotificationRepositoryImpl.java  # ✅
-│   │   │       ├── NotificationAuditRepositoryImpl.java  # ⏳
-│   │   │       ├── NotificationReadRepositoryImpl.java  # ⏳
-│   │   │       ├── NotificationConfirmationRepositoryImpl.java  # 确认记录仓储实现 ⏳
-│   │   │       ├── NotificationRecycleBinRepositoryImpl.java    # 回收站仓储实现 ⏳
-│   │   │       ├── NotificationPermissionRepositoryImpl.java    # 权限仓储实现 ⏳
-│   │   │       └── PolicyRepositoryImpl.java  # ⏳
-│   │   └── partition/                    # 数据分区策略 ⏳
-│   │       ├── PartitionStrategy.java    # 分区策略接口
-│   │       └── TimeBasedPartitionStrategy.java  # 基于时间的分区策略
-│   │
-│   ├── booking/                          # 资源预订基础设施
-│   │   ├── service/                      # 预订服务
-│   │   │   ├── BookingConflictDetector.java # 预订冲突检测 ⏳
-│   │   │   └── ResourceLockService.java     # 资源锁定服务 ⏳
-│   │   └── impl/                         # 服务实现
-│   │       └── RedisResourceLockServiceImpl.java  # ⏳
-│   │
-│   ├── file/                             # 文件存储
-│   │   ├── service/                      # 服务定义
-│   │   │   ├── FileService.java          # 文件服务 ⏳
-│   │   │   └── AttachmentService.java    # 附件服务 ⏳
-│   │   └── impl/                         # 服务实现
-│   │       ├── FileServiceImpl.java      # ⏳
-│   │       └── AttachmentServiceImpl.java  # ⏳
-│   │
-│   ├── content/                          # 内容处理
-│   │   ├── service/                      # 服务定义
-│   │   │   ├── ContentSecurityService.java  # 内容安全服务 ⏳
-│   │   │   └── SensitiveWordFilter.java  # 敏感词过滤 ⏳
-│   │   └── impl/                         # 服务实现
-│   │       ├── ContentSecurityServiceImpl.java  # ⏳
-│   │       └── SensitiveWordFilterImpl.java  # ⏳
-│   │
-│   ├── workflow/                         # 工作流引擎
-│   │   ├── service/                      # 服务定义
-│   │   │   ├── WorkflowService.java      # 工作流服务 ⏳
-│   │   │   ├── WorkflowFormService.java         # 工作流表单服务 ⏳
-│   │   │   └── WorkflowTaskAssignService.java   # 任务分配服务 ⏳
-│   │   ├── definition/                   # 工作流定义
-│   │   │   ├── ProcessDefinitionService.java  # 流程定义服务 ⏳
-│   │   │   └── FormDefinitionService.java     # 表单定义服务 ⏳
-│   │   ├── rule/                         # 业务规则
-│   │   │   ├── ServicePriorityRule.java       # 服务优先级规则 ⏳
-│   │   │   ├── ServiceAssignmentRule.java     # 服务分配规则 ⏳
-│   │   │   └── RuleEngineService.java         # 规则引擎服务 ⏳
-│   │   ├── execution/                    # 工作流执行
-│   │   │   ├── ProcessExecutionService.java   # 流程执行服务 ⏳
-│   │   │   └── TaskService.java               # 任务服务 ⏳
-│   │   ├── monitor/                      # 工作流监控
-│   │   │   └── ProcessMonitorService.java     # 流程监控服务 ⏳
-│   │   └── impl/                         # 服务实现
-│   │       └── WorkflowServiceImpl.java  # ⏳
-│   │
-│   ├── evaluation/                       # 评价服务
-│   │   ├── service/                      # 服务定义
-│   │   │   ├── EvaluationCalculator.java  # 评价计算服务 ⏳
-│   │   │   └── EvaluationAnalyzer.java    # 评价分析服务 ⏳
-│   │   └── impl/                         # 服务实现
-│   │       └── EvaluationCalculatorImpl.java  # ⏳
-│   │
-│   ├── search/                           # 搜索实现
-│   │   ├── repository/                   # 搜索仓储
-│   │   │   └── ElasticsearchRepository.java  # ⏳
-│   │   └── service/                      # 搜索服务
-│   │       └── ElasticsearchService.java  # ⏳
-│   │
-│   ├── message/                          # 消息队列
-│   │   ├── producer/                     # 消息生产者
-│   │   │   └── RocketMQProducer.java  # ⏳
-│   │   └── consumer/                     # 消息消费者
-│   │       └── RocketMQConsumer.java  # ⏳
-│   │
-│   ├── mobile/                           # 移动端支持
-│   │   ├── service/                      # 服务定义
-│   │   │   ├── PushNotificationService.java  # 推送通知服务 ⏳
-│   │   │   └── MobileAdaptationService.java  # 移动适配服务 ⏳
-│   │   └── impl/                         # 服务实现
-│   │       └── PushNotificationServiceImpl.java  # ⏳
-│   │
-│   ├── integration/                      # 外部系统集成
-│   │   ├── payment/                      # 支付集成
-│   │   │   └── PaymentGatewayService.java  # ⏳
-│   │   ├── sms/                          # 短信集成
-│   │   │   └── SmsService.java  # ⏳
-│   │   └── weather/                      # 天气服务集成
-│   │       └── WeatherService.java  # ⏳
-│   │
-│   ├── cache/                            # 缓存服务
-│   │   ├── service/                      # 服务定义 ⏳
-│   │   └── impl/                         # 服务实现 ⏳
-│   │
-│   ├── lock/                             # 分布式锁服务
-│   │   ├── DistributedLockService.java   # 分布式锁服务 ⏳
-│   │   └── RedisLockServiceImpl.java     # Redis实现 ⏳
-│   │
-│   ├── metrics/                          # 业务监控与度量
-│   │   ├── MetricsService.java           # 度量服务 ⏳
-│   │   └── NotificationMetricsCollector.java  # 通知度量收集器 ⏳
-│   │
-│   ├── event/                            # 事件机制
-│   │   ├── publisher/                    # 事件发布
-│   │   │   └── EventPublisherImpl.java    # ⏳
-│   │   └── listener/                     # 事件监听
-│   │       └── NotificationEventListener.java  # ⏳
-│   │
-│   └── security/                         # 安全实现
-│       ├── service/                      # 服务定义 ⏳
-│       └── impl/                         # 服务实现 ⏳
-│
-└── common/                               # 通用模块
-    ├── dto/                              # 数据传输对象
-    │   ├── service/                      # 服务管理DTO
-    │   │   ├── ServiceItemDTO.java  # ⏳
-    │   │   ├── ServiceProcessDTO.java  # ⏳
-    │   │   ├── ServiceEvaluationDTO.java  # ⏳
-    │   │   └── request/
-    │   │       ├── ServiceItemRequest.java  # ⏳
-    │   │       └── ServiceEvaluationRequest.java  # ⏳
-    │   ├── resource/                     # 资源管理DTO
-    │   │   ├── MeetingRoomDTO.java  # ⏳
-    │   │   ├── BookingDTO.java  # ⏳
-    │   │   ├── AirConditionerDTO.java  # ⏳
-    │   │   └── request/
-    │   │       ├── BookingRequest.java  # ⏳
-    │   │       └── AcExtensionRequest.java  # ⏳
-    │   └── information/                  # 信息公开DTO
-    │       ├── NotificationDTO.java  # ✅
-    │       ├── NotificationAuditDTO.java  # ⏳
-    │       ├── NotificationStatsDTO.java  # ⏳
-    │       ├── AttachmentDTO.java  # ⏳
-    │       ├── PolicyDTO.java  # ⏳
-    │       └── request/
-    │           ├── NotificationRequest.java  # ✅
-    │           ├── NotificationAuditRequest.java  # ⏳
-    │           └── PolicyRequest.java  # ⏳
-    ├── response/                         # 统一响应
-    │   ├── Result.java  # ✅
-    │   └── PageResult.java  # ✅
-    ├── enums/                            # 枚举定义
-    │   ├── service/                      # 服务管理枚举
-    │   │   ├── ServiceItemStatusEnum.java  # ⏳
-    │   │   ├── ServicePriorityEnum.java  # ⏳
-    │   │   ├── ServiceTypeEnum.java  # ⏳
-    │   │   └── EvaluationDimensionEnum.java  # ⏳
-    │   ├── resource/                     # 资源管理枚举
-    │   │   ├── ResourceTypeEnum.java  # ⏳
-    │   │   ├── BookingStatusEnum.java  # ⏳
-    │   │   └── ResourceAvailabilityEnum.java  # ⏳
-    │   └── information/                  # 信息管理枚举
-    │       ├── NotificationStatusEnum.java  # ✅
-    │       ├── AuditStatusEnum.java  # ⏳
-    │       ├── AttachmentTypeEnum.java  # ⏳
-    │       └── NotificationTypeEnum.java  # ⏳
-    ├── constant/                         # 常量定义
-    │   ├── SystemConstants.java  # ⏳
-    │   └── SecurityConstants.java  # ⏳
-    └── utils/                            # 工具类
-        ├── DateUtils.java  # ✅
-        └── StringUtils.java  # ✅
+│   └── common/                               # 通用模块
+│       ├── dto/                              # 数据传输对象
+│       │   ├── service/                      # 服务管理DTO
+│       │   │   ├── ServiceItemDTO.java  # ⏳
+│       │   │   ├── ServiceProcessDTO.java  # ⏳
+│       │   │   ├── ServiceEvaluationDTO.java  # ⏳
+│       │   │   └── request/
+│       │   │       ├── ServiceItemRequest.java  # ⏳
+│       │   │       └── ServiceEvaluationRequest.java  # ⏳
+│       │   ├── resource/                     # 资源管理DTO
+│       │   │   ├── MeetingRoomDTO.java  # ⏳
+│       │   │   ├── BookingDTO.java  # ⏳
+│       │   │   ├── AirConditionerDTO.java  # ⏳
+│       │   │   └── request/
+│       │   │       ├── BookingRequest.java  # ⏳
+│       │   │       └── AcExtensionRequest.java  # ⏳
+│       │   └── information/                  # 信息公开DTO
+│       │       ├── AnnouncementDTO.java  # ✅
+│       │       ├── AnnouncementAuditDTO.java  # ⏳
+│       │       ├── AnnouncementStatsDTO.java  # ⏳
+│       │       ├── AttachmentDTO.java  # ⏳
+│       │       ├── PolicyDTO.java  # ⏳
+│       │       └── request/
+│       │           ├── AnnouncementRequest.java  # ✅
+│       │           ├── AnnouncementAuditRequest.java  # ⏳
+│       │           └── PolicyRequest.java  # ⏳
+│       ├── response/                         # 统一响应
+│       │   ├── Result.java  # ✅
+│       │   └── PageResult.java  # ✅
+│       ├── enums/                            # 枚举定义
+│       │   ├── service/                      # 服务管理枚举
+│       │   │   ├── ServiceItemStatusEnum.java  # ⏳
+│       │   │   ├── ServicePriorityEnum.java  # ⏳
+│       │   │   ├── ServiceTypeEnum.java  # ⏳
+│       │   │   └── EvaluationDimensionEnum.java  # ⏳
+│       │   ├── resource/                     # 资源管理枚举
+│       │   │   ├── ResourceTypeEnum.java  # ⏳
+│       │   │   ├── BookingStatusEnum.java  # ⏳
+│       │   │   └── ResourceAvailabilityEnum.java  # ⏳
+│       │   └── information/                  # 信息管理枚举
+│       │       ├── AnnouncementStatusEnum.java  # ✅
+│       │       ├── AuditStatusEnum.java  # ⏳
+│       │       ├── AttachmentTypeEnum.java  # ⏳
+│       │       └── AnnouncementTypeEnum.java  # ⏳
+│       ├── constant/                         # 常量定义
+│       │   ├── SystemConstants.java  # ⏳
+│       │   └── SecurityConstants.java  # ⏳
+│       └── utils/                            # 工具类
+│           ├── DateUtils.java  # ✅
+│           └── StringUtils.java  # ✅
 
 SmartCampus/src/main/resources/
 ├── application.yml                       # 应用配置 ✅
@@ -485,12 +520,12 @@ SmartCampus/src/main/resources/
 │   │   ├── MeetingRoomMapper.xml  # ⏳
 │   │   └── ResourceBookingMapper.xml  # ⏳
 │   └── information/                      # 信息管理XML映射
-│       ├── NotificationMapper.xml  # ✅
-│       ├── NotificationAuditMapper.xml  # ⏳
-│       ├── NotificationReadMapper.xml  # ⏳
-│       ├── NotificationConfirmationMapper.xml  # 确认记录映射XML ⏳
-│       ├── NotificationRecycleBinMapper.xml    # 回收站映射XML ⏳
-│       ├── NotificationPermissionMapper.xml    # 权限映射XML ⏳
+│       ├── AnnouncementMapper.xml  # ✅
+│       ├── AnnouncementAuditMapper.xml  # ⏳
+│       ├── AnnouncementReadMapper.xml  # ⏳
+│       ├── AnnouncementConfirmationMapper.xml  # 确认记录映射XML ⏳
+│       ├── AnnouncementRecycleBinMapper.xml    # 回收站映射XML ⏳
+│       ├── AnnouncementPermissionMapper.xml    # 权限映射XML ⏳
 │       ├── AttachmentMapper.xml  # ⏳
 │       ├── PolicyMapper.xml  # ⏳
 │       └── ActivityMapper.xml  # ⏳

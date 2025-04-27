@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
  */
 @Data
 @Entity
-@Table(name = "notices")
+@Table(name = "announcements")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notification {
+public class Announcement {
 
     /**
      * 主键ID

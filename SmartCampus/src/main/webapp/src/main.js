@@ -16,7 +16,13 @@ import 'ant-design-vue/dist/reset.css';
 
 import './assets/styles/main.css';
 
-console.log('初始路径:', window.location.pathname);
+console.log("应用启动，当前路径:", window.location.pathname);
+
+// 添加路由调试
+window.addEventListener('load', () => {
+  console.log("页面加载完成，当前路径:", window.location.pathname);
+});
+
 console.log('完整URL:', window.location.href);
 console.log('PlatformSelector组件:', PlatformSelector ? '已加载' : '未加载');
 console.log('ComprehensiveApp组件:', ComprehensiveApp ? '已加载' : '未加载');

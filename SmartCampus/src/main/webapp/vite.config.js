@@ -14,7 +14,7 @@ export default defineConfig({
           // 记录请求
           console.log(`请求: ${req.method} ${req.url}`);
           
-          // 如果是根路径，直接重定向到选择器页面
+          // 如果是根路径，直接重定向到选择器页面，但不进行后续自动跳转
           if (req.url === '/' || req.url === '/index.html') {
             console.log('拦截到根路径请求，重定向到选择器页面');
             res.writeHead(302, {
@@ -24,22 +24,29 @@ export default defineConfig({
             return;
           }
           
-          // 允许访问综合管理平台的服务管理下的路径
-          if (req.url.startsWith('/service/information/notification') || 
-              req.url.startsWith('/comprehensive/service/information/notification')) {
-            console.log('允许访问通知公告页面');
+          // 移除原来的自动跳转代码，改为更合理的路由处理
+          if (req.url === '/selector.html') {
+            console.log('加载选择器页面');
             next();
             return;
           }
           
-          // 如果是/comprehensive/路径，检查是否是直接访问
-          if (req.url.startsWith('/comprehensive/') && req.headers.referer) {
-            const referer = new URL(req.headers.referer);
-            if (referer.pathname === '/' || referer.pathname === '/selector.html') {
-              console.log('来自选择器的请求，放行通过');
-              next();
-              return;
-            }
+          // 综合平台相关路由
+          if (req.url.startsWith('/comprehensive/')) {
+            console.log('访问综合平台:', req.url);
+            next();
+            return;
+          }
+          
+          // 特定模块相关路由 - 不再自动跳转
+          if (req.url.startsWith('/service/information/notification')) {
+            console.log('访问通知公告页面，需要登录后由菜单导航');
+            // 让用户通过正常流程导航
+            res.writeHead(302, {
+              'Location': '/selector.html'
+            });
+            res.end();
+            return;
           }
           
           next();
@@ -64,7 +71,18 @@ export default defineConfig({
   server: {
     port: 3000,
     open: false,
-    proxy: {},
+    proxy: {
+      '/service': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path
+      },
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path
+      }
+    },
     cors: true,
     hmr: true,
     // 配置路径重写规则

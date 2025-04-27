@@ -214,4 +214,60 @@ docker-compose up -d
 如果项目无法正常启动：
 1. 删除node_modules文件夹和package-lock.json
 2. 重新执行`npm install`
-3. 使用`node start.js`启动项目 
+3. 使用`node start.js`启动项目
+
+## 项目结构
+
+- **根目录**: 主前端项目（端口3003）
+- **server/**: Node.js后端服务器（端口3001）
+- **SmartCampus/src/main/webapp/**: 智慧园区前端项目（端口3000）
+
+## 端口配置
+
+- 后端API服务器: `http://localhost:3001`
+- 主前端应用: `http://localhost:3003`
+- Webapp应用: `http://localhost:3000`
+
+## 启动方式
+
+### 方式一：一键启动所有服务
+
+```bash
+# Windows
+start-all.bat
+```
+
+### 方式二：分别启动各服务
+
+1. 启动后端服务器：
+```bash
+# Windows
+start-server.bat
+
+# 或者手动设置环境变量
+cd server
+set PORT=3001
+npm run dev
+```
+
+2. 启动主前端应用：
+```bash
+npm run dev
+```
+
+3. 启动Webapp应用：
+```bash
+cd SmartCampus/src/main/webapp
+npm run dev
+```
+
+## 代理配置
+
+- 主前端应用将`/api`请求代理到`http://localhost:3001`
+- Webapp应用将`/service`和`/api`请求代理到`http://localhost:8080`
+
+## 注意事项
+
+- 确保启动服务器之前安装了所有依赖（`npm install`）
+- 第一次运行时，数据库将自动初始化
+- 如果需要更改端口配置，请同时更新相应的代理设置 

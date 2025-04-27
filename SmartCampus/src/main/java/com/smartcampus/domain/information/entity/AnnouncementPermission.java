@@ -9,25 +9,25 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * 通知权限实体
+ * 公告权限实体
  */
 @Entity
-@Table(name = "t_notification_permission")
+@Table(name = "t_announcement_permission")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationPermission {
+public class AnnouncementPermission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     /**
-     * 通知ID
+     * 公告ID
      */
     @Column(nullable = false)
-    private Long notificationId;
+    private Long announcementId;
     
     /**
      * 权限类型：1-部门 2-角色 3-用户

@@ -73,6 +73,42 @@
       }
     }
   </style>
+  <script>
+    // 防止可能的自动跳转
+    console.log("选择器页面加载");
+    
+    // 调试：监控页面是否被重定向
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+    
+    history.pushState = function() {
+      console.log('pushState 被调用:', arguments);
+      return originalPushState.apply(this, arguments);
+    };
+    
+    history.replaceState = function() {
+      console.log('replaceState 被调用:', arguments);
+      return originalReplaceState.apply(this, arguments);
+    };
+    
+    // 防止自动跳转
+    let redirectAttempted = false;
+    
+    Object.defineProperty(window, 'location', {
+      get: function() {
+        return this._location || window._location || document.location;
+      },
+      set: function(val) {
+        console.log('有代码尝试修改window.location:', val);
+        if(val.toString().includes('notification') && !redirectAttempted) {
+          console.log('拦截到跳转到notification页面的尝试');
+          redirectAttempted = true;
+          return;
+        }
+        this._location = val;
+      }
+    });
+  </script>
 </head>
 <body>
   <div class="platform-selector">

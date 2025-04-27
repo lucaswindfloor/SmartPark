@@ -1,3 +1,61 @@
+# SmartCampus 智慧园区系统
+
+## 项目结构
+
+- **src/main**: Java后端代码目录
+- **src/main/webapp**: 前端代码目录
+
+## 启动方式
+
+### 方式一：一键启动所有服务
+
+```bash
+# 在SmartCampus目录下执行
+start-all.bat
+```
+
+这将同时启动后端服务和前端应用。
+
+### 方式二：分别启动后端和前端
+
+1. 启动后端服务器：
+```bash
+# 在SmartCampus目录下执行
+start-server.bat
+```
+
+2. 启动前端应用：
+```bash
+# 在SmartCampus目录下执行
+start-webapp.bat
+```
+
+## 访问地址
+
+- 后端API: http://localhost:8080
+- 前端应用: http://localhost:3000
+
+## Vite代理配置
+
+前端Vite开发服务器已配置代理，将API请求转发到后端：
+
+```javascript
+// SmartCampus/src/main/webapp/vite.config.js
+server: {
+  port: 3000,
+  proxy: {
+    '/service': {
+      target: 'http://localhost:8080',
+      changeOrigin: true
+    },
+    '/api': {
+      target: 'http://localhost:8080',
+      changeOrigin: true
+    }
+  }
+}
+```
+
 # Smart Campus Management System
 
 Smart Campus is a comprehensive management system designed to provide digital solutions for campus administration, student services, and facility management.

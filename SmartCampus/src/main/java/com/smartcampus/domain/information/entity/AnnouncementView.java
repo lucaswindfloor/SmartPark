@@ -10,17 +10,17 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
- * 通知查看记录实体类
+ * 公告查看记录实体类
  */
 @Entity
-@Table(name = "t_notice_views", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"notice_id", "user_id"})
+@Table(name = "t_announcement_views", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"announcement_id", "user_id"})
 })
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NoticeView {
+public class AnnouncementView {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +30,8 @@ public class NoticeView {
      * 公告ID
      */
     @NotNull(message = "公告ID不能为空")
-    @Column(name = "notice_id", nullable = false)
-    private Long noticeId;
+    @Column(name = "announcement_id", nullable = false)
+    private Long announcementId;
     
     /**
      * 查看用户ID

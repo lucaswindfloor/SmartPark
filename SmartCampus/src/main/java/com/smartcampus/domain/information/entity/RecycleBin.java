@@ -28,8 +28,8 @@ public class RecycleBin {
      * 公告ID
      */
     @NotNull(message = "公告ID不能为空")
-    @Column(name = "notice_id", nullable = false)
-    private Long noticeId;
+    @Column(name = "announcement_id", nullable = false)
+    private Long announcementId;
     
     /**
      * 删除人ID
