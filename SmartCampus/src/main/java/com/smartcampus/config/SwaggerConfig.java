@@ -1,39 +1,50 @@
 package com.smartcampus.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.Contact;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Swagger配置类
+ * SpringDoc OpenAPI 3 配置 (Minimal Prototype)
  */
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
 
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.smartcampus.interfaces.api.controller"))
-                .paths(PathSelectors.any())
-                .build()
-                .apiInfo(apiInfo());
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("SmartCampus API (Minimal Prototype)")
+                        .version("1.0.0")
+                        .description("Smart Campus Management System API Documentation - Focused on Announcement Module")
+                        .contact(new Contact().name("SmartCampus Team").url("https://www.smartcampus.com").email("info@smartcampus.com")));
     }
 
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Smart Campus API")
-                .description("Smart Campus Management System API Documentation")
-                .version("1.0.0")
-                .contact(new Contact("Smart Campus Team", "https://www.smartcampus.com", "info@smartcampus.com"))
+    @Bean
+    public GroupedOpenApi announcementApi() {
+        // Group specifically for the Announcement module in the comprehensive platform
+        return GroupedOpenApi.builder()
+                .group("1-Comprehensive-Announcement") // Group name for organization in Swagger UI
+                .packagesToScan("com.smartcampus.platform.comprehensive.servicemanagement.informationdisclosure.controller.announcement") // Updated package path
+                // .pathsToMatch("/api/comprehensive/servicemanagement/informationdisclosure/announcement/**") // Alternative: Match by path
                 .build();
     }
+
+    // TODO: Add other GroupedOpenApi beans for other modules as they are implemented
+    /*
+    @Bean
+    public GroupedOpenApi otherComprehensiveApi() {
+        return GroupedOpenApi.builder()
+                .group("2-Comprehensive-Other")
+                .packagesToScan("com.smartcampus.platform.comprehensive.*") // Adjust package
+                .packagesToExclude("com.smartcampus.platform.comprehensive.servicemanagement.informationdisclosure.controller.announcement") // Updated package path
+                .build();
+    }
+    */
+
+    // TODO: Add beans for public and admin platforms later
+
 } 

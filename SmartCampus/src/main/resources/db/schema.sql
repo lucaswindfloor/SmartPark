@@ -1,123 +1,160 @@
--- 通知公告表
-CREATE TABLE IF NOT EXISTS t_notices (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '公告唯一标识',
-    title VARCHAR(100) NOT NULL COMMENT '标题',
-    content TEXT NOT NULL COMMENT '正文（富文本）',
-    status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1-草稿 2-待审核 3-待发布 4-已发布 5-已过期 6-已取消发布 7-档案',
-    creator_id BIGINT NOT NULL COMMENT '起草人ID',
-    scope TINYINT NOT NULL DEFAULT 1 COMMENT '公开范围：1-全部 2-企业 3-角色',
-    scope_details JSON COMMENT '范围详情（企业ID、角色ID列表）',
-    type TINYINT NOT NULL DEFAULT 1 COMMENT '类型：1-普通 2-政策 3-活动 4-紧急',
-    importance TINYINT NOT NULL DEFAULT 2 COMMENT '重要性：1-普通 2-重要 3-紧急',
-    require_confirmation BOOLEAN NOT NULL DEFAULT FALSE COMMENT '是否需确认',
-    confirmation_deadline DATETIME COMMENT '确认截止时间',
-    view_count INT NOT NULL DEFAULT 0 COMMENT '查看次数',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    published_at DATETIME COMMENT '发布时间',
-    scheduled_publish_at DATETIME COMMENT '定时发布时间',
-    expired_at DATETIME COMMENT '过期时间',
-    is_pinned BOOLEAN NOT NULL DEFAULT FALSE COMMENT '是否置顶',
-    validity_period INT DEFAULT 7 COMMENT '有效期（默认7天）',
-    archived_at DATETIME COMMENT '归档时间',
-    attachments JSON COMMENT '附件信息（文件名、URL）',
-    extra_data JSON COMMENT '扩展数据',
+-- Announcement Table (previously t_notices)
+CREATE TABLE IF NOT EXISTS t_announcement (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Announcement unique identifier',
+    title VARCHAR(100) NOT NULL COMMENT 'Title',
+    content TEXT NOT NULL COMMENT 'Content (Rich Text)', -- Changed to NOT NULL
+    type VARCHAR(50) COMMENT 'Type code (from AnnouncementTypeEnum)',
+    status VARCHAR(50) COMMENT 'Status code (from AnnouncementStatusEnum)',
+    importance VARCHAR(50) COMMENT 'Importance level code', -- Added
+    require_confirmation BOOLEAN DEFAULT FALSE COMMENT 'Requires confirmation flag', -- Added
+    confirmation_deadline DATETIME COMMENT 'Confirmation deadline', -- Added
+    attachments JSON COMMENT 'Attachments info (filename, URL)', -- Added
+    publish_time DATETIME COMMENT 'Actual publish time',
+    scheduled_publish_at DATETIME COMMENT 'Scheduled publish time', -- Added
+    expiry_time DATETIME COMMENT 'Expiry time',
+    validity_period INT DEFAULT 7 COMMENT 'Validity period (days)', -- Added
+    archived_at DATETIME COMMENT 'Archive time', -- Added
+    is_top BOOLEAN DEFAULT FALSE COMMENT 'Is pinned/top',
+    sort_order INT DEFAULT 0 COMMENT 'Sort order for pinned items',
+    view_count INT DEFAULT 0 COMMENT 'View count', -- Added
+    -- Columns from BaseEntity
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+    create_by VARCHAR(64) COMMENT 'Creator username or ID',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last update time',
+    update_by VARCHAR(64) COMMENT 'Last updater username or ID',
+    delete_flag TINYINT DEFAULT 0 COMMENT 'Logic delete flag (0: not deleted, 1: deleted)',
+    -- Additional fields from original t_notices (optional, based on detailed requirements)
+    -- creator_id BIGINT COMMENT 'Creator User ID (alternative to create_by)',
+    -- scope TINYINT DEFAULT 1 COMMENT 'Scope: 1-All 2-Enterprise 3-Role',
+    -- scope_details JSON COMMENT 'Scope details (list of IDs)',
+    -- importance TINYINT DEFAULT 2 COMMENT 'Importance: 1-Normal 2-Important 3-Urgent',
+    -- require_confirmation BOOLEAN DEFAULT FALSE COMMENT 'Requires confirmation flag',
+    -- confirmation_deadline DATETIME COMMENT 'Confirmation deadline',
+    -- view_count INT DEFAULT 0 COMMENT 'View count',
+    -- scheduled_publish_at DATETIME COMMENT 'Scheduled publish time',
+    -- validity_period INT DEFAULT 7 COMMENT 'Validity period (days)',
+    -- archived_at DATETIME COMMENT 'Archive time',
+    -- extra_data JSON COMMENT 'Extra data',
     INDEX idx_status (status),
-    INDEX idx_creator (creator_id),
-    INDEX idx_created_at (created_at),
+    -- INDEX idx_creator (creator_id), -- If using creator_id
+    INDEX idx_create_time (create_time),
     INDEX idx_type (type),
-    INDEX idx_importance (importance)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知公告表';
+    INDEX idx_importance (importance), -- Added index
+    INDEX idx_publish_time (publish_time),
+    INDEX idx_scheduled_publish_at (scheduled_publish_at), -- Added index
+    INDEX idx_is_top_sort (is_top, sort_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Announcement Table';
 
--- 用户表(如果已存在，可以跳过)
+-- Announcement Permission/Scope Table (replaces t_user_permissions)
+CREATE TABLE IF NOT EXISTS t_announcement_permission (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Record unique identifier',
+    announcement_id BIGINT NOT NULL COMMENT 'Announcement ID',
+    target_type VARCHAR(50) NOT NULL COMMENT 'Target type (e.g., ROLE, DEPARTMENT, USER, ENTERPRISE)',
+    target_id BIGINT NOT NULL COMMENT 'Target ID (ID of role, department, user, etc.)',
+    -- Columns from BaseEntity
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+    create_by VARCHAR(64) COMMENT 'Creator username or ID',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last update time',
+    update_by VARCHAR(64) COMMENT 'Last updater username or ID',
+    delete_flag TINYINT DEFAULT 0 COMMENT 'Logic delete flag (0: not deleted, 1: deleted)',
+    INDEX idx_announcement (announcement_id),
+    INDEX idx_target (target_type, target_id),
+    UNIQUE KEY uk_announcement_target (announcement_id, target_type, target_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Announcement Permission/Scope Table';
+
+
+-- Announcement Log Table (previously t_notice_logs)
+CREATE TABLE IF NOT EXISTS t_announcement_logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Log unique identifier',
+    announcement_id BIGINT NOT NULL COMMENT 'Announcement ID',
+    operation VARCHAR(50) NOT NULL COMMENT 'Operation type (e.g., CREATE, SUBMIT_APPROVAL, PUBLISH)',
+    user_id BIGINT NOT NULL COMMENT 'Operator User ID',
+    username VARCHAR(64) COMMENT 'Operator username',
+    comment TEXT COMMENT 'Remark (e.g., rejection reason)',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Operation time',
+    INDEX idx_announcement (announcement_id),
+    INDEX idx_user (user_id),
+    INDEX idx_create_time (create_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Announcement Operation Log Table';
+
+-- Announcement View Record Table (previously t_notice_views)
+CREATE TABLE IF NOT EXISTS t_announcement_views (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Record unique identifier',
+    announcement_id BIGINT NOT NULL COMMENT 'Announcement ID',
+    user_id BIGINT NOT NULL COMMENT 'Viewer User ID',
+    view_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'View time',
+    INDEX idx_announcement (announcement_id),
+    INDEX idx_user (user_id),
+    INDEX idx_view_time (view_time),
+    UNIQUE KEY uk_announcement_user (announcement_id, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Announcement View Record Table';
+
+-- Announcement Confirmation Record Table (previously t_notice_confirmations)
+CREATE TABLE IF NOT EXISTS t_announcement_confirmations (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Record unique identifier',
+    announcement_id BIGINT NOT NULL COMMENT 'Announcement ID',
+    user_id BIGINT NOT NULL COMMENT 'Confirmer User ID',
+    confirmation_time DATETIME COMMENT 'Confirmation time',
+    -- Columns from BaseEntity
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+    create_by VARCHAR(64) COMMENT 'Creator username or ID (Might be the user ID)',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last update time',
+    update_by VARCHAR(64) COMMENT 'Last updater username or ID',
+    delete_flag TINYINT DEFAULT 0 COMMENT 'Logic delete flag (0: not deleted, 1: deleted)',
+    INDEX idx_announcement (announcement_id),
+    INDEX idx_user (user_id),
+    INDEX idx_confirmation_time (confirmation_time),
+    UNIQUE KEY uk_announcement_user (announcement_id, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Announcement Confirmation Record Table';
+
+-- Announcement Recycle Bin Table (previously t_recycle_bin)
+CREATE TABLE IF NOT EXISTS t_announcement_recycle_bin (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Recycle record unique identifier',
+    announcement_id BIGINT NOT NULL COMMENT 'Announcement ID',
+    delete_by BIGINT NOT NULL COMMENT 'Deleter User ID',
+    delete_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Deletion time',
+    expire_time DATETIME NOT NULL COMMENT 'Recycle bin expiry time (e.g., 30 days)',
+    INDEX idx_announcement (announcement_id),
+    INDEX idx_delete_by (delete_by),
+    INDEX idx_expire_time (expire_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Announcement Recycle Bin Table';
+
+
+-- User Table (Keep as is, assuming it's a general user table)
 CREATE TABLE IF NOT EXISTS t_users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '用户唯一标识',
-    username VARCHAR(50) NOT NULL COMMENT '用户名',
-    email VARCHAR(100) COMMENT '邮箱，用于通知',
-    enterprise_id BIGINT COMMENT '所属企业ID',
-    role VARCHAR(50) COMMENT '角色',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'User unique identifier',
+    username VARCHAR(50) NOT NULL COMMENT 'Username',
+    password VARCHAR(100) NOT NULL COMMENT 'Password (Hashed)', -- Added password
+    email VARCHAR(100) COMMENT 'Email, used for notifications',
+    phone VARCHAR(20) COMMENT 'Phone number', -- Added phone
+    enterprise_id BIGINT COMMENT 'Associated enterprise ID',
+    role VARCHAR(50) COMMENT 'Role (Consider using a separate Role table)',
+    status TINYINT DEFAULT 0 COMMENT 'User status (0: normal, 1: disabled)', -- Added status
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+    create_by VARCHAR(64) COMMENT 'Creator username or ID',
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last update time',
+    update_by VARCHAR(64) COMMENT 'Last updater username or ID',
+    delete_flag TINYINT DEFAULT 0 COMMENT 'Logic delete flag (0: not deleted, 1: deleted)', -- Added delete_flag
     UNIQUE KEY uk_username (username),
     INDEX idx_enterprise (enterprise_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User Table';
 
--- 权限表
-CREATE TABLE IF NOT EXISTS t_user_permissions (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '记录唯一标识',
-    user_id BIGINT NOT NULL COMMENT '用户ID',
-    permission VARCHAR(20) NOT NULL COMMENT '权限：draft、audit、publish、manage、archive',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    INDEX idx_user (user_id),
-    INDEX idx_permission (permission),
-    UNIQUE KEY uk_user_permission (user_id, permission)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户权限表';
 
--- 操作日志表
-CREATE TABLE IF NOT EXISTS t_notice_logs (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '日志唯一标识',
-    notice_id BIGINT NOT NULL COMMENT '公告ID',
-    operation VARCHAR(50) NOT NULL COMMENT '操作类型（如提交审核、发布）',
-    user_id BIGINT NOT NULL COMMENT '操作人ID',
-    comment TEXT COMMENT '备注（如驳回原因）',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
-    INDEX idx_notice (notice_id),
-    INDEX idx_user (user_id),
-    INDEX idx_created_at (created_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知操作日志表';
-
--- 查看记录表
-CREATE TABLE IF NOT EXISTS t_notice_views (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '记录唯一标识',
-    notice_id BIGINT NOT NULL COMMENT '公告ID',
-    user_id BIGINT NOT NULL COMMENT '查看用户ID',
-    viewed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '查看时间',
-    INDEX idx_notice (notice_id),
-    INDEX idx_user (user_id),
-    INDEX idx_viewed_at (viewed_at),
-    UNIQUE KEY uk_notice_user (notice_id, user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知查看记录表';
-
--- 确认记录表
-CREATE TABLE IF NOT EXISTS t_notice_confirmations (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '记录唯一标识',
-    notice_id BIGINT NOT NULL COMMENT '公告ID',
-    user_id BIGINT NOT NULL COMMENT '确认用户ID',
-    confirmed_at DATETIME COMMENT '确认时间',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    INDEX idx_notice (notice_id),
-    INDEX idx_user (user_id),
-    INDEX idx_confirmed_at (confirmed_at),
-    UNIQUE KEY uk_notice_user (notice_id, user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知确认记录表';
-
--- 回收站表
-CREATE TABLE IF NOT EXISTS t_recycle_bin (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '回收记录唯一标识',
-    notice_id BIGINT NOT NULL COMMENT '公告ID',
-    deleted_by BIGINT NOT NULL COMMENT '删除人ID',
-    deleted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '删除时间',
-    expire_at DATETIME NOT NULL COMMENT '回收站过期时间（30天）',
-    INDEX idx_notice (notice_id),
-    INDEX idx_deleted_by (deleted_by),
-    INDEX idx_expire_at (expire_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知回收站表';
-
--- 通知记录表
+-- Notification Table (Keep as is for push notifications, distinct from announcements)
 CREATE TABLE IF NOT EXISTS t_notifications (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '通知唯一标识',
-    notice_id BIGINT NOT NULL COMMENT '公告ID',
-    recipient_id BIGINT NOT NULL COMMENT '接收人ID',
-    type VARCHAR(20) NOT NULL COMMENT '通知类型（inbox、app、sms）',
-    content TEXT NOT NULL COMMENT '通知内容',
-    sent_at DATETIME COMMENT '发送时间',
-    is_read BOOLEAN NOT NULL DEFAULT FALSE COMMENT '是否已读',
-    read_at DATETIME COMMENT '阅读时间',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    INDEX idx_notice (notice_id),
+    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Notification unique identifier',
+    -- announcement_id BIGINT COMMENT 'Related Announcement ID (Optional)', -- Can link to announcement if needed
+    recipient_id BIGINT NOT NULL COMMENT 'Recipient User ID',
+    type VARCHAR(20) NOT NULL COMMENT 'Notification type (e.g., INBOX, APP_PUSH, SMS, EMAIL)',
+    title VARCHAR(100) COMMENT 'Notification title',
+    content TEXT NOT NULL COMMENT 'Notification content',
+    sent_at DATETIME COMMENT 'Send time',
+    is_read BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Is read flag',
+    read_at DATETIME COMMENT 'Read time',
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+    -- INDEX idx_announcement (announcement_id), -- If adding link
     INDEX idx_recipient (recipient_id),
     INDEX idx_type (type),
     INDEX idx_sent_at (sent_at),
     INDEX idx_is_read (is_read)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知推送记录表'; 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Push Notification Record Table'; 

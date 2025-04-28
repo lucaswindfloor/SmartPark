@@ -104,4 +104,17 @@ public class Result<T> implements Serializable {
                 .data(data)
                 .build();
     }
+
+    /**
+     * 失败返回结果
+     *
+     * @param resultCode 错误码
+     * @param message    错误信息 (overrides resultCode's default message)
+     */
+    public static <T> Result<T> error(ResultCode resultCode, String message) {
+        return Result.<T>builder()
+                .code(resultCode.getCode())
+                .message(message)
+                .build();
+    }
 } 

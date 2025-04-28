@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartcampus.infrastructure.persistence.mysql.mapper.servicemanagement.informationdisclosure.announcement.AnnouncementMapper">
+
+    <!-- BaseResultMap and Base_Column_List can be defined here if needed -->
+
+    <!-- Example custom query (if needed) -->
+    <!--
+    <select id="findPublishedAnnouncements" resultType="com.smartcampus.domain.servicemanagement.informationdisclosure.entity.announcement.Announcement">
+        SELECT * FROM t_announcement
+        WHERE status = 'PUBLISHED'
+          AND delete_flag = 0
+          AND (expiry_time IS NULL OR expiry_time > NOW())
+        ORDER BY is_top DESC, sort_order ASC, publish_time DESC
+    </select>
+    -->
+
+</mapper>

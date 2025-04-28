@@ -26,6 +26,9 @@ public enum ResultCode {
     INTERNAL_SERVER_ERROR(500, "Internal server error"),
     SERVICE_UNAVAILABLE(503, "Service unavailable"),
     
+    // --- General Failure --- 
+    FAILURE(500, "操作失败"), // Added generic failure
+    
     // Business error codes (1000+)
     NOTIFICATION_SEND_FAILED(1001, "Failed to send notification"),
     NOTIFICATION_NOT_FOUND(1002, "Notification not found"),
