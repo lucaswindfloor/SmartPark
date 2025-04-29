@@ -161,16 +161,59 @@
             
             <!-- 服务管理菜单 -->
             <template v-if="activeTopTab === 'service'">
-              <a-sub-menu key="information-management">
-                <template #icon><notification-outlined /></template>
-                <template #title>信息发布管理</template>
-                <a-menu-item key="notification">通知公告</a-menu-item>
-                <a-menu-item key="policy">政策文件</a-menu-item>
-                <a-menu-item key="activity">园区活动</a-menu-item>
-                <a-menu-item key="survey">问卷调查</a-menu-item>
-                <a-menu-item key="demand">需求发布</a-menu-item>
+              <!-- 服务事项 -->
+              <a-menu-item key="ServiceItems">
+                <template #icon><unordered-list-outlined /></template>
+                服务事项
+              </a-menu-item>
+              <!-- 服务设置 -->
+              <a-menu-item key="ServiceSettings">
+                <template #icon><setting-outlined /></template>
+                服务设置
+              </a-menu-item>
+              <!-- 服务管理配置 -->
+              <a-sub-menu key="ServiceManagementConfig">
+                <template #icon><control-outlined /></template>
+                <template #title>服务管理配置</template>
+                <a-menu-item key="BasicConfiguration">基础配置</a-menu-item>
+                <a-menu-item key="EvaluationManagement">评价管理</a-menu-item>
+                <a-menu-item key="ServiceGuide">服务指南</a-menu-item>
               </a-sub-menu>
-              <!-- 更多服务管理菜单项... -->
+              <!-- 信息发布管理 -->
+              <a-sub-menu key="InformationDisclosure">
+                <template #icon><notification-outlined /></template>
+                <template #title>信息公开</template> 
+                <a-menu-item key="AnnouncementList">通知公告</a-menu-item>
+                <a-menu-item key="PolicyManagement">政策文件</a-menu-item>
+                <a-menu-item key="ActivityManagement">园区活动</a-menu-item>
+                <a-menu-item key="SurveyManagement">问卷调查</a-menu-item>
+                <a-menu-item key="DemandPublishing">需求发布</a-menu-item>
+              </a-sub-menu>
+              <!-- 会议管理 -->
+              <a-menu-item key="MeetingManagement">
+                <template #icon><team-outlined /></template>
+                会议管理
+              </a-menu-item>
+              <!-- 空调管理 -->
+              <a-menu-item key="AirConditioningManagement">
+                <template #icon><thunderbolt-outlined /></template>
+                空调管理
+              </a-menu-item>
+              <!-- 门禁管理 -->
+              <a-menu-item key="AccessControlManagement">
+                <template #icon><safety-outlined /></template>
+                门禁管理
+              </a-menu-item>
+              <!-- 停车管理 -->
+              <a-menu-item key="ParkingManagement">
+                <template #icon><car-outlined /></template>
+                停车管理
+              </a-menu-item>
+              <!-- 服务办理 -->
+              <a-menu-item key="ServiceProcessing">
+                <template #icon><solution-outlined /></template>
+                服务办理
+              </a-menu-item>
             </template>
           </a-menu>
         </a-layout-sider>
@@ -210,8 +253,14 @@ import {
   AccountBookOutlined,
   DollarOutlined,
   NotificationOutlined,
+  UnorderedListOutlined,
+  ControlOutlined,
+  ThunderboltOutlined,
+  SafetyOutlined,
+  CarOutlined,
+  SolutionOutlined,
 } from '@ant-design/icons-vue';
-import { isAuthenticated, forceAuthenticate, getAuthDiagnostics } from '../../../services/auth';
+import { isLoggedIn as isAuthenticated, logout } from '../../../core/utils/auth';
 
 const router = useRouter();
 const route = useRoute();
@@ -270,14 +319,12 @@ const selectedKeys = ref(['dashboard']);
 const handleTabClick = (key) => {
   console.log('Tab点击:', key);
   
-  // 检查认证状态，如有需要进行认证
-  if (!isAuthenticated()) {
-    console.warn('用户未登录，自动设置认证状态');
-    forceAuthenticate();
-  }
+  // 检查认证状态 (不再强制认证)
+  // if (!isAuthenticated()) {
+  //   console.warn('用户未登录，不再自动设置认证状态');
+  // }
   
-  // 输出诊断信息
-  console.log('认证状态诊断:', getAuthDiagnostics());
+  // 不再输出认证诊断信息
   
   activeTopTab.value = key;
   
@@ -304,9 +351,10 @@ const handleTabClick = (key) => {
       router.push('/comprehensive/finance/bill');
       break;
     case 'service':
-      openKeys.value = ['information-management'];
-      selectedKeys.value = ['notification'];
-      router.push('/service/information/notification');
+      // Navigate to the default/initial service page (e.g., AnnouncementList)
+      openKeys.value = ['InformationDisclosure']; // Ensure the parent sub-menu is open
+      selectedKeys.value = ['AnnouncementList']; // Select the default item
+      router.push({ name: 'AnnouncementList' }); // Navigate to the default item
       break;
     // 更多case分支...
   }
@@ -339,12 +387,20 @@ const handleMenuClick = ({ key }) => {
       }
       break;
     case 'service':
-      if (key === 'notification' || key === 'policy' || key === 'activity' ||
-          key === 'survey' || key === 'demand') {
-        router.push(`/service/information/${key}`);
+      // --- Navigate by route name based on menu key ---
+      const validServiceKeys = [
+        'ServiceItems', 'ServiceSettings', 
+        'BasicConfiguration', 'EvaluationManagement', 'ServiceGuide',
+        'AnnouncementList', 'PolicyManagement', 'ActivityManagement', 'SurveyManagement', 'DemandPublishing',
+        'MeetingManagement', 'AirConditioningManagement', 'AccessControlManagement',
+        'ParkingManagement', 'ServiceProcessing'
+      ];
+      if (validServiceKeys.includes(key)) {
+        router.push({ name: key });
       } else {
-        // 其他服务管理的路由...
-        console.log('其他服务管理路由, key:', key);
+        console.warn('Unhandled service menu key:', key);
+        // Optionally navigate to a default service page or show an error
+        router.push({ name: 'ServiceManagement' }); // Fallback to parent route maybe?
       }
       break;
     case 'finance':
@@ -361,6 +417,7 @@ const handleMenuClick = ({ key }) => {
 
 // 处理退出登录
 const handleLogout = () => {
+  logout(); // 先调用登出函数，清除认证信息
   router.push('/comprehensive/login');
 };
 
@@ -394,23 +451,57 @@ const initFromRoute = () => {
       openKeys.value = ['bill-management'];
     }
     // 其他财务管理相关路径...
-  } else if (path.includes('/service')) {
+  } else if (path.includes('/servicemanagement')) {
     activeTopTab.value = 'service';
-    if (path.includes('/information')) {
-      openKeys.value = ['information-management'];
-      if (path.includes('/notification')) {
-        selectedKeys.value = ['notification'];
+    // Check the full path to determine selected/open keys
+    if (path.includes('/informationdisclosure')) {
+      openKeys.value = ['InformationDisclosure']; // Match the sub-menu key
+      if (path.endsWith('/list')) { // Check for the specific list path
+        selectedKeys.value = ['AnnouncementList']; // Match the menu item key (route name)
       } else if (path.includes('/policy')) {
-        selectedKeys.value = ['policy'];
+        selectedKeys.value = ['PolicyManagement']; // Match the menu item key (route name)
       } else if (path.includes('/activity')) {
-        selectedKeys.value = ['activity'];
+        selectedKeys.value = ['ActivityManagement']; // Match the menu item key (route name)
       } else if (path.includes('/survey')) {
-        selectedKeys.value = ['survey'];
+        selectedKeys.value = ['SurveyManagement']; // Match the menu item key (route name)
       } else if (path.includes('/demand')) {
-        selectedKeys.value = ['demand'];
+        selectedKeys.value = ['DemandPublishing']; // Match the menu item key (route name)
       }
+    } else if (path.includes('/service-items')) {
+      selectedKeys.value = ['ServiceItems'];
+      openKeys.value = [];
+    } else if (path.includes('/service-settings')) {
+      selectedKeys.value = ['ServiceSettings'];
+      openKeys.value = [];
+    } else if (path.includes('/service-mgmt')) {
+      openKeys.value = ['ServiceManagementConfig'];
+      if (path.includes('/basic-config')) {
+        selectedKeys.value = ['BasicConfiguration'];
+      } else if (path.includes('/evaluation')) {
+        selectedKeys.value = ['EvaluationManagement'];
+      } else if (path.includes('/guide')) {
+        selectedKeys.value = ['ServiceGuide'];
+      }
+    } else if (path.includes('/meeting')) {
+      selectedKeys.value = ['MeetingManagement'];
+      openKeys.value = [];
+    } else if (path.includes('/ac')) {
+      selectedKeys.value = ['AirConditioningManagement'];
+      openKeys.value = [];
+    } else if (path.includes('/access')) {
+      selectedKeys.value = ['AccessControlManagement'];
+      openKeys.value = [];
+    } else if (path.includes('/parking')) {
+      selectedKeys.value = ['ParkingManagement'];
+      openKeys.value = [];
+    } else if (path.includes('/service-processing')) {
+      selectedKeys.value = ['ServiceProcessing'];
+      openKeys.value = [];
+    } else {
+      // Fallback if no specific sub-route matches
+      selectedKeys.value = [];
+      openKeys.value = [];
     }
-    // 其他服务管理相关路径...
   }
 };
 

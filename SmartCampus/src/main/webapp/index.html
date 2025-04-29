@@ -7,27 +7,9 @@
   <link rel="icon" href="/favicon.ico">
   <title>湘江科创基地智慧园区</title>
   <meta name="description" content="湘江科创基地智慧园区系统，包含综合管理平台、公共服务平台和系统管理平台">
-  <script>
-    // 防止可能的重定向
-    console.log('加载index.html，当前路径:', window.location.pathname);
-    // 如果检测到非根路径访问且不是明确请求综合平台，强制回到根路径
-    if (window.location.pathname !== '/' && !window.location.pathname.startsWith('/comprehensive/')) {
-      console.log('检测到非预期路径，将重定向到根路径');
-      window.location.href = '/';
-    }
-  </script>
 </head>
 <body>
   <div id="app"></div>
-  <!-- 延迟加载主脚本，以便能先执行上面的防重定向代码 -->
-  <script>
-    setTimeout(() => {
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = '/src/main.js';
-      document.body.appendChild(script);
-      console.log('主脚本已加载');
-    }, 50);
-  </script>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html> 

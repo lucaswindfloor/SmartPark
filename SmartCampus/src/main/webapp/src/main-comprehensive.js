@@ -2,6 +2,9 @@
 // 综合管理平台入口文件
 
 import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import ArcoVue from '@arco-design/web-vue';
+import ArcoVueIcon from '@arco-design/web-vue/es/icon';
 import App from './platforms/comprehensive/App.vue';
 import router from './platforms/comprehensive/router';
 import ElementPlus from 'element-plus';
@@ -15,7 +18,6 @@ import 'ant-design-vue/dist/reset.css';
 import './assets/styles/main.css';
 
 // 导入Pinia和共享状态
-import { createPinia } from 'pinia';
 import { useSharedStore } from './stores/shared';
 
 // 显示基本调试信息
@@ -48,6 +50,8 @@ app.use(pinia); // 添加Pinia
 app.use(router);
 app.use(ElementPlus);
 app.use(Antd); // 使用 Ant Design Vue
+app.use(ArcoVue, {});
+app.use(ArcoVueIcon);
 
 // 注册Element Plus图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -60,7 +64,7 @@ document.getElementById('app').innerHTML = '<div style="text-align:center;paddin
 // 确保DOM已准备好
 setTimeout(() => {
   // 挂载应用
-  app.mount('#app');
+  app.mount('#app-comprehensive');
   console.log('综合管理平台已挂载');
   
   // 测试共享状态

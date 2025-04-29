@@ -70,15 +70,18 @@
     </div>
 
       <!-- 表格区域 -->
-      <s-table
+      <a-table  
         ref="table"
         size="default"
         :columns="columns"
-        :data="loadData"
+        :data-source="tableData" 
+        :pagination="pagination"
+        :loading="loading"
+        @change="handleTableChange"
+        row-key="id" 
         :alert="true"
         :rowSelection="rowSelection"
         :scroll="{ x: 1500 }"
-        showPagination="auto"
       >
         <!-- 标题列自定义 -->
         <span slot="titleSlot" slot-scope="text, record">
@@ -137,7 +140,7 @@
             </a-menu>
           </a-dropdown>
         </span>
-      </s-table>
+      </a-table>
     </a-card>
     
     <!-- 操作组件 -->
@@ -152,7 +155,7 @@
 </template>
 
 <script>
-import { STable } from '@/components'
+import { Table } from 'ant-design-vue'
 import { 
   getNotificationList, 
   deleteNotification, 
@@ -164,21 +167,32 @@ import {
   extendNotificationValidity
 } from '@/api/notification'
 import moment from 'moment'
-import OperationComponent from './components/OperationComponent'
+import OperationComponent from './components/OperationComponent.vue'
 
 export default {
   name: 'NotificationList',
   components: {
-    STable,
+    ATable: Table,
     OperationComponent
   },
   data () {
     return {
       // 表格加载状态
       loading: false,
-// 查询参数
+      // 表格数据
+      tableData: [],
+      // 分页配置
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50'],
+        showTotal: total => `共 ${total} 条`
+      },
+      // 查询参数
       queryParam: {
-  title: '',
+        title: '',
         status: undefined,
         type: undefined
       },
@@ -249,11 +263,16 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      // 加载数据方法
+      // 加载数据方法 (Modified for a-table)
       loadData: parameter => {
+        this.loading = true;
+        const pageNo = parameter.current || this.pagination.current;
+        const pageSize = parameter.pageSize || this.pagination.pageSize;
+
         // 合并查询参数
         const requestParam = {
-          ...parameter,
+          pageNo: pageNo,
+          pageSize: pageSize,
           ...this.queryParam
         }
         
@@ -270,13 +289,23 @@ export default {
         
         return getNotificationList(requestParam)
           .then(res => {
-            return {
-              data: res.data.records || [],
+            this.tableData = res.data.records || [];
+            this.pagination = {
+              ...this.pagination,
+              current: res.data.current || 1,
               pageSize: res.data.size || 10,
-              pageNo: res.data.current || 1,
-              totalCount: res.data.total || 0,
-              totalPage: res.data.pages || 0
-            }
+              total: res.data.total || 0
+            };
+            return res.data; // Return raw data or just resolve
+          })
+          .catch(err => {
+            console.error("Error loading notification list:", err);
+            this.$message.error('加载列表失败');
+            this.tableData = []; // Clear data on error
+            this.pagination.total = 0;
+          })
+          .finally(() => {
+            this.loading = false;
           })
       },
       // 选择行配置
@@ -310,10 +339,20 @@ export default {
   },
   watch: {
     viewType () {
-      this.$refs.table.refresh(true)
+      this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
     }
   },
   methods: {
+    // Handle table changes (pagination, sorting, filtering)
+    handleTableChange(pagination, filters, sorter) {
+      console.log('Table change:', pagination, filters, sorter);
+      this.pagination = pagination;
+      // Add sorting/filtering params to queryParam if needed
+      // this.queryParam.sortField = sorter.field;
+      // this.queryParam.sortOrder = sorter.order;
+      this.loadData({ current: pagination.current, pageSize: pagination.pageSize /*, ...sorter */ });
+    },
+
     // 重置搜索
     resetSearch () {
       this.queryParam = {
@@ -322,7 +361,9 @@ export default {
         type: undefined
       }
       this.dateRange = []
-      this.$refs.table.refresh(true)
+      // Reset pagination and reload data
+      this.pagination.current = 1;
+      this.loadData({ current: 1, pageSize: this.pagination.pageSize });
     },
     
     // 获取类型名称
@@ -389,7 +430,7 @@ export default {
         onOk: () => {
           submitNotificationAudit(record.id).then(res => {
             this.$message.success('提交审核成功')
-            this.$refs.table.refresh()
+            this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
           }).catch(err => {
             this.$message.error('提交审核失败：' + err.message)
           })
@@ -430,7 +471,7 @@ export default {
         onOk: () => {
           archiveNotification(record.id).then(res => {
             this.$message.success('归档成功')
-            this.$refs.table.refresh()
+            this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
           }).catch(err => {
             this.$message.error('归档失败：' + err.message)
           })
@@ -438,7 +479,7 @@ export default {
       })
     },
 
-// 删除通知
+    // 删除通知
     handleDelete (record) {
       this.$confirm({
         title: '确定要删除该通知公告吗？',
@@ -446,7 +487,7 @@ export default {
         onOk: () => {
           deleteNotification(record.id).then(res => {
             this.$message.success('删除成功')
-            this.$refs.table.refresh()
+            this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
           }).catch(err => {
             this.$message.error('删除失败：' + err.message)
           })
@@ -454,7 +495,7 @@ export default {
       })
     },
 
-// 批量删除
+    // 批量删除
     handleBatchDelete () {
       this.$confirm({
         title: `确定要删除选中的 ${this.selectedRowKeys.length} 条记录吗？`,
@@ -465,7 +506,7 @@ export default {
             this.$message.success('批量删除成功')
             this.selectedRowKeys = []
             this.selectedRows = []
-            this.$refs.table.refresh()
+            this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
           }).catch(err => {
             this.$message.error('批量删除失败：' + err.message)
           })
@@ -482,7 +523,7 @@ export default {
     onAuditSubmit (record, data) {
       auditNotification(record.id, data).then(res => {
         this.$message.success('审核操作成功')
-        this.$refs.table.refresh()
+        this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
       }).catch(err => {
         this.$message.error('审核操作失败：' + err.message)
       })
@@ -492,7 +533,7 @@ export default {
     onPublishSubmit (record, data) {
       publishNotification(record.id, data).then(res => {
         this.$message.success('发布成功')
-        this.$refs.table.refresh()
+        this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
       }).catch(err => {
         this.$message.error('发布失败：' + err.message)
       })
@@ -502,7 +543,7 @@ export default {
     onCancelSubmit (record, data) {
       cancelNotification(record.id, data).then(res => {
         this.$message.success('取消发布成功')
-        this.$refs.table.refresh()
+        this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
       }).catch(err => {
         this.$message.error('取消发布失败：' + err.message)
       })
@@ -512,11 +553,23 @@ export default {
     onExtendSubmit (record, data) {
       extendNotificationValidity(record.id, data).then(res => {
         this.$message.success('延长有效期成功')
-        this.$refs.table.refresh()
+        this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize })
       }).catch(err => {
         this.$message.error('延长有效期失败：' + err.message)
       })
+    },
+
+    // Refresh function to be called externally if needed
+    refreshTable(resetPage = false) {
+        if (resetPage) {
+            this.pagination.current = 1;
+        }
+        this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize });
     }
+  },
+  mounted() {
+      // Load initial data when component mounts
+      this.loadData({ current: this.pagination.current, pageSize: this.pagination.pageSize });
   }
 }
 </script>

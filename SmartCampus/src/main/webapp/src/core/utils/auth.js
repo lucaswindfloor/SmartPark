@@ -4,7 +4,7 @@
  */
 
 import { post } from './request';
-import { localStore } from './storage';
+import { localStorage } from './storage';
 
 // 存储Token的键名
 const TOKEN_KEY = 'smart_campus_token';
@@ -19,7 +19,7 @@ const PLATFORM_KEY = 'smart_campus_current_platform';
  * @returns {string} token字符串
  */
 export function getToken() {
-  return localStore.get(TOKEN_KEY);
+  return localStorage.get(TOKEN_KEY);
 }
 
 /**
@@ -27,7 +27,7 @@ export function getToken() {
  * @param {string} token - 认证token
  */
 export function setToken(token) {
-  return localStore.set(TOKEN_KEY, token);
+  return localStorage.set(TOKEN_KEY, token);
 }
 
 /**
@@ -35,7 +35,7 @@ export function setToken(token) {
  * @returns {string} 刷新token字符串
  */
 export function getRefreshToken() {
-  return localStore.get(REFRESH_TOKEN_KEY);
+  return localStorage.get(REFRESH_TOKEN_KEY);
 }
 
 /**
@@ -43,7 +43,7 @@ export function getRefreshToken() {
  * @param {string} token - 刷新token
  */
 export function setRefreshToken(token) {
-  return localStore.set(REFRESH_TOKEN_KEY, token);
+  return localStorage.set(REFRESH_TOKEN_KEY, token);
 }
 
 /**
@@ -69,7 +69,7 @@ export function saveLoginInfo(data) {
  * @returns {object} 用户信息对象
  */
 export function getUserInfo() {
-  const userInfo = localStore.get(USER_INFO_KEY);
+  const userInfo = localStorage.get(USER_INFO_KEY);
   return userInfo ? JSON.parse(userInfo) : null;
 }
 
@@ -78,14 +78,14 @@ export function getUserInfo() {
  * @param {object} userInfo - 用户信息对象
  */
 export function setUserInfo(userInfo) {
-  return localStore.set(USER_INFO_KEY, JSON.stringify(userInfo));
+  return localStorage.set(USER_INFO_KEY, JSON.stringify(userInfo));
 }
 
 /**
  * 移除用户信息
  */
 export function removeUserInfo() {
-  return localStore.remove(USER_INFO_KEY);
+  return localStorage.remove(USER_INFO_KEY);
 }
 
 /**
@@ -93,7 +93,7 @@ export function removeUserInfo() {
  * @returns {Array} 角色数组
  */
 export function getRoles() {
-  return localStore.get(ROLES_KEY) || [];
+  return localStorage.get(ROLES_KEY) || [];
 }
 
 /**
@@ -101,7 +101,7 @@ export function getRoles() {
  * @param {Array} roles - 角色数组
  */
 export function setRoles(roles) {
-  return localStore.set(ROLES_KEY, roles);
+  return localStorage.set(ROLES_KEY, roles);
 }
 
 /**
@@ -109,7 +109,7 @@ export function setRoles(roles) {
  * @returns {Array} 权限数组
  */
 export function getPermissions() {
-  return localStore.get(PERMISSIONS_KEY) || [];
+  return localStorage.get(PERMISSIONS_KEY) || [];
 }
 
 /**
@@ -117,7 +117,7 @@ export function getPermissions() {
  * @param {Array} permissions - 权限数组
  */
 export function setPermissions(permissions) {
-  return localStore.set(PERMISSIONS_KEY, permissions);
+  return localStorage.set(PERMISSIONS_KEY, permissions);
 }
 
 /**
@@ -125,7 +125,7 @@ export function setPermissions(permissions) {
  * @returns {string} 当前平台标识
  */
 export function getCurrentPlatform() {
-  return localStore.get(PLATFORM_KEY) || 'public';
+  return localStorage.get(PLATFORM_KEY) || 'public';
 }
 
 /**
@@ -133,7 +133,7 @@ export function getCurrentPlatform() {
  * @param {string} platform - 平台标识
  */
 export function setCurrentPlatform(platform) {
-  return localStore.set(PLATFORM_KEY, platform);
+  return localStorage.set(PLATFORM_KEY, platform);
 }
 
 /**
@@ -177,11 +177,11 @@ export function logout() {
  * 清除认证信息
  */
 export function clearAuth() {
-  localStore.remove(TOKEN_KEY);
-  localStore.remove(REFRESH_TOKEN_KEY);
-  localStore.remove(USER_INFO_KEY);
-  localStore.remove(ROLES_KEY);
-  localStore.remove(PERMISSIONS_KEY);
+  localStorage.remove(TOKEN_KEY);
+  localStorage.remove(REFRESH_TOKEN_KEY);
+  localStorage.remove(USER_INFO_KEY);
+  localStorage.remove(ROLES_KEY);
+  localStorage.remove(PERMISSIONS_KEY);
 }
 
 /**

@@ -81,10 +81,11 @@ import { useRouter } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
 import { 
-  setAuthenticated, 
-  clearAuthentication,
-  getAuthDiagnostics
-} from '../../../../services/auth';
+  setToken, 
+  setUserInfo,
+  clearAuth,
+  isLoggedIn
+} from '../../../../core/utils/auth';
 
 const router = useRouter();
 const loading = ref(false);
@@ -102,7 +103,12 @@ const handleSubmit = (values) => {
   setTimeout(() => {
     if (values.username && values.password) {
       // 登录成功，设置认证状态
-      setAuthenticated(values.username, 'admin');
+      setToken('mock-jwt-token-' + Date.now()); // 设置一个模拟的 token
+      setUserInfo({
+        username: values.username,
+        roles: ['admin'],
+        permissions: ['dashboard:view', 'service:view']
+      });
       
       message.success('登录成功');
       
@@ -121,7 +127,12 @@ const quickLogin = () => {
   
   setTimeout(() => {
     // 设置登录状态
-    setAuthenticated('admin', 'admin');
+    setToken('mock-jwt-token-' + Date.now()); // 设置一个模拟的 token
+    setUserInfo({
+      username: 'admin',
+      roles: ['admin'],
+      permissions: ['dashboard:view', 'service:view']
+    });
     
     message.success('测试登录成功');
     
@@ -134,18 +145,23 @@ const quickLogin = () => {
 
 // 调试功能
 const checkAuthStatus = () => {
-  const status = getAuthDiagnostics();
+  const status = isLoggedIn();
   console.log('认证状态诊断:', status);
-  message.info(`当前登录状态: ${status.isAuthenticated ? '已登录' : '未登录'}`);
+  message.info(`当前登录状态: ${status ? '已登录' : '未登录'}`);
 };
 
 const forceLogin = () => {
-  setAuthenticated();
+  setToken('mock-jwt-token-' + Date.now()); // 设置一个模拟的 token
+  setUserInfo({
+    username: 'admin',
+    roles: ['admin'],
+    permissions: ['dashboard:view', 'service:view']
+  });
   message.success('已强制设置为登录状态');
 };
 
 const clearLogin = () => {
-  clearAuthentication();
+  clearAuth();
   message.warning('已清除登录状态');
 };
 </script>
