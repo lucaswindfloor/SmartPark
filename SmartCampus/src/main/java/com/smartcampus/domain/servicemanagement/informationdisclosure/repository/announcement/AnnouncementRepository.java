@@ -2,20 +2,27 @@ package com.smartcampus.domain.servicemanagement.informationdisclosure.repositor
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smartcampus.domain.servicemanagement.informationdisclosure.entity.announcement.Announcement;
-
-import java.util.Optional;
+import com.smartcampus.platform.comprehensive.servicemanagement.dto.informationdisclosure.announcement.AnnouncementDTO;
+import com.smartcampus.platform.comprehensive.servicemanagement.dto.informationdisclosure.announcement.request.AnnouncementQueryDTO;
 
 /**
- * 通知公告仓储接口
+ * Repository interface for Announcement domain.
  */
 public interface AnnouncementRepository {
 
-    Optional<Announcement> findById(Long id);
+    /**
+     * Find announcements by query criteria with pagination.
+     *
+     * @param page The pagination object (from MyBatis Plus).
+     * @param query The query DTO containing filtering and sorting parameters.
+     * @return A page containing AnnouncementDTOs including joined data (e.g., publisher name).
+     */
+    Page<AnnouncementDTO> findPage(Page<Announcement> page, AnnouncementQueryDTO query);
 
-    Announcement save(Announcement announcement);
-
-    void deleteById(Long id);
-
-    // Add other methods as needed, e.g., for querying by status, type, pagination
-    // Page<Announcement> findByCriteria(AnnouncementCriteria criteria, Page<Announcement> page);
+    // Add other necessary repository methods based on requirements:
+    // Announcement findById(Long id);
+    // AnnouncementDTO findDetailById(Long id); // May need specific DTO
+    // void save(Announcement announcement);
+    // void update(Announcement announcement);
+    // void deleteLogically(Long id);
 }

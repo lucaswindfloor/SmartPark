@@ -548,7 +548,7 @@ SmartCampus/src/main/java/com/smartcampus/
     │   │       │   └── AnnouncementTypeEnum.java
     │   │       └── policy/
     │   ├── meetingmanagement/
-    │   ├── notificationmanagement/
+    │   ├── messagemanagement/
     │   └── resourcemanagement/
     │       ├── ResourceTypeEnum.java
     │       ├── BookingStatusEnum.java

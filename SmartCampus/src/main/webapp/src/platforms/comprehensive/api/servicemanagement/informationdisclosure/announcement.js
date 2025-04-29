@@ -1,13 +1,13 @@
-import request from '@/utils/request'
+import request from '@/core/utils/request'
 
 /**
  * 获取通知公告列表
  * @param {Object} params 查询参数
  * @returns {Promise}
  */
-export function getNotificationList(params) {
+export function getAnnouncementList(params) {
   return request({
-    url: '/api/notification/list',
+    url: '/api/announcements',
     method: 'get',
     params
   })
@@ -18,9 +18,9 @@ export function getNotificationList(params) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function getNotificationDetail(id) {
+export function getAnnouncementDetail(id) {
   return request({
-    url: `/api/notification/${id}`,
+    url: `/api/announcements/${id}`,
     method: 'get'
   })
 }
@@ -30,9 +30,9 @@ export function getNotificationDetail(id) {
  * @param {Object} data 通知公告数据
  * @returns {Promise}
  */
-export function createNotification(data) {
+export function createAnnouncement(data) {
   return request({
-    url: '/api/notification',
+    url: '/api/announcements',
     method: 'post',
     data
   })
@@ -44,9 +44,9 @@ export function createNotification(data) {
  * @param {Object} data 更新数据
  * @returns {Promise}
  */
-export function updateNotification(id, data) {
+export function updateAnnouncement(id, data) {
   return request({
-    url: `/api/notification/${id}`,
+    url: `/api/announcements/${id}`,
     method: 'put',
     data
   })
@@ -57,9 +57,9 @@ export function updateNotification(id, data) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function deleteNotification(id) {
+export function deleteAnnouncement(id) {
   return request({
-    url: `/api/notification/${id}`,
+    url: `/api/announcements/${id}`,
     method: 'delete'
   })
 }
@@ -69,9 +69,9 @@ export function deleteNotification(id) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function submitNotificationAudit(id) {
+export function submitAnnouncementAudit(id) {
   return request({
-    url: `/api/notification/${id}/submit-audit`,
+    url: `/api/announcements/${id}/submit-audit`,
     method: 'post'
   })
 }
@@ -82,9 +82,9 @@ export function submitNotificationAudit(id) {
  * @param {Object} data 审核数据
  * @returns {Promise}
  */
-export function auditNotification(id, data) {
+export function auditAnnouncement(id, data) {
   return request({
-    url: `/api/notification/${id}/audit`,
+    url: `/api/announcements/${id}/audit`,
     method: 'post',
     data
   })
@@ -96,9 +96,9 @@ export function auditNotification(id, data) {
  * @param {Object} data 发布数据
  * @returns {Promise}
  */
-export function publishNotification(id, data) {
+export function publishAnnouncement(id, data) {
   return request({
-    url: `/api/notification/${id}/publish`,
+    url: `/api/announcements/${id}/publish`,
     method: 'post',
     data
   })
@@ -110,9 +110,9 @@ export function publishNotification(id, data) {
  * @param {Object} data 取消原因
  * @returns {Promise}
  */
-export function cancelNotification(id, data) {
+export function cancelAnnouncement(id, data) {
   return request({
-    url: `/api/notification/${id}/cancel`,
+    url: `/api/announcements/${id}/cancel`,
     method: 'post',
     data
   })
@@ -123,9 +123,9 @@ export function cancelNotification(id, data) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function archiveNotification(id) {
+export function archiveAnnouncement(id) {
   return request({
-    url: `/api/notification/${id}/archive`,
+    url: `/api/announcements/${id}/archive`,
     method: 'post'
   })
 }
@@ -135,9 +135,9 @@ export function archiveNotification(id) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function restoreNotification(id) {
+export function restoreAnnouncement(id) {
   return request({
-    url: `/api/notification/${id}/restore`,
+    url: `/api/announcements/${id}/restore`,
     method: 'post'
   })
 }
@@ -147,9 +147,9 @@ export function restoreNotification(id) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function permanentDeleteNotification(id) {
+export function permanentDeleteAnnouncement(id) {
   return request({
-    url: `/api/notification/${id}/permanent-delete`,
+    url: `/api/announcements/${id}/permanent-delete`,
     method: 'delete'
   })
 }
@@ -158,9 +158,9 @@ export function permanentDeleteNotification(id) {
  * 清空回收站
  * @returns {Promise}
  */
-export function emptyRecycleBin() {
+export function emptyAnnouncementRecycleBin() {
   return request({
-    url: '/api/notification/empty-recycle-bin',
+    url: '/api/announcements/empty-recycle-bin',
     method: 'delete'
   })
 }
@@ -171,9 +171,9 @@ export function emptyRecycleBin() {
  * @param {Object} data 延期数据
  * @returns {Promise}
  */
-export function extendNotificationValidity(id, data) {
+export function extendAnnouncementValidity(id, data) {
   return request({
-    url: `/api/notification/${id}/extend`,
+    url: `/api/announcements/${id}/extend`,
     method: 'post',
     data
   })
@@ -184,9 +184,9 @@ export function extendNotificationValidity(id, data) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function getNotificationStatistics(id) {
+export function getAnnouncementStatistics(id) {
   return request({
-    url: `/api/notification/${id}/statistics`,
+    url: `/api/announcements/${id}/statistics`,
     method: 'get'
   })
 }
@@ -196,9 +196,9 @@ export function getNotificationStatistics(id) {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function getNotificationConfirmations(id) {
+export function getAnnouncementConfirmations(id) {
   return request({
-    url: `/api/notification/${id}/confirmations`,
+    url: `/api/announcements/${id}/confirmations`,
     method: 'get'
   })
 }
@@ -209,9 +209,9 @@ export function getNotificationConfirmations(id) {
  * @param {Array} userIds 用户ID列表
  * @returns {Promise}
  */
-export function sendConfirmationReminder(id, userIds) {
+export function sendAnnouncementConfirmationReminder(id, userIds) {
   return request({
-    url: `/api/notification/${id}/send-reminder`,
+    url: `/api/announcements/${id}/send-reminder`,
     method: 'post',
     data: { userIds }
   })
@@ -221,9 +221,9 @@ export function sendConfirmationReminder(id, userIds) {
  * 获取未读通知公告
  * @returns {Promise}
  */
-export function getUnreadNotifications() {
+export function getUnreadAnnouncements() {
   return request({
-    url: '/api/notification/unread',
+    url: '/api/announcements/unread',
     method: 'get'
   })
 }
@@ -233,9 +233,9 @@ export function getUnreadNotifications() {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function markAsRead(id) {
+export function markAnnouncementAsRead(id) {
   return request({
-    url: `/api/notification/${id}/read`,
+    url: `/api/announcements/${id}/read`,
     method: 'post'
   })
 }
@@ -244,9 +244,9 @@ export function markAsRead(id) {
  * 标记所有通知为已读
  * @returns {Promise}
  */
-export function markAllAsRead() {
+export function markAllAnnouncementsAsRead() {
   return request({
-    url: '/api/notification/read-all',
+    url: '/api/announcements/read-all',
     method: 'post'
   })
 }
@@ -256,9 +256,9 @@ export function markAllAsRead() {
  * @param {String|Number} id 通知公告ID
  * @returns {Promise}
  */
-export function confirmNotification(id) {
+export function confirmAnnouncement(id) {
   return request({
-    url: `/api/notification/${id}/confirm`,
+    url: `/api/announcements/${id}/confirm`,
     method: 'post'
   })
 }
@@ -268,9 +268,9 @@ export function confirmNotification(id) {
  * @param {Object} params 查询参数
  * @returns {Promise}
  */
-export function getAuditList(params) {
+export function getAnnouncementAuditList(params) {
   return request({
-    url: '/api/notification/audit-list',
+    url: '/api/announcements/audit-list',
     method: 'get',
     params
   })
@@ -281,9 +281,9 @@ export function getAuditList(params) {
  * @param {Object} params 查询参数
  * @returns {Promise}
  */
-export function getArchiveList(params) {
+export function getAnnouncementArchiveList(params) {
   return request({
-    url: '/api/notification/archive-list',
+    url: '/api/announcements/archive-list',
     method: 'get',
     params
   })
@@ -294,9 +294,9 @@ export function getArchiveList(params) {
  * @param {Object} params 查询参数
  * @returns {Promise}
  */
-export function getRecycleBinList(params) {
+export function getAnnouncementRecycleBinList(params) {
   return request({
-    url: '/api/notification/recycle-bin-list',
+    url: '/api/announcements/recycle-bin-list',
     method: 'get',
     params
   })

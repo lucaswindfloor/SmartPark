@@ -15,4 +15,117 @@
     </select>
     -->
 
+    <!-- Result Map for AnnouncementDTO -->
+    <resultMap id="AnnouncementDTOResultMap" type="com.smartcampus.platform.comprehensive.servicemanagement.dto.informationdisclosure.announcement.AnnouncementDTO">
+        <id property="id" column="a_id"/>
+        <result property="title" column="a_title"/>
+        <result property="content" column="a_content"/>
+        <result property="type" column="a_type"/>
+        <result property="status" column="a_status"/>
+        <result property="importance" column="a_importance"/>
+        <result property="requireConfirmation" column="a_require_confirmation"/>
+        <result property="confirmationDeadline" column="a_confirmation_deadline"/>
+        <!-- attachments needs specific handling or a TypeHandler -->
+        <result property="publishTime" column="a_publish_time"/>
+        <result property="scheduledPublishAt" column="a_scheduled_publish_at"/>
+        <result property="expiryTime" column="a_expiry_time"/>
+        <result property="validityPeriod" column="a_validity_period"/>
+        <result property="archivedAt" column="a_archived_at"/>
+        <result property="isTop" column="a_is_top"/>
+        <result property="sortOrder" column="a_sort_order"/>
+        <result property="readCount" column="a_view_count"/> <!-- Map view_count to readCount -->
+        <result property="createTime" column="a_create_time"/>
+        <result property="createBy" column="a_create_by"/> <!-- Store original creator ID/username -->
+        <result property="publisher" column="u_username"/> <!-- Map joined username to publisher -->
+        <result property="updateTime" column="a_update_time"/>
+        <result property="updateBy" column="a_update_by"/>
+    </resultMap>
+
+    <!-- Custom query for selectAnnouncementPage -->
+    <select id="selectAnnouncementPage" resultMap="AnnouncementDTOResultMap">
+        SELECT
+            a.id AS a_id,
+            a.title AS a_title,
+            -- a.content AS a_content, -- Avoid selecting large content field in list view
+            a.type AS a_type,
+            a.status AS a_status,
+            a.importance AS a_importance,
+            a.require_confirmation AS a_require_confirmation,
+            a.confirmation_deadline AS a_confirmation_deadline,
+            a.publish_time AS a_publish_time,
+            a.scheduled_publish_at AS a_scheduled_publish_at,
+            a.expiry_time AS a_expiry_time,
+            a.validity_period AS a_validity_period,
+            a.archived_at AS a_archived_at,
+            a.is_top AS a_is_top,
+            a.sort_order AS a_sort_order,
+            a.view_count AS a_view_count,
+            a.create_time AS a_create_time,
+            a.create_by AS a_create_by,
+            a.update_time AS a_update_time,
+            a.update_by AS a_update_by,
+            u.username AS u_username
+        FROM
+            t_announcement a
+        LEFT JOIN
+            t_users u ON a.create_by = u.username -- Corrected JOIN condition
+        WHERE
+            a.delete_flag = 0 -- Exclude logically deleted records
+            <!-- Dynamic Filtering Conditions -->
+            <if test="query.title != null and query.title != ''">
+                AND a.title LIKE CONCAT('%', #{query.title}, '%')
+            </if>
+            <if test="query.status != null and query.status != ''">
+                AND a.status = #{query.status}
+            </if>
+            <if test="query.type != null and query.type != ''">
+                AND a.type = #{query.type}
+            </if>
+            <if test="query.importance != null and query.importance != ''">
+                AND a.importance = #{query.importance}
+            </if>
+            <if test="query.startDate != null and query.startDate != ''">
+                AND a.create_time >= #{query.startDate}
+            </if>
+            <if test="query.endDate != null and query.endDate != ''">
+                <!-- Add 1 day to endDate for inclusive range -->
+                AND a.create_time &lt; DATE_ADD(#{query.endDate}, INTERVAL 1 DAY)
+            </if>
+            <!-- Filtering based on viewType (frontend tabs) -->
+            <if test="query.viewType != null and query.viewType != '' and query.viewType != 'all'">
+                 <!-- Add specific conditions based on viewType values -->
+                 <!-- Example: -->
+                 <choose>
+                    <when test="query.viewType == 'draft'">
+                        AND a.status = 'draft'
+                    </when>
+                    <when test="query.viewType == 'published'">
+                        AND a.status = 'published'
+                    </when>
+                    <when test="query.viewType == 'audit'">
+                        AND a.status = 'audit' -- Or your specific status code
+                    </when>
+                     <when test="query.viewType == 'expired'">
+                        AND a.status = 'expired'
+                    </when>
+                     <when test="query.viewType == 'archive'">
+                        AND a.status = 'archive'
+                    </when>
+                    <!-- Add other view types as needed -->
+                 </choose>
+            </if>
+        <!-- Default sorting -->
+        ORDER BY
+            a.is_top DESC, a.sort_order ASC,
+            <!-- Dynamic Sorting -->
+            <choose>
+                <when test="query.sortField == 'publishTime' and query.sortOrder == 'asc'">a.publish_time ASC</when>
+                <when test="query.sortField == 'publishTime' and query.sortOrder == 'desc'">a.publish_time DESC</when>
+                <when test="query.sortField == 'readCount' and query.sortOrder == 'asc'">a.view_count ASC</when>
+                <when test="query.sortField == 'readCount' and query.sortOrder == 'desc'">a.view_count DESC</when>
+                <!-- Add other sortable fields -->
+                <otherwise>a.create_time DESC</otherwise> <!-- Default sort -->
+            </choose>
+    </select>
+
 </mapper>

@@ -1,38 +1,75 @@
 package com.smartcampus.domain.servicemanagement.informationdisclosure.entity.announcement;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.smartcampus.domain.common.entity.BaseEntity;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.smartcampus.common.entity.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 /**
- * 通知公告实体
+ * Announcement Domain Entity
+ * Maps directly to the t_announcement table.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_announcement") // Example table name
+@TableName("t_announcement")
 public class Announcement extends BaseEntity {
 
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-    private String title;
-    private String content;
-    private String type; // Consider using Enum
-    private String status; // Consider using Enum
-    private String importance;
-    private Boolean requireConfirmation;
-    private LocalDateTime confirmationDeadline;
-    private String attachments;
-    private LocalDateTime publishTime;
-    private LocalDateTime scheduledPublishAt;
-    private LocalDateTime expiryTime;
-    private Integer validityPeriod;
-    private LocalDateTime archivedAt;
-    private Boolean isTop;
-    private Integer sortOrder;
-    private Integer viewCount;
 
-    // Add other relevant fields and potentially methods for domain logic
+    @TableField("title")
+    private String title;
+
+    @TableField("content")
+    private String content;
+
+    @TableField("type")
+    private String type; // Consider mapping to an Enum later
+
+    @TableField("status")
+    private String status; // Consider mapping to an Enum later
+
+    @TableField("importance")
+    private String importance; // Consider mapping to an Enum later
+
+    @TableField("require_confirmation")
+    private Boolean requireConfirmation;
+
+    @TableField("confirmation_deadline")
+    private LocalDateTime confirmationDeadline;
+
+    // JSON fields require TypeHandler in MyBatis Plus config or handle as String
+    @TableField("attachments")
+    private String attachments; // Storing JSON as String for simplicity initially
+
+    @TableField("publish_time")
+    private LocalDateTime publishTime;
+
+    @TableField("scheduled_publish_at")
+    private LocalDateTime scheduledPublishAt;
+
+    @TableField("expiry_time")
+    private LocalDateTime expiryTime;
+
+    @TableField("validity_period")
+    private Integer validityPeriod;
+
+    @TableField("archived_at")
+    private LocalDateTime archivedAt;
+
+    @TableField("is_top")
+    private Boolean isTop;
+
+    @TableField("sort_order")
+    private Integer sortOrder;
+
+    @TableField("view_count")
+    private Integer viewCount;
 
 }

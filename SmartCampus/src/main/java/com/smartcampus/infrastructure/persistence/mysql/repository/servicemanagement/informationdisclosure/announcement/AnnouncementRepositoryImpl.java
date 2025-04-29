@@ -1,41 +1,47 @@
 package com.smartcampus.infrastructure.persistence.mysql.repository.servicemanagement.informationdisclosure.announcement;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smartcampus.domain.servicemanagement.informationdisclosure.entity.announcement.Announcement;
 import com.smartcampus.domain.servicemanagement.informationdisclosure.repository.announcement.AnnouncementRepository;
 import com.smartcampus.infrastructure.persistence.mysql.mapper.servicemanagement.informationdisclosure.announcement.AnnouncementMapper;
+import com.smartcampus.platform.comprehensive.servicemanagement.dto.informationdisclosure.announcement.AnnouncementDTO;
+import com.smartcampus.platform.comprehensive.servicemanagement.dto.informationdisclosure.announcement.request.AnnouncementQueryDTO;
 import org.springframework.stereotype.Repository;
-import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 通知公告仓储实现
+ * Implementation of the AnnouncementRepository using MyBatis Plus.
  */
 @Repository
-@RequiredArgsConstructor
 public class AnnouncementRepositoryImpl implements AnnouncementRepository {
 
-    private final AnnouncementMapper announcementMapper;
+    @Autowired
+    private AnnouncementMapper announcementMapper;
 
     @Override
-    public Optional<Announcement> findById(Long id) {
-        return Optional.ofNullable(announcementMapper.selectById(id));
+    public Page<AnnouncementDTO> findPage(Page<Announcement> page, AnnouncementQueryDTO query) {
+        // Delegate the custom query execution to the mapper
+        return announcementMapper.selectAnnouncementPage(page, query);
     }
 
-    @Override
-    public Announcement save(Announcement announcement) {
-        if (announcement.getId() == null) {
-            announcementMapper.insert(announcement);
-        } else {
-            announcementMapper.updateById(announcement);
-        }
-        return announcement;
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        announcementMapper.deleteById(id);
-    }
-
-    // Implement other custom methods defined in the interface
+    // Implement other methods defined in AnnouncementRepository here...
+    // Example:
+    // @Override
+    // public Announcement findById(Long id) {
+    //     return announcementMapper.selectById(id);
+    // }
+    //
+    // @Override
+    // public void save(Announcement announcement) {
+    //     if (announcement.getId() == null) {
+    //         announcementMapper.insert(announcement);
+    //     } else {
+    //         announcementMapper.updateById(announcement);
+    //     }
+    // }
+    //
+    // @Override
+    // public void deleteLogically(Long id) {
+    //     announcementMapper.deleteById(id); // MyBatis Plus handles logical delete if @TableLogic is present
+    // }
 }

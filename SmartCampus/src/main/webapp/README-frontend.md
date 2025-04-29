@@ -170,7 +170,7 @@ SmartCampus/
 │   │   │   │
 │   │   │   ├── components/                 # 平台特定组件 ⏳
 │   │   │   ├── api/                        # API接口 
-│   │   │   │   ├── service/                # 服务管理API
+│   │   │   │   ├── servicemanagement/                # 服务管理API
 │   │   │   │   │   ├── informationdisclosure/        # 信息公开API (Renamed)
 │   │   │   │   │   │   ├── announcement.js # 通知公告API接口 🚧 (Status updated)
 │   │   │   │   │   │   ├── policy.js       # 政策文件API接口 ⏳
