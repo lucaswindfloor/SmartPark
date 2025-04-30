@@ -284,6 +284,17 @@ SmartCampus/
 │   │       └── App.vue                     # 系统管理员平台主应用 ⏳
 │   │
 │   ├── services/                           # 服务层 (For complex frontend logic, NOT direct API calls)
+│   │   │   # CLARIFICATION:
+│   │   │   # This directory is intended for complex, reusable frontend-specific business logic
+│   │   │   # that might be shared across multiple components or even platforms.
+│   │   │   # Examples: Complex calculation services, orchestration of multiple frontend actions,
+│   │   │   # wrappers around complex browser APIs (if not handled by libraries/hooks).
+│   │   │   # 
+│   │   │   # Simple API call wrappers belong in `platforms/<platform>/api/<module>/...`
+│   │   │   # Component-specific logic belongs in the component itself or `composables` (hooks).
+│   │   │   # Application state management belongs in Pinia `stores`.
+│   │   │   # Use this directory sparingly.
+│   │   │
 │   │   ├── auth/                           # 认证服务 ✅
 │   │   ├── informationdisclosure/                    # 信息服务 (Renamed)
 │   │   │   ├── announcement/               # 通知公告服务

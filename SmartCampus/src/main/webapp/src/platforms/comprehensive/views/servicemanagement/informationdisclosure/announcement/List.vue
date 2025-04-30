@@ -4,13 +4,13 @@
       <!-- 顶部操作区 -->
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
+          <a-row :gutter="24">
+            <a-col :md="10" :sm="12">
               <a-form-item label="标题">
                 <a-input v-model="queryParam.title" placeholder="请输入标题关键词" />
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
+            <a-col :md="7" :sm="12">
               <a-form-item label="状态">
                 <a-select v-model="queryParam.status" placeholder="请选择状态" allowClear>
                   <a-select-option v-for="(item, index) in statusOptions" :key="index" :value="item.value">
@@ -19,7 +19,7 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
+            <a-col :md="7" :sm="12">
               <a-form-item label="类型">
                 <a-select v-model="queryParam.type" placeholder="请选择类型" allowClear>
                   <a-select-option v-for="(item, index) in typeOptions" :key="index" :value="item.value">
@@ -28,12 +28,12 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
+            <a-col :md="10" :sm="12">
               <a-form-item label="日期">
                 <a-range-picker v-model="dateRange" style="width: 100%" />
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
+            <a-col :md="14" :sm="24">
               <span class="table-page-search-submitButtons">
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
                 <a-button style="margin-left: 8px" @click="resetSearch">重置</a-button>
@@ -45,22 +45,7 @@
 
       <!-- 操作按钮区 -->
       <div class="table-operator">
-        <a-button type="primary" @click="handleCreate">
-          <template #icon><PlusOutlined /></template>
-          新建
-        </a-button>
-        <a-dropdown v-if="selectedRowKeys.length > 0">
-          <template #overlay>
-             <a-menu>
-                <a-menu-item key="delete" @click="handleBatchDelete">批量删除</a-menu-item>
-             </a-menu>
-          </template>
-          <a-button style="margin-left: 8px">
-            批量操作 <DownOutlined />
-          </a-button>
-        </a-dropdown>
-        
-        <!-- 视图切换 -->
+         <!-- 视图切换 -->
         <div class="view-tabs">
           <a-radio-group v-model="queryParam.viewType" button-style="solid">
             <a-radio-button value="all">全部</a-radio-button>
@@ -75,6 +60,24 @@
             回收站
           </a-button>
         </div>
+        
+        <div>
+            <a-button type="primary" @click="handleCreate">
+                <template #icon><PlusOutlined /></template>
+                新建
+            </a-button>
+            <a-dropdown v-if="selectedRowKeys.length > 0">
+            <template #overlay>
+                <a-menu>
+                <a-menu-item key="delete" @click="handleBatchDelete">批量删除</a-menu-item>
+                </a-menu>
+            </template>
+            <a-button style="margin-left: 8px">
+                批量操作 <DownOutlined />
+            </a-button>
+            </a-dropdown>
+        </div>
+        
     </div>
 
       <!-- 表格区域 -->
@@ -89,25 +92,25 @@
         row-key="id" 
         :alert="true"
         :rowSelection="rowSelection"
-        :scroll="{ x: 1500 }"
+        :scroll="{ x: 1500, y: 500 }"
       >
         <!-- Single template for all body cells -->
         <template #bodyCell="{ column, text, record }">
           <!-- Title Column -->
           <template v-if="column.key === 'title'">
-            <div class="notification-title-cell">
-              <span :class="{ 'unread-title': !record.isRead }">{{ text }}</span>
-              <a-tag v-if="record.isTop" color="red">置顶</a-tag>
-              <a-tag v-if="record.isImportant" color="orange">重要</a-tag>
-            </div>
+          <div class="notification-title-cell">
+            <span :class="{ 'unread-title': !record.isRead }">{{ text }}</span>
+            <a-tag v-if="record.isTop" color="red">置顶</a-tag>
+            <a-tag v-if="record.isImportant" color="orange">重要</a-tag>
+          </div>
           </template>
           <!-- Type Column -->
           <template v-else-if="column.key === 'type'">
-            <a-tag :color="getTypeColor(text)">{{ getTypeName(text) }}</a-tag>
+          <a-tag :color="getTypeColor(text)">{{ getTypeName(text) }}</a-tag>
           </template>
           <!-- Status Column -->
           <template v-else-if="column.key === 'status'">
-            <a-badge :status="getStatusType(text)" :text="getStatusName(text)" />
+          <a-badge :status="getStatusType(text)" :text="getStatusName(text)" />
           </template>
           <!-- Publish Time Column -->
           <template v-else-if="column.key === 'publishTime'">
@@ -119,43 +122,43 @@
           </template>
           <!-- Action Column -->
           <template v-else-if="column.key === 'action'">
-            <a @click="handleView(record)">查看</a>
-            <a-divider type="vertical" />
-            <a v-if="record.status === 'draft'" @click="handleEdit(record)">编辑</a>
-            <a-divider v-if="record.status === 'draft'" type="vertical" />
-            <a-dropdown v-if="record.status !== 'deleted'">
-              <a class="ant-dropdown-link">
+          <a @click="handleView(record)">查看</a>
+          <a-divider type="vertical" />
+          <a v-if="record.status === 'draft'" @click="handleEdit(record)">编辑</a>
+          <a-divider v-if="record.status === 'draft'" type="vertical" />
+          <a-dropdown v-if="record.status !== 'deleted'">
+            <a class="ant-dropdown-link">
                 更多 <DownOutlined />
-              </a>
+            </a>
               <template #overlay>
                  <a-menu>
-                    <a-menu-item v-if="record.status === 'draft'" @click="handleSubmitAudit(record)">
-                      提交审核
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status === 'draft'" @click="handlePublish(record)">
-                      直接发布
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status === 'audit'" @click="handleAudit(record)">
-                      审核
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status === 'published'" @click="handleCancel(record)">
-                      取消发布
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status === 'published'" @click="handleExtend(record)">
-                      延长有效期
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status === 'published'" @click="handleViewStatistics(record)">
-                      查看阅读统计
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status === 'published' || record.status === 'expired'" @click="handleArchive(record)">
-                      归档
-                    </a-menu-item>
-                    <a-menu-item @click="handleDelete(record)">
-                      删除
-                    </a-menu-item>
-                 </a-menu>
+              <a-menu-item v-if="record.status === 'draft'" @click="handleSubmitAudit(record)">
+                提交审核
+              </a-menu-item>
+              <a-menu-item v-if="record.status === 'draft'" @click="handlePublish(record)">
+                直接发布
+              </a-menu-item>
+              <a-menu-item v-if="record.status === 'audit'" @click="handleAudit(record)">
+                审核
+              </a-menu-item>
+              <a-menu-item v-if="record.status === 'published'" @click="handleCancel(record)">
+                取消发布
+              </a-menu-item>
+              <a-menu-item v-if="record.status === 'published'" @click="handleExtend(record)">
+                延长有效期
+              </a-menu-item>
+              <a-menu-item v-if="record.status === 'published'" @click="handleViewStatistics(record)">
+                查看阅读统计
+              </a-menu-item>
+              <a-menu-item v-if="record.status === 'published' || record.status === 'expired'" @click="handleArchive(record)">
+                归档
+              </a-menu-item>
+              <a-menu-item @click="handleDelete(record)">
+                删除
+              </a-menu-item>
+            </a-menu>
               </template>
-            </a-dropdown>
+          </a-dropdown>
           </template>
           <!-- Default rendering for other columns -->
           <template v-else>
@@ -181,7 +184,7 @@ import { Table, Tag, Badge, Button, Dropdown, Menu, Radio, Input, Select, DatePi
 import { DownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { ref, reactive, onMounted, computed, watch } from 'vue'; // Import Vue 3 Composition API functions
 import { useRouter } from 'vue-router';
-import {
+import { 
   getAnnouncementList,
   createAnnouncement,
   updateAnnouncement,
@@ -230,16 +233,16 @@ export default {
     const loading = ref(false);
     const tableData = ref([]);
     const pagination = reactive({
-      current: 1,
-      pageSize: 10,
-      total: 0,
-      showSizeChanger: true,
-      pageSizeOptions: ['10', '20', '50'],
-      showTotal: total => `共 ${total} 条`
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50'],
+        showTotal: total => `共 ${total} 条`
     });
     const queryParam = reactive({
-      title: '',
-      status: undefined,
+        title: '',
+        status: undefined,
       type: undefined,
       startDate: null,
       endDate: null,
@@ -269,55 +272,55 @@ export default {
 
     // --- Table Columns Definition ---
     const columns = [
-      {
-        title: '标题',
-        dataIndex: 'title',
-        key: 'title',
+        {
+          title: '标题',
+          dataIndex: 'title',
+          key: 'title',
         fixed: 'left',
         width: 300
-      },
-      {
-        title: '类型',
-        dataIndex: 'type',
-        key: 'type',
-        width: 120
+        },
+        {
+          title: '类型',
+          dataIndex: 'type',
+          key: 'type',
+        width: 100
       },
       {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
-        width: 120
+        width: 100
       },
       {
         title: '发布者',
         dataIndex: 'publisher', // Assuming backend provides this (mapped from u.username)
-        key: 'publisher',
-        width: 150
-      },
-      {
-        title: '发布时间',
-        dataIndex: 'publishTime',
-        key: 'publishTime',
+          key: 'publisher',
+        width: 120
+        },
+        {
+          title: '发布时间',
+          dataIndex: 'publishTime',
+          key: 'publishTime',
         width: 160,
         sorter: true
-      },
-      {
-        title: '阅读量',
+        },
+        {
+          title: '阅读量',
         dataIndex: 'readCount', // Mapped from view_count
-        key: 'readCount',
-        width: 100,
-        sorter: true
-      },
-      {
+          key: 'readCount',
+          width: 100,
+          sorter: true
+        },
+        {
         title: '过期时间',
         dataIndex: 'expiryTime',
         key: 'expiryTime',
         width: 160
-      },
-      {
-        title: '操作',
-        key: 'action',
-        fixed: 'right',
+        },
+        {
+          title: '操作',
+          key: 'action',
+          fixed: 'right',
         width: 200
       }
     ];
@@ -558,14 +561,50 @@ export default {
 
 <style lang="less" scoped>
 .notification-list-container {
+  .table-page-search-wrapper .ant-form-inline .ant-form-item {
+    margin-bottom: 12px;
+  }
   .table-operator {
     margin-bottom: 18px;
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     
     .view-tabs {
       display: flex;
       align-items: center;
+      
+      .ant-radio-button-wrapper {
+        margin-right: 4px;
+        padding: 0 12px;
+        border-radius: 4px !important;
+        border-color: #d9d9d9;
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        
+        &:hover {
+          color: #1890ff;
+          border-color: #1890ff;
+          background-color: #e6f7ff;
+          z-index: 1;
+        }
+
+        &.ant-radio-button-wrapper-checked {
+          color: #fff;
+          background-color: #1890ff;
+          border-color: #1890ff;
+          box-shadow: -1px 0 0 0 #1890ff; 
+          z-index: 1;
+          
+          &:hover {
+             background-color: #096dd9;
+             border-color: #096dd9;
+          }
+          
+          &::before {
+             background-color: transparent !important;
+          }
+        }
+      }
       
       .recycle-bin-btn {
         margin-left: 16px;
@@ -580,8 +619,6 @@ export default {
   }
   
   .table-page-search-submitButtons {
-    display: block;
-    margin-bottom: 24px;
     white-space: nowrap;
   }
 }

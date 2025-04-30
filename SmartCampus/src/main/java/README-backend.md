@@ -222,7 +222,17 @@ SmartCampus/src/main/java/com/smartcampus/
 │           └── dto/ # 数据传输对象 ⏳
 │
 ├── domain/ # 领域层 (第一层级)
-│   ├── user/ # 用户领域
+│   ├── authorization/ # 权限认证领域 (NEW)
+│   │   ├── entity/ # 实体
+│   │   │   ├── User.java
+│   │   │   ├── Role.java
+│   │   │   └── Permission.java
+│   │   └── repository/ # 仓储接口
+│   │       ├── UserRepository.java
+│   │       ├── RoleRepository.java
+│   │       └── PermissionRepository.java
+│   │
+│   ├── user/ # 用户领域 (Consider if this is still needed or merged into authorization)
 │   │   ├── entity/ # 实体 ⏳
 │   │   ├── repository/ # 仓储接口 ⏳
 │   │   └── domainservice/ # 领域服务 ⏳
@@ -401,49 +411,38 @@ SmartCampus/src/main/java/com/smartcampus/
 │   ├── persistence/ # 持久化实现
 │   │   ├── mysql/ # MySQL 实现
 │   │   │   ├── mapper/ # MyBatis映射接口 (按领域组织)
-│   │   │   │   ├── servicemanagement/ # 服务管理映射
-│   │   │   │   │   ├── serviceitems/ # ⏳
-│   │   │   │   │   ├── servicesettings/ # ⏳
-│   │   │   │   │   ├── basicconfig/ # ⏳
-│   │   │   │   │   ├── evaluationmanagement/ # ⏳
-│   │   │   │   │   ├── serviceguidelines/ # ⏳
-│   │   │   │   │   └── informationdisclosure/ # ✅
-│   │   │   │   │       ├── announcement/
-│   │   │   │   │       │   ├── AnnouncementMapper.java
-│   │   │   │   │       │   ├── AnnouncementAuditMapper.java
-│   │   │   │   │       │   └── AnnouncementReadMapper.java
-│   │   │   │   │       └── policy/
-│   │   │   │   │           └── PolicyMapper.java
-│   │   │   │   ├── meetingmanagement/ # ✅
-│   │   │   │   │   ├── MeetingRoomMapper.java
-│   │   │   │   │   └── MeetingBookingMapper.java
-│   │   │   │   ├── notificationmanagement/ # ✅
-│   │   │   │   │   ├── MessageMapper.java
-│   │   │   │   │   ├── SystemMessageMapper.java
-│   │   │   │   │   └── UserMessageMapper.java
-│   │   │   │   ├── resourcemanagement/ # ⏳
-│   │   │   │   └── subscriptionmanagement/ # ⏳
+│   │   │   │   ├── authorization/ # 权限认证映射 (NEW)
+│   │   │   │   │   ├── UserMapper.java
+│   │   │   │   │   ├── RoleMapper.java
+│   │   │   │   │   ├── PermissionMapper.java
+│   │   │   │   │   ├── UserRoleMapper.java
+│   │   │   │   │   └── RolePermissionMapper.java
+│   │   │   │   ├── servicemanagement/ 
+│   │   │   │   │   // ... existing servicemanagement mappers ...
+│   │   │   │   ├── meetingmanagement/ 
+│   │   │   │   │   // ... existing meetingmanagement mappers ...
+│   │   │   │   ├── notificationmanagement/ 
+│   │   │   │   │   // ... existing notificationmanagement mappers ...
+│   │   │   │   ├── resourcemanagement/ 
+│   │   │   │   │   // ... existing resourcemanagement mappers ...
+│   │   │   │   └── subscriptionmanagement/ 
+│   │   │   │       // ... existing subscriptionmanagement mappers ...
 │   │   │   └── repository/ # 仓储实现 (按领域组织)
-│   │   │       ├── servicemanagement/ # 服务管理仓储实现
-│   │   │       │   ├── serviceitems/ # ⏳
-│   │   │       │   ├── servicesettings/ # ⏳
-│   │   │       │   ├── basicconfig/ # ⏳
-│   │   │       │   ├── evaluationmanagement/ # ⏳
-│   │   │       │   ├── serviceguidelines/ # ⏳
-│   │   │       │   └── informationdisclosure/ # ✅
-│   │   │       │       ├── announcement/
-│   │   │       │       │   ├── AnnouncementRepositoryImpl.java
-│   │   │       │       │   ├── AnnouncementAuditRepositoryImpl.java
-│   │   │       │       │   └── AnnouncementReadRepositoryImpl.java
-│   │   │       │       └── policy/
-│   │   │       │           └── PolicyRepositoryImpl.java
-│   │   │       ├── meetingmanagement/ # ✅
-│   │   │       ├── notificationmanagement/ # ✅
-│   │   │       ├── resourcemanagement/ # ⏳
-│   │   │       └── subscriptionmanagement/ # ⏳
-│   │   └── redis/ # Redis 实现
-│   │       ├── cache/ # Redis缓存实现
-│   │       └── lock/ # Redis分布式锁实现
+│   │   │       ├── authorization/ # 权限认证仓储实现 (NEW)
+│   │   │       │   ├── UserRepositoryImpl.java
+│   │   │       │   ├── RoleRepositoryImpl.java
+│   │   │       │   └── PermissionRepositoryImpl.java
+│   │   │       ├── servicemanagement/ 
+│   │   │       │   // ... existing servicemanagement repos ...
+│   │   │       ├── meetingmanagement/ 
+│   │   │       │   // ... existing meetingmanagement repos ...
+│   │   │       ├── notificationmanagement/ 
+│   │   │       │   // ... existing notificationmanagement repos ...
+│   │   │       ├── resourcemanagement/ 
+│   │   │       │   // ... existing resourcemanagement repos ...
+│   │   │       └── subscriptionmanagement/ 
+│   │   │           // ... existing subscriptionmanagement repos ...
+│   │   // ... other persistence implementations ...
 │   │
 │   ├── file/ # 文件存储
 │   │   ├── service/ # 服务定义 ⏳
