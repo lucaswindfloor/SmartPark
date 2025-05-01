@@ -158,3 +158,213 @@ CREATE TABLE IF NOT EXISTS t_notifications (
     INDEX idx_sent_at (sent_at),
     INDEX idx_is_read (is_read)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Push Notification Record Table'; 
+
+
+
+
+
+
+
+
+
+-- ----------------------------
+-- Table structure for users
+-- ----------------------------
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `username` varchar(30) NOT NULL COMMENT '用户名',
+  `password_hash` varchar(100) DEFAULT '' COMMENT '密码哈希',
+  `nickname` varchar(30) DEFAULT NULL COMMENT '昵称',
+  `email` varchar(50) DEFAULT '' COMMENT '邮箱',
+  `phone_number` varchar(20) DEFAULT '' COMMENT '手机号码',
+  `avatar` varchar(255) DEFAULT '' COMMENT '头像地址',
+  `status` tinyint(1) DEFAULT '0' COMMENT '帐号状态（0正常 1停用）',
+  `created_by` varchar(64) DEFAULT '' COMMENT '创建者',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_by` varchar(64) DEFAULT '' COMMENT '更新者',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `deleted` tinyint(1) DEFAULT '0' COMMENT '删除标志（0存在 1删除）',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
+
+-- ----------------------------
+-- Table structure for roles
+-- ----------------------------
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+  `role_key` varchar(100) NOT NULL COMMENT '角色权限字符串 (e.g., park_operator)',
+  `role_name` varchar(30) NOT NULL COMMENT '角色名称',
+  `description` varchar(500) DEFAULT NULL COMMENT '备注',
+  `status` tinyint(1) DEFAULT '0' COMMENT '角色状态（0正常 1停用）',
+  `created_by` varchar(64) DEFAULT '' COMMENT '创建者',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_by` varchar(64) DEFAULT '' COMMENT '更新者',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` tinyint(1) DEFAULT '0' COMMENT '删除标志（0存在 1删除）',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_role_key` (`role_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色信息表';
+
+-- ----------------------------
+-- Table structure for permissions
+-- ----------------------------
+DROP TABLE IF EXISTS `permissions`;
+CREATE TABLE `permissions` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '权限ID',
+  `permission_string` varchar(100) NOT NULL COMMENT '权限标识符 (e.g., announcement:draft)',
+  `description` varchar(255) DEFAULT '' COMMENT '权限描述',
+  `module` varchar(50) DEFAULT '' COMMENT '所属模块 (e.g., announcement)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_permission_string` (`permission_string`)
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='权限信息表';
+
+-- ----------------------------
+-- Table structure for user_roles
+-- ----------------------------
+DROP TABLE IF EXISTS `user_roles`;
+CREATE TABLE `user_roles` (
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `role_id` bigint NOT NULL COMMENT '角色ID',
+  PRIMARY KEY (`user_id`,`role_id`),
+  KEY `fk_role_id` (`role_id`),
+  CONSTRAINT `fk_user_id_roles` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_role_id_users` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户和角色关联表';
+
+-- ----------------------------
+-- Table structure for role_permissions
+-- ----------------------------
+DROP TABLE IF EXISTS `role_permissions`;
+CREATE TABLE `role_permissions` (
+  `role_id` bigint NOT NULL COMMENT '角色ID',
+  `permission_id` bigint NOT NULL COMMENT '权限ID',
+  PRIMARY KEY (`role_id`,`permission_id`),
+  KEY `fk_permission_id` (`permission_id`),
+  CONSTRAINT `fk_role_id_perms` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_permission_id_roles` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='角色和权限关联表';
+
+
+
+
+
+
+
+
+
+
+
+
+
+    -- Insert Permissions (based on AnnouncementController annotations)
+    INSERT INTO permissions (permission_string, description, module) VALUES
+    ('announcement:view', 'Permission to view announcements', 'announcement'),
+    ('announcement:draft', 'Permission to create and edit announcement drafts', 'announcement'),
+    ('announcement:submit', 'Permission to submit announcements for approval (Implied by draft)', 'announcement'), -- Often linked to draft
+    ('announcement:audit', 'Permission to audit announcements', 'announcement'),
+    ('announcement:publish', 'Permission to publish or withdraw announcements', 'announcement'),
+    ('announcement:manage', 'Permission to manage published announcements (pin, delete, etc.)', 'announcement'),
+    ('announcement:archive', 'Permission to archive/unarchive announcements', 'announcement');
+    -- Add 'announcement:admin' if needed for recycle bin etc.
+
+    -- Insert Roles
+    INSERT INTO roles (role_key, role_name, description, status, deleted) VALUES
+    ('ANNOUNCEMENT_DRAFTER', '公告起草员', 'Can create and manage announcement drafts', 0, 0),
+    ('ANNOUNCEMENT_AUDITOR', '公告审核员', 'Can review and approve/reject announcements', 0, 0),
+    ('ANNOUNCEMENT_PUBLISHER', '公告发布员', 'Can publish approved announcements', 0, 0),
+    ('ANNOUNCEMENT_MANAGER', '公告管理员', 'Can manage published and archived announcements', 0, 0);
+    -- Add other roles like PARK_ADMINISTRATOR etc.
+
+    -- Assign Permissions to Roles (Example - Adjust based on your exact needs)
+    -- Get the IDs from the inserted roles and permissions
+    -- Example: Drafter gets draft permission
+    INSERT INTO role_permissions (role_id, permission_id) VALUES
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:view')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:draft')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:submit')); -- Drafter can submit
+
+    -- Example: Auditor gets view and audit permission
+    INSERT INTO role_permissions (role_id, permission_id) VALUES
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_AUDITOR'), (SELECT id FROM permissions WHERE permission_string = 'announcement:view')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_AUDITOR'), (SELECT id FROM permissions WHERE permission_string = 'announcement:audit'));
+
+    -- Example: Publisher gets view and publish permission
+    INSERT INTO role_permissions (role_id, permission_id) VALUES
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_PUBLISHER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:view')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_PUBLISHER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:publish'));
+
+    -- Example: Manager gets view, manage, and archive permission
+    INSERT INTO role_permissions (role_id, permission_id) VALUES
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_MANAGER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:view')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_MANAGER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:manage')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_MANAGER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:archive'));
+    -- Manager might also get draft permission if they can also create
+    -- INSERT INTO role_permissions (role_id, permission_id) VALUES ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_MANAGER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:draft'));
+
+    -- Insert Test Users (Replace password_hash with your generated BCrypt hash)
+    INSERT INTO users (username, password_hash, nickname, status, deleted) VALUES
+    ('drafter_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Drafty', 0, 0), -- Password: password
+    ('auditor_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Audity', 0, 0), -- Password: password
+    ('publisher_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Publishy', 0, 0), -- Password: password
+    ('manager_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Managery', 0, 0); -- Password: password
+
+    -- Assign Roles to Users
+    INSERT INTO user_roles (user_id, role_id) VALUES
+    ((SELECT id FROM users WHERE username = 'drafter_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER')),
+    ((SELECT id FROM users WHERE username = 'auditor_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_AUDITOR')),
+    ((SELECT id FROM users WHERE username = 'publisher_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_PUBLISHER')),
+    ((SELECT id FROM users WHERE username = 'manager_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_MANAGER'));
+    -- Assign multiple roles if needed:
+    -- INSERT INTO user_roles (user_id, role_id) VALUES ((SELECT id FROM users WHERE username = 'manager_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER'));
+
+
+
+
+
+
+
+
+
+        -- Insert Permissions (based on AnnouncementController annotations)
+    INSERT INTO permissions (permission_string, description, module) VALUES
+    ('announcement:view', 'Permission to view announcements', 'announcement'),
+    ('announcement:draft', 'Permission to create and edit announcement drafts', 'announcement'),
+    ('announcement:submit', 'Permission to submit announcements for approval (Implied by draft)', 'announcement'), -- Often linked to draft
+    ('announcement:audit', 'Permission to audit announcements', 'announcement'),
+    ('announcement:publish', 'Permission to publish or withdraw announcements', 'announcement'),
+    ('announcement:manage', 'Permission to manage published announcements (pin, delete, etc.)', 'announcement'),
+    ('announcement:archive', 'Permission to archive/unarchive announcements', 'announcement');
+
+    -- Insert Roles
+    INSERT INTO roles (role_key, role_name, description, status, deleted) VALUES
+    ('ANNOUNCEMENT_DRAFTER', '公告起草员', 'Can create and manage announcement drafts', 0, 0),
+    ('ANNOUNCEMENT_AUDITOR', '公告审核员', 'Can review and approve/reject announcements', 0, 0),
+    ('ANNOUNCEMENT_PUBLISHER', '公告发布员', 'Can publish approved announcements', 0, 0),
+    ('ANNOUNCEMENT_MANAGER', '公告管理员', 'Can manage published and archived announcements', 0, 0);
+
+    -- Assign Permissions to Roles (Example - Adjust based on your exact needs)
+    INSERT INTO role_permissions (role_id, permission_id) VALUES
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:view')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:draft')),
+    ((SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER'), (SELECT id FROM permissions WHERE permission_string = 'announcement:submit'));
+    -- ... (rest of role-permission mappings) ...
+
+    -- Insert Test Users (Replace password_hash with your generated BCrypt hash)
+    INSERT INTO users (username, password_hash, nickname, status, deleted) VALUES
+    ('drafter_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Drafty', 0, 0), -- Password: password
+    ('auditor_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Audity', 0, 0), -- Password: password
+    ('publisher_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Publishy', 0, 0), -- Password: password
+    ('manager_user', '$2a$10$dXJ3SWnlQNddISkc./cPX.pfj8uB/kG9jcbFEuX80f5v1Zl.g.eDC', 'Managery', 0, 0); -- Password: password
+
+    -- Assign Roles to Users
+    INSERT INTO user_roles (user_id, role_id) VALUES
+    ((SELECT id FROM users WHERE username = 'drafter_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_DRAFTER')),
+    ((SELECT id FROM users WHERE username = 'auditor_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_AUDITOR')),
+    ((SELECT id FROM users WHERE username = 'publisher_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_PUBLISHER')),
+    ((SELECT id FROM users WHERE username = 'manager_user'), (SELECT id FROM roles WHERE role_key = 'ANNOUNCEMENT_MANAGER'));

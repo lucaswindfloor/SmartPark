@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartcampus.infrastructure.persistence.mysql.mapper.servicemanagement.informationdisclosure.announcement.AnnouncementAuditMapper">
+    <resultMap id="BaseResultMap" type="com.smartcampus.domain.servicemanagement.informationdisclosure.entity.announcement.AnnouncementAudit">
+        <id column="id" property="id" />
+        <result column="announcement_id" property="announcementId" />
+        <result column="auditor" property="auditor" />
+        <result column="audit_time" property="auditTime" />
+        <result column="status" property="status" />
+        <result column="comment" property="comment" />
+        <!-- 基础字段 -->
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="delete_flag" property="deleteFlag" />
+    </resultMap>
+    
+    <!-- 可以添加更复杂的查询 -->
+    <select id="selectByAnnouncementId" resultMap="BaseResultMap">
+        SELECT * FROM t_announcement_audit 
+        WHERE announcement_id = #{announcementId}
+        ORDER BY audit_time DESC
+    </select>
+</mapper> 

@@ -30,7 +30,7 @@ public class AnnouncementDTO {
     private Boolean isTop; // is_top in schema
     private Integer sortOrder;
 
-    private Integer readCount; // Mapped from view_count in schema
+    private Integer viewCount; // Mapped from view_count in schema
 
     // Fields from BaseEntity or mapped from joins
     private LocalDateTime createTime;

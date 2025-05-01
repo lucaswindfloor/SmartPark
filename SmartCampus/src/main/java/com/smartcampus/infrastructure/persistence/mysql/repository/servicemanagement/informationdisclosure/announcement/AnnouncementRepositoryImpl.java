@@ -24,24 +24,38 @@ public class AnnouncementRepositoryImpl implements AnnouncementRepository {
         return announcementMapper.selectAnnouncementPage(page, query);
     }
 
-    // Implement other methods defined in AnnouncementRepository here...
-    // Example:
-    // @Override
-    // public Announcement findById(Long id) {
-    //     return announcementMapper.selectById(id);
-    // }
-    //
-    // @Override
-    // public void save(Announcement announcement) {
-    //     if (announcement.getId() == null) {
-    //         announcementMapper.insert(announcement);
-    //     } else {
-    //         announcementMapper.updateById(announcement);
-    //     }
-    // }
-    //
-    // @Override
-    // public void deleteLogically(Long id) {
-    //     announcementMapper.deleteById(id); // MyBatis Plus handles logical delete if @TableLogic is present
-    // }
+    @Override
+    public Announcement findById(Long id) {
+        return announcementMapper.selectById(id);
+    }
+
+    @Override
+    public void save(Announcement announcement) {
+        if (announcement.getId() == null) {
+            announcementMapper.insert(announcement);
+        } else {
+            announcementMapper.updateById(announcement);
+        }
+    }
+
+    @Override
+    public void updateById(Announcement announcement) {
+        announcementMapper.updateById(announcement);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        announcementMapper.deleteById(id); // MyBatis Plus handles logical delete if @TableLogic is present
+    }
+    
+    @Override
+    public void recoverById(Long id) {
+        // We need to manually update the delete_flag field since MyBatis Plus doesn't provide a direct "recover" method
+        Announcement announcement = findById(id);
+        if (announcement != null) {
+            // Set delete_flag to 0 to recover the entity
+            announcement.setDeleteFlag(0);
+            updateById(announcement);
+        }
+    }
 }

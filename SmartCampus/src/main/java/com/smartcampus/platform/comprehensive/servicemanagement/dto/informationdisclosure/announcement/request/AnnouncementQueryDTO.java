@@ -32,6 +32,9 @@ public class AnnouncementQueryDTO {
     // Sorting (Example: pass field name and direction)
     private String sortField; // Field to sort by (e.g., 'publishTime', 'readCount')
     private String sortOrder; // 'asc' or 'desc'
+    
+    // Recycle Bin flag - for retrieving items from the recycle bin
+    private Boolean recycleBin = false;
 
     // Add other potential query params as needed
     // private Long creatorId;

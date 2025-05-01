@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartcampus.infrastructure.persistence.mysql.mapper.security.RoleMapper">
+
+    <resultMap id="RoleResultMap" type="com.smartcampus.infrastructure.persistence.mysql.entity.RolePO">
+        <id property="id" column="id"/>
+        <result property="roleKey" column="role_key"/>
+        <result property="roleName" column="role_name"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedBy" column="updated_by"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="deleted" column="deleted"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="selectRolesByUserId" resultMap="RoleResultMap">
+        SELECT
+            r.id, r.role_key, r.role_name, r.description, r.status, r.created_by,
+            r.created_at, r.updated_by, r.updated_at, r.deleted, r.create_time, r.update_time
+        FROM
+            roles r
+        INNER JOIN user_roles ur ON r.id = ur.role_id
+        WHERE
+            ur.user_id = #{userId}
+          AND r.deleted = 0
+          AND r.status = 0 -- Assuming status 0 means active
+    </select>
+
+    <!-- Define basic queries or result maps if needed later -->
+
+</mapper> 

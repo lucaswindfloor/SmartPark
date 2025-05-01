@@ -45,7 +45,7 @@
 
       <!-- 操作按钮区 -->
       <div class="table-operator">
-         <!-- 视图切换 -->
+        <!-- 视图切换 -->
         <div class="view-tabs">
           <a-radio-group v-model="queryParam.viewType" button-style="solid">
             <a-radio-button value="all">全部</a-radio-button>
@@ -289,9 +289,9 @@ export default {
         title: '状态',
         dataIndex: 'status',
         key: 'status',
-        width: 100
-      },
-      {
+          width: 100
+        },
+        {
         title: '发布者',
         dataIndex: 'publisher', // Assuming backend provides this (mapped from u.username)
           key: 'publisher',
@@ -566,8 +566,8 @@ export default {
   }
   .table-operator {
     margin-bottom: 18px;
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
     align-items: center;
     
     .view-tabs {

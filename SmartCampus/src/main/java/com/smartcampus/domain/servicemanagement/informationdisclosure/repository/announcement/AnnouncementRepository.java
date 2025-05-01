@@ -19,10 +19,43 @@ public interface AnnouncementRepository {
      */
     Page<AnnouncementDTO> findPage(Page<Announcement> page, AnnouncementQueryDTO query);
 
+    /**
+     * Find announcement by ID.
+     *
+     * @param id The announcement ID.
+     * @return The announcement entity or null if not found.
+     */
+    Announcement findById(Long id);
+
+    /**
+     * Save a new or update an existing announcement.
+     *
+     * @param announcement The announcement entity to save.
+     */
+    void save(Announcement announcement);
+
+    /**
+     * Update an existing announcement by ID.
+     *
+     * @param announcement The announcement entity with updated fields.
+     */
+    void updateById(Announcement announcement);
+
+    /**
+     * Delete announcement by ID (logical delete).
+     *
+     * @param id The announcement ID to delete.
+     */
+    void deleteById(Long id);
+    
+    /**
+     * Recover a logically deleted announcement by ID.
+     *
+     * @param id The announcement ID to recover.
+     */
+    void recoverById(Long id);
+
     // Add other necessary repository methods based on requirements:
-    // Announcement findById(Long id);
     // AnnouncementDTO findDetailById(Long id); // May need specific DTO
-    // void save(Announcement announcement);
-    // void update(Announcement announcement);
     // void deleteLogically(Long id);
 }

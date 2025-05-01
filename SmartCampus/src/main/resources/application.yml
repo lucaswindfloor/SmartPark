@@ -55,3 +55,6 @@ app:
   notification:
     email:
       sender: noreply@smartcampus.com
+  jwt:
+    secret: zYltsAifhTtmIEaRmxUMqFVoI31cqFmssuT63LN+5JnjbGFctyKezsxE5RxEiGqGgq4qup/DVXAbNHciYw5pjw== # 替换为你的密钥
+    expiration-ms: 86400000 # JWT token expiration time (1 day in milliseconds)

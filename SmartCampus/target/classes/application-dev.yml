@@ -34,3 +34,5 @@ logging:
 app:
   notification:
     test-mode: true 
+  jwt:
+    secret: zYltsAifhTtmIEaRmxUMqFVoI31cqFmssuT63LN+5JnjbGFctyKezsxE5RxEiGqGgq4qup/DVXAbNHciYw5pjw== # 替换为你的密钥

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smartcampus.infrastructure.persistence.mysql.mapper.security.PermissionMapper">
+
+    <!-- No ResultMap needed as we are returning a Set<String> -->
+
+    <select id="selectPermissionsByRoleId" resultType="java.lang.String">
+        SELECT
+            p.permission_string
+        FROM
+            permissions p
+        INNER JOIN
+            role_permissions rp ON p.id = rp.permission_id
+        WHERE
+            rp.role_id = #{roleId}
+    </select>
+
+    <!-- Define basic queries or result maps if needed later -->
+
+</mapper> 
