@@ -1,5 +1,5 @@
 <template>
-  <div class="notification-list-container">
+  <div class="announcement-list-container">
     <a-card :bordered="false">
       <!-- 顶部操作区 -->
       <div class="table-page-search-wrapper">
@@ -98,19 +98,26 @@
         <template #bodyCell="{ column, text, record }">
           <!-- Title Column -->
           <template v-if="column.key === 'title'">
-          <div class="notification-title-cell">
-            <span :class="{ 'unread-title': !record.isRead }">{{ text }}</span>
-            <a-tag v-if="record.isTop" color="red">置顶</a-tag>
-            <a-tag v-if="record.isImportant" color="orange">重要</a-tag>
-          </div>
+            <div class="notification-title-cell">
+              <span style="margin-right: 8px;">
+                <a-tooltip title="紧急" v-if="record.importance === 'emergency'">
+                  <ExclamationCircleFilled style="color: red;" />
+                </a-tooltip>
+                <a-tooltip title="重要" v-else-if="record.importance === 'important'">
+                  <StarFilled style="color: orange;" />
+                </a-tooltip>
+              </span>
+              <a @click="handleView(record)" :class="{ 'unread-title': !record.isRead }" style="cursor: pointer;">{{ text }}</a>
+              <a-tag v-if="record.isTop" color="red">置顶</a-tag>
+            </div>
           </template>
           <!-- Type Column -->
           <template v-else-if="column.key === 'type'">
-          <a-tag :color="getTypeColor(text)">{{ getTypeName(text) }}</a-tag>
+            <a-tag :color="getTypeColor(text)">{{ getTypeName(text) }}</a-tag>
           </template>
           <!-- Status Column -->
           <template v-else-if="column.key === 'status'">
-          <a-badge :status="getStatusType(text)" :text="getStatusName(text)" />
+            <a-badge :status="getStatusType(text)" :text="getStatusName(text)" />
           </template>
           <!-- Publish Time Column -->
           <template v-else-if="column.key === 'publishTime'">
@@ -120,45 +127,43 @@
           <template v-else-if="column.key === 'expiryTime'">
             {{ text ? moment(text).format('YYYY-MM-DD HH:mm') : '永久有效' }}
           </template>
+          <!-- Read Count Column -->
+          <template v-else-if="column.key === 'readCount'">
+            {{ text }}
+          </template>
+          <!-- Creator Column -->
+          <template v-else-if="column.key === 'createByName'">
+            {{ record.createByName || record.createBy || '-' }}
+          </template>
+          <!-- Publisher Column -->
+          <template v-else-if="column.key === 'publisherName'">
+            {{ record.publisherName || record.publisher || '-' }}
+          </template>
           <!-- Action Column -->
           <template v-else-if="column.key === 'action'">
-          <a @click="handleView(record)">查看</a>
-          <a-divider type="vertical" v-if="authStore.hasPermission('announcement:draft') && record.status === 'draft'" />
-          <a v-if="authStore.hasPermission('announcement:draft') && record.status === 'draft'" @click="handleEdit(record)">编辑</a>
-          <a-divider v-if="record.status !== 'deleted'" type="vertical" />
-          <a-dropdown v-if="record.status !== 'deleted'">
-            <a class="ant-dropdown-link">
-                更多 <DownOutlined />
-            </a>
-              <template #overlay>
-                 <a-menu>
-                  <a-menu-item v-if="authStore.hasPermission('announcement:draft') && record.status === 'draft'" @click="handleSubmitAudit(record)">
-                    提交审核
-                  </a-menu-item>
-                  <a-menu-item v-if="authStore.hasPermission('announcement:publish') && record.status === 'draft'" @click="handlePublish(record)">
-                    直接发布
-                  </a-menu-item>
-                  <a-menu-item v-if="authStore.hasPermission('announcement:audit') && record.status === 'audit'" @click="handleAudit(record)">
-                    审核
-                  </a-menu-item>
-                  <a-menu-item v-if="authStore.hasPermission('announcement:publish') && record.status === 'published'" @click="handleCancel(record)">
-                    取消发布
-                  </a-menu-item>
-                  <a-menu-item v-if="authStore.hasPermission('announcement:manage') && record.status === 'published'" @click="handleExtend(record)">
-                    延长有效期
-                  </a-menu-item>
-                  <a-menu-item v-if="authStore.hasPermission('announcement:manage') && record.status === 'published'" @click="handleViewStatistics(record)">
-                    查看阅读统计
-                  </a-menu-item>
-                  <a-menu-item v-if="authStore.hasPermission('announcement:archive') && (record.status === 'published' || record.status === 'expired')" @click="handleArchive(record)">
-                    归档
-                  </a-menu-item>
-                  <a-menu-item v-if="authStore.hasAnyPermission(['announcement:draft', 'announcement:manage'])" @click="handleDelete(record)">
-                    删除
-                  </a-menu-item>
-                 </a-menu>
-              </template>
-          </a-dropdown>
+            <template v-if="record.status === 'draft' && isDrafterRole()">
+                <a-space :size="8">
+                    <a v-if="canEditRecord(record)" @click="handleEdit(record)">编辑</a>
+                    <a v-if="canSubmitAuditRecord(record)" @click="handleSubmitAudit(record)">提交审核</a>
+                    <a v-if="canDeleteRecord(record)" @click="handleDelete(record)">删除</a>
+                </a-space>
+            </template>
+            <template v-else-if="!isDrafterRole() && record.status !== 'deleted'">
+                <a-dropdown>
+                    <a class="ant-dropdown-link">更多 <DownOutlined /></a>
+                    <template #overlay>
+                        <a-menu>
+                            <a-menu-item v-if="record.status === 'draft' && authStore.hasPermission('announcement:publish')" @click="handlePublish(record)">直接发布</a-menu-item>
+                            <a-menu-item v-if="record.status === 'audit' && authStore.hasPermission('announcement:audit')" @click="handleAudit(record)">审核</a-menu-item>
+                            <a-menu-item v-if="record.status === 'published' && authStore.hasPermission('announcement:publish')" @click="handleCancel(record)">取消发布</a-menu-item>
+                            <a-menu-item v-if="record.status === 'published' && authStore.hasPermission('announcement:manage')" @click="handleExtend(record)">延长有效期</a-menu-item>
+                            <a-menu-item v-if="record.status === 'published' && authStore.hasPermission('announcement:manage')" @click="handleViewStatistics(record)">查看阅读统计</a-menu-item>
+                            <a-menu-item v-if="(record.status === 'published' || record.status === 'expired') && authStore.hasPermission('announcement:archive')" @click="handleArchive(record)">归档</a-menu-item>
+                            <a-menu-item v-if="canDeleteRecord(record)" @click="handleDelete(record)">删除</a-menu-item>
+                        </a-menu>
+                    </template>
+                </a-dropdown>
+            </template>
           </template>
           <!-- Default rendering for other columns -->
           <template v-else>
@@ -180,8 +185,8 @@
 </template>
 
 <script>
-import { Table, Tag, Badge, Button, Dropdown, Menu, Radio, Input, Select, DatePicker, Card, Form, Row, Col, Divider, message, Modal } from 'ant-design-vue'
-import { DownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
+import { Table, Tag, Badge, Button, Dropdown, Menu, Radio, Input, Select, DatePicker, Card, Form, Row, Col, Divider, message, Modal, Space, Tooltip } from 'ant-design-vue'
+import { DownOutlined, PlusOutlined, DeleteOutlined, ExclamationCircleFilled, StarFilled } from '@ant-design/icons-vue'
 import { ref, reactive, onMounted, computed, watch } from 'vue'; // Import Vue 3 Composition API functions
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/core/stores/auth'; // Import the auth store
@@ -227,13 +232,18 @@ export default {
     OperationComponent,
     DownOutlined,
     PlusOutlined,
-    DeleteOutlined
+    DeleteOutlined,
+    ASpace: Space,
+    ATooltip: Tooltip,
+    ExclamationCircleFilled,
+    StarFilled
   },
   setup() {
     const router = useRouter();
     const authStore = useAuthStore(); // Get the auth store instance
     const loading = ref(false);
     const tableData = ref([]);
+    const operationComponent = ref(null); // Ref for the child component
     const pagination = reactive({
         current: 1,
         pageSize: 10,
@@ -245,12 +255,13 @@ export default {
     const queryParam = reactive({
         title: '',
         status: undefined,
-      type: undefined,
-      startDate: null,
-      endDate: null,
-      viewType: 'all', // Default view type
-      sortField: null,
-      sortOrder: null
+        type: undefined,
+        importance: undefined,
+        startDate: null,
+        endDate: null,
+        viewType: 'all', // Default view type
+        sortField: null,
+        sortOrder: null
     });
     const dateRange = ref([]); // For the date picker model
     const selectedRowKeys = ref([]);
@@ -266,10 +277,14 @@ export default {
       { value: 'cancelled', label: '已取消' }
     ]);
     const typeOptions = ref([
-      { value: 'normal', label: '普通通知' },
-      { value: 'policy', label: '政策文件' },
-      { value: 'event', label: '园区活动' },
-      { value: 'emergency', label: '紧急通知' }
+      { value: 'property', label: '物业公告' },
+      { value: 'finance', label: '财务公告' },
+      { value: 'security', label: '安全公告' }
+    ]);
+    const importanceOptions = ref([
+        { value: 'emergency', label: '紧急' },
+        { value: 'important', label: '重要' },
+        { value: 'normal', label: '普通' },
     ]);
 
     // --- Table Columns Definition ---
@@ -399,6 +414,7 @@ export default {
       queryParam.title = '';
       queryParam.status = undefined;
       queryParam.type = undefined;
+      queryParam.importance = undefined;
       dateRange.value = [];
       queryParam.startDate = null;
       queryParam.endDate = null;
@@ -520,7 +536,7 @@ export default {
 
     // --- More action handlers (SubmitAudit, Publish, Audit, Cancel, Extend, ViewStats, Archive) ---
     const handleSubmitAudit = (record) => {
-        if (!authStore.hasPermission('announcement:draft')) {
+        if (!authStore.hasPermission('announcement:submit')) {
             message.error('您没有提交审核的权限。');
             return;
         }
@@ -541,11 +557,11 @@ export default {
 
     // --- Helper functions for rendering ---
     const getTypeColor = (type) => {
-      const colors = { normal: 'blue', policy: 'green', event: 'purple', emergency: 'red' };
+      const colors = { property: 'blue', finance: 'purple', security: 'red' };
       return colors[type] || 'default';
     };
     const getTypeName = (type) => {
-      const names = { normal: '普通', policy: '政策', event: '活动', emergency: '紧急' };
+      const names = { property: '物业公告', finance: '财务公告', security: '安全公告' };
       return names[type] || type;
     };
     const getStatusType = (status) => {
@@ -557,20 +573,88 @@ export default {
       return names[status] || status;
     };
 
+    // --- Reactive Permission Check Functions (Simplified for Drafter) ---
+
+    const isDrafterRole = () => {
+        const hasDraftPerm = authStore.hasPermission('announcement:draft');
+        const canManageOrAdmin = authStore.hasPermission('announcement:manage') || authStore.hasPermission('announcement:admin');
+        return hasDraftPerm && !canManageOrAdmin;
+    };
+
+    const canEditRecord = (record) => {
+      const isDraft = record.status === 'draft';
+      const hasDraftPerm = authStore.hasPermission('announcement:draft');
+      // Drafter can edit ANY draft if they have the permission
+      return isDraft && hasDraftPerm;
+    };
+
+    const canSubmitAuditRecord = (record) => {
+      const isDraft = record.status === 'draft';
+      const hasSubmitPerm = authStore.hasPermission('announcement:submit');
+      // Drafter can submit ANY draft if they have the permission
+      return isDraft && hasSubmitPerm;
+    };
+
+    const canDeleteRecord = (record) => {
+        console.log(`[canDeleteRecord] Checking record ID: ${record.id}, Status: ${record.status}, Current User Permissions Check`);
+
+        const isDraft = record.status === 'draft';
+        
+        // Scenario 1: Drafter (can delete ANY draft if they have the permission)
+        const hasDraftPerm = authStore.hasPermission('announcement:draft');
+        const canManageOrAdmin = authStore.hasPermission('announcement:manage') || authStore.hasPermission('announcement:admin');
+        const isLikelyDrafter = hasDraftPerm && !canManageOrAdmin; // Check if user is primarily a drafter
+        
+        if (isLikelyDrafter && isDraft) {
+             console.log('[canDeleteRecord] Result: true (Drafter deleting a draft)');
+             return true;
+        }
+
+        // Scenario 2: Manager/Admin (can delete more broadly)
+        if (canManageOrAdmin && record.status !== 'archive') { // Example: Can delete anything not archived
+            console.log(`[canDeleteRecord] Result: true (Manager/Admin deleting status: ${record.status})`);
+            return true; 
+        }
+
+        console.log('[canDeleteRecord] Result: false (No condition met)');
+        return false;
+    };
+
+    // --- OperationComponent Event Handlers (Already defined, ensure they are correct) ---
+    const onAuditSubmit = (formData) => {
+        console.log('Audit Submitted Data:', formData);
+        message.success('审核提交成功 (模拟)');
+        fetchData(); 
+    };
+    const onPublishSubmit = (formData) => {
+        console.log('Publish Submitted Data:', formData);
+        message.success('发布成功 (模拟)');
+        fetchData(); 
+    };
+    const onCancelSubmit = (formData) => {
+        console.log('Cancel Submitted Data:', formData);
+        message.success('取消发布成功 (模拟)');
+         fetchData(); 
+    };
+    const onExtendSubmit = (formData) => {
+        console.log('Extend Submitted Data:', formData);
+        message.success('延长有效期成功 (模拟)');
+         fetchData(); 
+    };
+
     // --- Lifecycle Hook ---
     onMounted(() => {
       console.log('[List.vue] Component mounted. Fetching initial data...');
-      // No need to call fetchData here if it's called by the viewType watcher initially
-      // Or ensure the initial fetch respects permissions:
+      // Fetch data only if user has view permission. 
+      // The permission checks in the template will reactively update once authStore is ready.
       if (authStore.hasPermission('announcement:view')) {
          fetchData();
       } else {
          message.error('您没有查看公告列表的权限。');
-         // Handle lack of initial view permission
       }
     });
 
-    // --- Return values for template ---
+    // --- Return values for template (Ensure canDelete is returned) ---
     return {
       loading,
       tableData,
@@ -580,8 +664,10 @@ export default {
       columns,
       statusOptions,
       typeOptions,
+      importanceOptions,
       selectedRowKeys,
       rowSelection,
+      operationComponent, // Return ref for child component
       // Methods
       fetchData, // Expose fetchData if needed for manual refresh
       handleTableChange,
@@ -606,23 +692,70 @@ export default {
       getStatusType,
       getStatusName,
       moment, // Expose moment for template usage
-      authStore // Expose authStore to the template
+      authStore, // Expose authStore to the template
+      isDrafterRole,
+      canEditRecord,
+      canSubmitAuditRecord,
+      canDeleteRecord,
+      // Handlers for OperationComponent (already defined and likely returned implicitly by options API structure)
+      onAuditSubmit,
+      onPublishSubmit,
+      onCancelSubmit,
+      onExtendSubmit
     };
   }
 }
 </script>
 
 <style lang="less" scoped>
-.notification-list-container {
+.announcement-list-container { /* Renamed from notification-list-container */
+  /* Ensure it takes up available height and allows scrolling */
+  height: 100%; /* Or calc(100vh - headerHeight - footerHeight - etc.) if needed */
+  overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+  display: flex; /* Use flexbox for better internal layout control */
+  flex-direction: column; /* Stack elements vertically */
+
+  .ant-card {
+    flex-grow: 1; /* Allow card to grow and fill space */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent card itself from causing double scrollbars */
+
+    :deep(.ant-card-body) { // Target the card body
+       display: flex;
+       flex-direction: column;
+       flex-grow: 1;
+       overflow: hidden; // Prevent card body overflow issues
+       padding: 15px; // Adjust padding as needed
+    }
+  }
+
+  .table-page-search-wrapper {
+     margin-bottom: 16px; // Keep some space
+     flex-shrink: 0; // Prevent search area from shrinking
+  }
+
+  .table-operator {
+    margin-bottom: 16px; // Keep some space
+    flex-shrink: 0; // Prevent operator area from shrinking
+    /* Combined existing rules */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .ant-table-wrapper {
+     flex-grow: 1; // Allow table wrapper to take remaining space
+     overflow: hidden; // Let the internal table scrolling handle table overflow
+  }
+
+  /* Existing styles below */
   .table-page-search-wrapper .ant-form-inline .ant-form-item {
     margin-bottom: 12px;
   }
+  
+  /* Styles for .table-operator children */
   .table-operator {
-    margin-bottom: 18px;
-  display: flex;
-  justify-content: space-between;
-    align-items: center;
-    
     .view-tabs {
       display: flex;
       align-items: center;
@@ -665,7 +798,7 @@ export default {
     }
   }
   
-  .notification-title-cell {
+  .notification-title-cell { /* Keep this specific class if it's used only for the title */
     .unread-title {
       font-weight: bold;
     }
@@ -674,5 +807,14 @@ export default {
   .table-page-search-submitButtons {
     white-space: nowrap;
   }
+}
+
+.notification-title-cell a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.notification-title-cell a:hover {
+  color: #1890ff;
 }
 </style> 

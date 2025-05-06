@@ -526,7 +526,7 @@ initFromRoute();
 }
 </style>
 
-<style scoped>
+<style lang="less" scoped>
 .admin-layout {
   width: 100%;
   height: 100vh;
@@ -798,25 +798,18 @@ initFromRoute();
 }
 
 .site-content {
-  margin: 24px;
-  padding: 0;
-  background: var(--light-bg);
-  border-radius: var(--border-radius-lg);
-  min-height: calc(100vh - 120px);
-  overflow: hidden;
-  position: relative;
-  transition: margin-left 0.3s;
+  transition: margin-left 0.2s;
+  background: #f0f2f5;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-container {
-  padding: 30px;
+  padding: 24px;
   background: #fff;
-  border-radius: var(--border-radius-lg);
-  min-height: calc(100vh - 120px);
-  box-shadow: var(--box-shadow);
-  position: relative;
-  overflow: hidden;
-  animation: fadeIn 0.5s;
+  min-height: 360px;
+  flex: 1;
 }
 
 .content-container::before {
