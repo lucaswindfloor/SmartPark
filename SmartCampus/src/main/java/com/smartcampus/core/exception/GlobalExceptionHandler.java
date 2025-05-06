@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.OK) // Or another appropriate status like BAD_REQUEST
     public Result<Void> handleBusinessException(BusinessException ex) {
         log.error("Business Exception: {}", ex.getMessage(), ex);
-        return Result.error(ex.getResultCode(), ex.getMessage());
+        return Result.failure(ex.getResultCode(), ex.getMessage());
     }
 
     /**
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     public Result<Void> handleException(Exception ex) {
         log.error("Unhandled Exception: {}", ex.getMessage(), ex);
         // Avoid exposing internal details in production
-        return Result.error(ResultCode.INTERNAL_SERVER_ERROR.getCode(), "系统内部错误，请联系管理员");
+        return Result.failure(ResultCode.INTERNAL_SERVER_ERROR.getCode(), "系统内部错误，请联系管理员");
     }
 
     // Add handlers for specific exceptions like BindException, MethodArgumentNotValidException, etc.

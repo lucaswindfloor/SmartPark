@@ -55,18 +55,18 @@
             <a-radio-button value="expired">已过期</a-radio-button>
             <a-radio-button value="archive">已归档</a-radio-button>
           </a-radio-group>
-          <a-button @click="goToRecycleBin" class="recycle-bin-btn">
+          <a-button v-if="authStore.hasPermission('announcement:manage')" @click="goToRecycleBin" class="recycle-bin-btn">
             <template #icon><DeleteOutlined /></template>
             回收站
           </a-button>
         </div>
         
         <div>
-            <a-button type="primary" @click="handleCreate">
+            <a-button v-if="authStore.hasPermission('announcement:draft')" type="primary" @click="handleCreate">
                 <template #icon><PlusOutlined /></template>
                 新建
             </a-button>
-            <a-dropdown v-if="selectedRowKeys.length > 0">
+            <a-dropdown v-if="selectedRowKeys.length > 0 && authStore.hasAnyPermission(['announcement:draft', 'announcement:manage'])">
             <template #overlay>
                 <a-menu>
                 <a-menu-item key="delete" @click="handleBatchDelete">批量删除</a-menu-item>
@@ -123,40 +123,40 @@
           <!-- Action Column -->
           <template v-else-if="column.key === 'action'">
           <a @click="handleView(record)">查看</a>
-          <a-divider type="vertical" />
-          <a v-if="record.status === 'draft'" @click="handleEdit(record)">编辑</a>
-          <a-divider v-if="record.status === 'draft'" type="vertical" />
+          <a-divider type="vertical" v-if="authStore.hasPermission('announcement:draft') && record.status === 'draft'" />
+          <a v-if="authStore.hasPermission('announcement:draft') && record.status === 'draft'" @click="handleEdit(record)">编辑</a>
+          <a-divider v-if="record.status !== 'deleted'" type="vertical" />
           <a-dropdown v-if="record.status !== 'deleted'">
             <a class="ant-dropdown-link">
                 更多 <DownOutlined />
             </a>
               <template #overlay>
                  <a-menu>
-              <a-menu-item v-if="record.status === 'draft'" @click="handleSubmitAudit(record)">
-                提交审核
-              </a-menu-item>
-              <a-menu-item v-if="record.status === 'draft'" @click="handlePublish(record)">
-                直接发布
-              </a-menu-item>
-              <a-menu-item v-if="record.status === 'audit'" @click="handleAudit(record)">
-                审核
-              </a-menu-item>
-              <a-menu-item v-if="record.status === 'published'" @click="handleCancel(record)">
-                取消发布
-              </a-menu-item>
-              <a-menu-item v-if="record.status === 'published'" @click="handleExtend(record)">
-                延长有效期
-              </a-menu-item>
-              <a-menu-item v-if="record.status === 'published'" @click="handleViewStatistics(record)">
-                查看阅读统计
-              </a-menu-item>
-              <a-menu-item v-if="record.status === 'published' || record.status === 'expired'" @click="handleArchive(record)">
-                归档
-              </a-menu-item>
-              <a-menu-item @click="handleDelete(record)">
-                删除
-              </a-menu-item>
-            </a-menu>
+                  <a-menu-item v-if="authStore.hasPermission('announcement:draft') && record.status === 'draft'" @click="handleSubmitAudit(record)">
+                    提交审核
+                  </a-menu-item>
+                  <a-menu-item v-if="authStore.hasPermission('announcement:publish') && record.status === 'draft'" @click="handlePublish(record)">
+                    直接发布
+                  </a-menu-item>
+                  <a-menu-item v-if="authStore.hasPermission('announcement:audit') && record.status === 'audit'" @click="handleAudit(record)">
+                    审核
+                  </a-menu-item>
+                  <a-menu-item v-if="authStore.hasPermission('announcement:publish') && record.status === 'published'" @click="handleCancel(record)">
+                    取消发布
+                  </a-menu-item>
+                  <a-menu-item v-if="authStore.hasPermission('announcement:manage') && record.status === 'published'" @click="handleExtend(record)">
+                    延长有效期
+                  </a-menu-item>
+                  <a-menu-item v-if="authStore.hasPermission('announcement:manage') && record.status === 'published'" @click="handleViewStatistics(record)">
+                    查看阅读统计
+                  </a-menu-item>
+                  <a-menu-item v-if="authStore.hasPermission('announcement:archive') && (record.status === 'published' || record.status === 'expired')" @click="handleArchive(record)">
+                    归档
+                  </a-menu-item>
+                  <a-menu-item v-if="authStore.hasAnyPermission(['announcement:draft', 'announcement:manage'])" @click="handleDelete(record)">
+                    删除
+                  </a-menu-item>
+                 </a-menu>
               </template>
           </a-dropdown>
           </template>
@@ -184,6 +184,7 @@ import { Table, Tag, Badge, Button, Dropdown, Menu, Radio, Input, Select, DatePi
 import { DownOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { ref, reactive, onMounted, computed, watch } from 'vue'; // Import Vue 3 Composition API functions
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/core/stores/auth'; // Import the auth store
 import { 
   getAnnouncementList,
   createAnnouncement,
@@ -230,6 +231,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore(); // Get the auth store instance
     const loading = ref(false);
     const tableData = ref([]);
     const pagination = reactive({
@@ -327,6 +329,17 @@ export default {
 
     // --- Methods ---
     const fetchData = async () => {
+      // Check if user has view permission before fetching
+      if (!authStore.hasPermission('announcement:view')) {
+        message.error('您没有查看公告列表的权限。');
+        loading.value = false;
+        tableData.value = [];
+        pagination.total = 0;
+        // Optionally redirect or show a more prominent message
+        // router.replace({ name: 'Forbidden' });
+        return;
+      }
+      
       loading.value = true;
       const params = {
         pageNo: pagination.current,
@@ -421,6 +434,10 @@ export default {
 
     // --- CRUD and other actions (placeholders) ---
     const handleCreate = () => {
+      if (!authStore.hasPermission('announcement:draft')) {
+        message.error('您没有创建公告的权限。');
+        return;
+      }
       console.log('Create clicked');
       // router.push({ name: 'AnnouncementCreate' }); // Assuming you have a create route
       message.info('新建功能待实现');
@@ -433,12 +450,20 @@ export default {
     };
 
     const handleEdit = (record) => {
+      if (!authStore.hasPermission('announcement:draft')) {
+          message.error('您没有编辑公告的权限。');
+          return;
+      }
       console.log('Edit clicked', record);
       // router.push({ name: 'AnnouncementEdit', params: { id: record.id } }); // Assuming you have an edit route
        message.info('编辑功能待实现');
     };
     
     const handleDelete = (record) => {
+      if (!authStore.hasAnyPermission(['announcement:draft', 'announcement:manage'])) {
+        message.error('您没有删除公告的权限。');
+        return;
+      }
       confirm({
         title: '确认删除',
         content: `您确定要删除通知 "${record.title}" 吗? 此操作会将其移入回收站。`,
@@ -457,7 +482,11 @@ export default {
     };
 
     const handleBatchDelete = () => {
-       if (selectedRowKeys.value.length === 0) {
+       if (!authStore.hasAnyPermission(['announcement:draft', 'announcement:manage'])) {
+        message.error('您没有批量删除公告的权限。');
+        return;
+      }
+      if (selectedRowKeys.value.length === 0) {
         message.warning('请至少选择一项进行删除');
         return;
       }
@@ -481,13 +510,29 @@ export default {
     };
     
     const goToRecycleBin = () => {
+       if (!authStore.hasPermission('announcement:manage')) {
+          message.error('您没有访问回收站的权限。');
+          return;
+      }
       message.info('回收站功能待实现');
       // router.push({ name: 'AnnouncementRecycleBin' });
     };
 
     // --- More action handlers (SubmitAudit, Publish, Audit, Cancel, Extend, ViewStats, Archive) ---
-    const handleSubmitAudit = (record) => { message.info('提交审核待实现'); };
-    const handlePublish = (record) => { message.info('直接发布待实现'); };
+    const handleSubmitAudit = (record) => {
+        if (!authStore.hasPermission('announcement:draft')) {
+            message.error('您没有提交审核的权限。');
+            return;
+        }
+        message.info('提交审核待实现');
+    };
+    const handlePublish = (record) => {
+        if (!authStore.hasPermission('announcement:publish')) {
+            message.error('您没有直接发布的权限。');
+            return;
+        }
+         message.info('直接发布待实现');
+    };
     const handleAudit = (record) => { message.info('审核待实现'); };
     const handleCancel = (record) => { message.info('取消发布待实现'); };
     const handleExtend = (record) => { message.info('延长有效期待实现'); };
@@ -514,8 +559,15 @@ export default {
 
     // --- Lifecycle Hook ---
     onMounted(() => {
-      console.log('[List.vue] Component mounted. Fetching initial data...'); // Log 0: Mounted
-      fetchData();
+      console.log('[List.vue] Component mounted. Fetching initial data...');
+      // No need to call fetchData here if it's called by the viewType watcher initially
+      // Or ensure the initial fetch respects permissions:
+      if (authStore.hasPermission('announcement:view')) {
+         fetchData();
+      } else {
+         message.error('您没有查看公告列表的权限。');
+         // Handle lack of initial view permission
+      }
     });
 
     // --- Return values for template ---
@@ -553,7 +605,8 @@ export default {
       getTypeName,
       getStatusType,
       getStatusName,
-      moment // Expose moment for template usage
+      moment, // Expose moment for template usage
+      authStore // Expose authStore to the template
     };
   }
 }

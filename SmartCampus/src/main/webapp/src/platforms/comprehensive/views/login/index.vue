@@ -80,6 +80,8 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import { message } from 'ant-design-vue';
+import { useAuthStore } from '@core/stores/auth';
+import { pinia } from '@/main-comprehensive';
 import { 
   setToken, 
   setUserInfo,
@@ -96,29 +98,23 @@ const loginForm = reactive({
   remember: false
 });
 
-const handleSubmit = (values) => {
+const handleSubmit = async (values) => {
   loading.value = true;
-  
-  // 模拟登录请求
-  setTimeout(() => {
-    if (values.username && values.password) {
-      // 登录成功，设置认证状态
-      setToken('mock-jwt-token-' + Date.now()); // 设置一个模拟的 token
-      setUserInfo({
-        username: values.username,
-        roles: ['admin'],
-        permissions: ['dashboard:view', 'service:view']
-      });
-      
-      message.success('登录成功');
-      
-      // 登录成功后跳转到工作门户
-      router.push('/comprehensive/dashboard');
-    } else {
-      message.error('登录失败，请检查用户名和密码');
-    }
+  const authStore = useAuthStore(pinia);
+  try {
+    await authStore.login(values);
+    
+    message.success('登录成功');
+    
+    const redirectPath = router.currentRoute.value.query.redirect || '/comprehensive/dashboard';
+    router.push(redirectPath);
+    
+  } catch (error) {
+    message.error(error.message || '登录失败，请检查用户名和密码或联系管理员');
+    console.error('Login failed:', error);
+  } finally {
     loading.value = false;
-  }, 1000);
+  }
 };
 
 // 快速测试登录功能

@@ -4,7 +4,7 @@
  */
 
 import axios from 'axios';
-import { message } from 'antd';
+import { message } from 'ant-design-vue';
 import { getToken, refreshToken, logout } from './auth';
 
 // 创建axios实例

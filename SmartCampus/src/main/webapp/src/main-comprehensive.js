@@ -18,7 +18,7 @@ import 'ant-design-vue/dist/reset.css';
 import './assets/styles/main.css';
 
 // 导入Pinia和共享状态
-import { useSharedStore } from './stores/shared';
+// import { useSharedStore } from './stores/shared';
 
 // 显示基本调试信息
 console.log('正在加载综合管理平台...');
@@ -29,56 +29,65 @@ const app = createApp(App);
 
 // 创建Pinia实例
 const pinia = createPinia();
+export { pinia };
 
 // 添加错误处理
-app.config.errorHandler = (err, vm, info) => {
+app.config.errorHandler = (err, instance, info) => {
   console.error('Vue错误:', err);
   console.error('错误信息:', info);
-  // 显示错误到页面
-  document.getElementById('app').innerHTML = `
-    <div style="padding: 20px; text-align: center;">
-      <h2>应用加载错误</h2>
-      <pre style="text-align: left; background: #f5f5f5; padding: 10px; overflow: auto;">
-        ${err.stack || err.message || '未知错误'}
-      </pre>
-    </div>
-  `;
+  console.error('错误组件实例:', instance);
+  // Consider a less disruptive way to show errors in production
+  try {
+    document.getElementById('app-comprehensive').innerHTML = `
+      <div style="padding: 20px; text-align: center;">
+        <h2>应用加载时发生错误</h2>
+        <p>请稍后重试或联系管理员。</p>
+        <pre style="margin-top: 10px; font-size: 12px; text-align: left; background: #f5f5f5; padding: 10px; overflow: auto; max-height: 300px;">
+          ${err.stack || err.message || '未知错误'}
+        </pre>
+      </div>
+    `;
+  } catch (e) {
+    console.error("Failed to update DOM with error message:", e);
+  }
 };
 
-// 使用插件
-app.use(pinia); // 添加Pinia
+// 使用插件 (Order matters: Pinia first, then Router)
+app.use(pinia);
+console.log('Pinia 已挂载');
 app.use(router);
-app.use(ElementPlus);
+console.log('Router 已安装');
+
+// --- CHANGE: Only register Ant Design Vue globally for now --- 
+// app.use(ElementPlus);
+// console.log('Element Plus 已挂载');
 app.use(Antd); // 使用 Ant Design Vue
-app.use(ArcoVue, {});
-app.use(ArcoVueIcon);
+console.log('Ant Design Vue 已挂载'); // Keep Antd as it seems used by login
+// app.use(ArcoVue);
+// app.use(ArcoVueIcon);
+// console.log('Arco Design Vue 已挂载');
 
-// 注册Element Plus图标
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component);
-}
+// --- REMOVE: Element Plus icon registration --- 
+// // 注册Element Plus图标
+// for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+//   app.component(key, component);
+// }
 
-// 先渲染一个加载提示
-document.getElementById('app').innerHTML = '<div style="text-align:center;padding:50px;"><h3>加载中...</h3></div>';
+// 直接挂载应用
+app.mount('#app-comprehensive');
+console.log('综合管理平台已挂载');
 
-// 确保DOM已准备好
-setTimeout(() => {
-  // 挂载应用
-  app.mount('#app-comprehensive');
-  console.log('综合管理平台已挂载');
-  
-  // 测试共享状态
-  const sharedStore = useSharedStore();
-  sharedStore.updatePlatformStatus('comprehensive', 'initialized');
-  sharedStore.addGlobalNotification({
-    title: '综合管理平台已启动',
-    message: '平台初始化完成，共享状态测试成功',
-    type: 'success'
-  });
-  
-  console.log('共享状态测试:', {
-    platforms: sharedStore.platformStatuses,
-    notifications: sharedStore.globalNotifications,
-    unreadCount: sharedStore.unreadNotificationsCount
-  });
-}, 0); 
+// 测试共享状态
+// const sharedStore = useSharedStore();
+// sharedStore.updatePlatformStatus('comprehensive', 'initialized');
+// sharedStore.addGlobalNotification({
+//   title: '综合管理平台已启动',
+//   message: '平台初始化完成，共享状态测试成功',
+//   type: 'success'
+// });
+
+// console.log('共享状态测试:', {
+//   platforms: sharedStore.platformStatuses,
+//   notifications: sharedStore.globalNotifications,
+//   unreadCount: sharedStore.unreadNotificationsCount
+// }); 

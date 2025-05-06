@@ -24,8 +24,8 @@ function navigateTo(platform) {
     // 添加一个确认对话框，防止自动跳转
     const confirmRedirect = confirm('确定要进入 "智慧园区综合管理平台" 吗？');
     if (confirmRedirect) {
-      console.log('用户确认跳转到综合平台');
-      window.location.href = '/comprehensive/login';
+      console.log('用户确认跳转到综合平台HTML入口');
+      window.location.href = '/comprehensive.html';
     } else {
       console.log('用户取消了跳转');
     }

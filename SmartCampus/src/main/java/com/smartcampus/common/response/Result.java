@@ -1,130 +1,67 @@
 package com.smartcampus.common.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
- * 统一API响应结果封装
+ * 通用API响应结果封装
+ * @param <T> 响应数据的类型
  */
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Result<T> implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
-    private Integer code;
+    /**
+     * 状态码 (0 或 200 表示成功)
+     */
+    private int code;
+
+    /**
+     * 响应消息
+     */
     private String message;
+
+    /**
+     * 响应数据
+     */
     private T data;
-    @Builder.Default
-    private LocalDateTime timestamp = LocalDateTime.now();
 
-    /**
-     * 成功返回结果
-     */
+    // --- Constructors ---
+
+    public Result() {}
+
+    public Result(int code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
+    // --- Success Methods ---
+
     public static <T> Result<T> success() {
-        return Result.<T>builder()
-                .code(ResultCode.SUCCESS.getCode())
-                .message(ResultCode.SUCCESS.getMessage())
-                .build();
+        return success(null);
     }
 
-    /**
-     * 成功返回结果
-     *
-     * @param data 获取的数据
-     */
     public static <T> Result<T> success(T data) {
-        return Result.<T>builder()
-                .code(ResultCode.SUCCESS.getCode())
-                .message(ResultCode.SUCCESS.getMessage())
-                .data(data)
-                .build();
+        return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
+    }
+     public static <T> Result<T> success(String message, T data) {
+        return new Result<>(ResultCode.SUCCESS.getCode(), message, data);
     }
 
-    /**
-     * 成功返回结果
-     *
-     * @param data 获取的数据
-     * @param message 提示信息
-     */
-    public static <T> Result<T> success(String message, T data) {
-        return Result.<T>builder()
-                .code(ResultCode.SUCCESS.getCode())
-                .message(message)
-                .data(data)
-                .build();
+
+    // --- Failure Methods ---
+
+    public static <T> Result<T> failure(ResultCode resultCode) {
+        return new Result<>(resultCode.getCode(), resultCode.getMessage(), null);
     }
 
-    /**
-     * 失败返回结果
-     *
-     * @param code 错误码
-     * @param message 错误信息
-     */
-    public static <T> Result<T> error(Integer code, String message) {
-        return Result.<T>builder()
-                .code(code)
-                .message(message)
-                .build();
+    public static <T> Result<T> failure(ResultCode resultCode, String message) {
+        return new Result<>(resultCode.getCode(), message, null);
     }
-
-    /**
-     * 失败返回结果
-     *
-     * @param resultCode 错误码
-     */
-    public static <T> Result<T> error(ResultCode resultCode) {
-        return Result.<T>builder()
-                .code(resultCode.getCode())
-                .message(resultCode.getMessage())
-                .build();
-    }
-    
-    /**
-     * 失败返回结果
-     *
-     * @param code 错误码
-     * @param message 错误信息
-     * @param data 数据
-     */
-    public static <T> Result<T> error(Integer code, String message, T data) {
-        return Result.<T>builder()
-                .code(code)
-                .message(message)
-                .data(data)
-                .build();
-    }
-    
-    /**
-     * 失败返回结果
-     *
-     * @param resultCode 错误码
-     * @param data 数据
-     */
-    public static <T> Result<T> error(ResultCode resultCode, T data) {
-        return Result.<T>builder()
-                .code(resultCode.getCode())
-                .message(resultCode.getMessage())
-                .data(data)
-                .build();
-    }
-
-    /**
-     * 失败返回结果
-     *
-     * @param resultCode 错误码
-     * @param message    错误信息 (overrides resultCode's default message)
-     */
-    public static <T> Result<T> error(ResultCode resultCode, String message) {
-        return Result.<T>builder()
-                .code(resultCode.getCode())
-                .message(message)
-                .build();
+     public static <T> Result<T> failure(int code, String message) {
+        return new Result<>(code, message, null);
     }
 } 
