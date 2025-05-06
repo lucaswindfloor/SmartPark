@@ -1,8 +1,8 @@
 # Server Configuration
 server:
   port: 8080
-  servlet:
-    context-path: /api
+  # servlet: # Commented out parent servlet key as well
+    # context-path: /api # Commented out
 
 # Database Configuration
 spring:

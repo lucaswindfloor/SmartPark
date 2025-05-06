@@ -39,8 +39,10 @@ public class SecurityConfig {
 
     // Define public API endpoints
     private static final String[] PUBLIC_API_ENDPOINTS = {
-        "/api/auth/login", // Login endpoint
-        "/api/auth/register" // Example: Registration endpoint (if you have one)
+        // "/api/auth/login", // Login endpoint
+        // "/api/auth/register" // Example: Registration endpoint (if you have one)
+        "/auth/login", // Login endpoint (no /api prefix)
+        "/auth/register" // Example: Registration endpoint (if you have one) (no /api prefix)
         // Add other public endpoints if necessary
     };
 
@@ -53,7 +55,6 @@ public class SecurityConfig {
             .authorizeRequests()
                 .antMatchers(SWAGGER_WHITELIST).permitAll()
                 .antMatchers(PUBLIC_API_ENDPOINTS).permitAll()
-                .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll();
 
         http.formLogin().disable();

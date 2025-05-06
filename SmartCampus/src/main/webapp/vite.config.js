@@ -27,11 +27,11 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     },
     cors: true,
-    hmr: true
+    hmr: { overlay: false }
   },
   build: {
     outDir: 'dist',

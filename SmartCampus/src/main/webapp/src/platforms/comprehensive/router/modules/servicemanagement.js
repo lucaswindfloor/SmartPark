@@ -106,7 +106,7 @@ const serviceRoute = {
           component: () => import('../../views/servicemanagement/informationdisclosure/announcement/List.vue'),
           meta: {
             title: '通知公告列表',
-            permission: ['announcement:list']
+            permission: ['announcement:view']
           },
         },
         // 其他信息公开页面

@@ -23,7 +23,7 @@ import javax.validation.Valid; // Import Valid
  * REST Controller for managing Announcements.
  */
 @RestController
-@RequestMapping("/api/announcements") // Keep the /api prefix here, consistent with SecurityConfig
+@RequestMapping("/announcements") // Removed /api prefix
 public class AnnouncementController {
 
     private static final Logger log = LoggerFactory.getLogger(AnnouncementController.class);

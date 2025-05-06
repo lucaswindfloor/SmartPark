@@ -33,7 +33,7 @@
         <result property="archivedAt" column="a_archived_at"/>
         <result property="isTop" column="a_is_top"/>
         <result property="sortOrder" column="a_sort_order"/>
-        <result property="readCount" column="a_view_count"/> <!-- Map view_count to readCount -->
+        <result property="viewCount" column="a_view_count"/>
         <result property="createTime" column="a_create_time"/>
         <result property="createBy" column="a_create_by"/> <!-- Store original creator ID/username -->
         <result property="publisher" column="u_username"/> <!-- Map joined username to publisher -->
@@ -121,8 +121,8 @@
             <choose>
                 <when test="query.sortField == 'publishTime' and query.sortOrder == 'asc'">a.publish_time ASC</when>
                 <when test="query.sortField == 'publishTime' and query.sortOrder == 'desc'">a.publish_time DESC</when>
-                <when test="query.sortField == 'readCount' and query.sortOrder == 'asc'">a.view_count ASC</when>
-                <when test="query.sortField == 'readCount' and query.sortOrder == 'desc'">a.view_count DESC</when>
+                <when test="query.sortField == 'viewCount' and query.sortOrder == 'asc'">a.view_count ASC</when>
+                <when test="query.sortField == 'viewCount' and query.sortOrder == 'desc'">a.view_count DESC</when>
                 <!-- Add other sortable fields -->
                 <otherwise>a.create_time DESC</otherwise> <!-- Default sort -->
             </choose>
